@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>9Touhou - jubeat Saucer Season 3 Tournament Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+        overflow-y: scroll;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+      .sidebar-nav-fixed {
+	      position:fixed;
+	      top:60px;
+	      width:21.97%;
+	  }	
+	  #topnav{
+	  	  display:none;
+	  }
+	  #file-form {
+		  width: auto;
+	  }
+	  @media (max-width: 767px) {
+	      .sidebar-nav-fixed {
+	      	margin-top: 70px;
+	        position:static;
+	        width:auto;
+	      }
+	      #topbar {
+	      	padding-left: 20px;
+	      	padding-right: 20px;
+	      	position:fixed;
+	      	width:auto;
+	      }
+	      #topnav{
+	      	display:block;
+	      }
+	      #sidenav {
+			display:none;
+	      	width:auto;	      	
+	      }
+	      #main {
+	      	margin-top: 20px !important;
+	      }
+	  }	
+	  @media (max-width: 979px) {
+	      .sidebar-nav-fixed {
+	      	margin-top: 70px;
+	        top:70px;
+	      }
+	      #topbar {
+	      	padding-left: 20px;
+	      	padding-right: 20px;	      
+	      	position:fixed;
+	      	width:auto;
+	      }
+	      #topnav {
+	      	display:block;
+	      }
+	      #sidenav {
+			display:none;
+	      	width:auto;
+	      }
+	      #main {
+	      	margin-top: 20px !important;
+	      }	      
+	  }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/spacelab/bootswatch.less" rel="stylesheet/less">
+    <link href="css/spacelab/variables.less" rel="stylesheet/less">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="ico/favicon.png">
+  </head>
+
+  <body ng-controller="FirstController">
+    <div id="topbar" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">{{company}}</a>
+          <p class="navbar-text pull-right">
+            Hello, <a href="#" class="navbar-link">{{name}}</a>
+			<button class="btn btn-inverse btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'">Login</button>
+			<button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'">Register</button>
+          </p>          
+          <div class="nav-collapse collapse">
+            <ul class="nav" id="topnav">
+              <li class="active"><a id="mp" href="#MainPage" data-toggle="tab" >Main Page</a></li>
+              <li><a id="pc" href="#PastChallenges" data-toggle="tab">Past Challenges</a></li>
+              <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
+              <li><a id="sm" href="#Submit" data-toggle="tab">Submit</a></li>
+              <li><a id="ab" href="#About" data-toggle="tab">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+	<!--Login Modal-->
+	<div class="modal hide fade" id="Login" style="display:none">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">x</a>
+			<h3 id="Login">Login</h3>
+		</div>
+		<div class="modal-body">
+			
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+	
+	<!--Registration Modal-->
+	<div class="modal hide fade" id="Register" style="display:none">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">x</a>
+			<h3 id="Register">Register</h3>
+		</div>
+		<div class="modal-body">
+			
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+	
+	<!-- Main Body -->
+    <div class="container-fluid" id="main">
+      <div class="row-fluid">
+      
+      	<!-- Navigation Sidebar (Access separate panes). -->
+        <div class="span3">
+          <div class="well sidebar-nav sidebar-nav-fixed" id="sidenav">
+            <ul class="nav nav-list">
+              <li class="nav-header">Navigation</li>
+              <li class="active"><a id="mp" href="#MainPage" data-toggle="tab">Main Page</a></li>
+              <li><a id="pc" href="#PastChallenges" data-toggle="tab">Past Challenges</a></li>
+              <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
+              <li><a id="sm" href="#Submit" data-toggle="tab">Submit</a></li>
+              <li><a id="ab" href="#About" data-toggle="tab">About</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        
+        <!-- Main Body -->
+        <div class="span9">
+        
+        	<!-- Panes -->
+        	<div class="tab-content" id="main">
+        		
+        		<!-- Main Page Pane -->
+        		<div class="tab-pane active" id="MainPage">
+		          <div class="hero-unit">
+		            <h1>Hello, {{name}}! </h1>
+		            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		            <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+		          </div>
+		          <div class="row-fluid">
+		            <div class="span4">
+		              <h2>Heading</h2>
+		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		              <p><a class="btn" href="#">View details &raquo;</a></p>
+		            </div><!--/span-->
+		            <div class="span4">
+		              <h2>Heading</h2>
+		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		              <p><a class="btn" href="#">View details &raquo;</a></p>
+		            </div><!--/span-->
+		            <div class="span4">
+		              <h2>Heading</h2>
+		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		              <p><a class="btn" href="#">View details &raquo;</a></p>
+		            </div><!--/span-->
+		          </div><!--/row-->
+		          <div class="row-fluid">
+		            <div class="span4">
+		              <h2>Heading</h2>
+		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		              <p><a class="btn" href="#">View details &raquo;</a></p>
+		            </div><!--/span-->
+		            <div class="span4">
+		              <h2>Heading</h2>
+		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		              <p><a class="btn" href="#">View details &raquo;</a></p>
+		            </div><!--/span-->
+		            <div class="span4">
+		              <h2>Heading</h2>
+		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		              <p><a class="btn" href="#">View details &raquo;</a></p>
+		            </div><!--/span-->
+		          </div><!--/row-->
+	          	</div>
+	          	
+	          	<!-- Past Challenges Pane -->
+	          	<div class="tab-pane" id="PastChallenges">
+		          <div class="hero-unit">
+		            <h1>Past Challenges</h1>
+		            <p>Hmmm, Past Challenges........</p>
+		          </div>	          	
+	          	</div>
+	          	
+	          	<!-- Current Ranking Pane -->
+	          	<div class="tab-pane" id="CurrentRanking">
+		          <div class="hero-unit">
+		            <h1>Current Ranking</h1>
+		            <p>Hmmm, Past Challenges........</p>
+		          </div>	          	
+	          	</div>
+	          	
+	          	<!-- Submit Pane -->
+	          	<div class="tab-pane" id="Submit">
+		          <div class="hero-unit">
+		            <h1>Submit</h1>
+		            <div id="file-submission" ng-hide="name=='BAKA'">
+						<iframe id="file-form" src="/blobform">
+						</iframe>
+					</div>
+					<div id="file-login" ng-show="name=='BAKA'">
+						<p>You have to login to submit a file!</p>
+					</div>
+		          </div>	          	
+	          	</div>
+	          	
+	          	<!-- About Pane -->
+	          	<div class="tab-pane" id="About">
+		          <div class="hero-unit">
+		            <h1>About</h1>
+		            <div id="file-view" ng-hide="name=='BAKA'">
+						<iframe id="file-view" src="/list">
+						</iframe>
+					</div>
+					<div id="file-login" ng-show="name=='BAKA'">
+						<p>You have to login to submit a file!</p>
+					</div>
+		          </div>	          	
+	          	</div>	          	
+	     	</div>
+	     </div><!--/span-->	        
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; {{company}} 2013</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular/angular-resource.min.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/app.js"></script>
+    <script src="../test/lib/angular/angular-mocks.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>

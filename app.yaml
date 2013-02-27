@@ -1,0 +1,23 @@
+application: 9touhou
+version: 5
+runtime: python27
+api_version: 1
+threadsafe: false
+
+handlers:
+- url: /app
+  static_dir: app
+  expiration: 1m
+
+- url: /test
+  static_dir: test
+  expiration: 1m
+
+- url: /.*
+  script: blob.app
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+
+
