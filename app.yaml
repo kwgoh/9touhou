@@ -5,6 +5,14 @@ api_version: 1
 threadsafe: false
 
 handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+  
+- url: /index.html
+  static_files: index.html
+  upload: index.html
+  
 - url: /app
   static_dir: app
   expiration: 1m

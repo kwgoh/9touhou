@@ -21,7 +21,7 @@ class BlobData(db.Model):
 
 class BlobFormHandler(webapp2.RequestHandler):
   def get(self):
-    upload_url = blobstore.create_upload_url('/upload')
+    upload_url = blobstore.create_upload_url('/file/upload')
     self.response.out.write('<html ng-app="myApp"><body ng-controller="FirstController"><link href="app/css/bootstrap.css" rel="stylesheet">')
     self.response.out.write('<script src="app/lib/angular/angular.min.js"></script>')
     self.response.out.write('<script src="app/lib/angular/angular-resource.min.js"></script>')
@@ -47,7 +47,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         b.date = datetime.datetime.now().date()
         b.put()
     
-        #self.redirect('/serve/%s' % blob_info.key())
+        #self.redirect('/file/serve/%s' % blob_info.key())
     except BadValueError:
         print "Error in uploading file!"
 	#$self.response.out.write(blob_info.key());
@@ -78,7 +78,7 @@ class ListBlobHandler(webapp2.RequestHandler):
       self.response.out.write('<td>%s</td>' % p.file_name)
       self.response.out.write('<td>%s</td>' % p.file_desc)
       self.response.out.write('<td>%s</td>' % p.file_owner)
-      self.response.out.write('<td><a href="/serve/%s">Link</a></td>' % p.file_blob_key)
+      self.response.out.write('<td><a href="/file/serve/%s">Link</a></td>' % p.file_blob_key)
       self.response.out.write('</tr>')
 
     self.response.out.write('</tbody>')
@@ -87,7 +87,7 @@ class ListBlobHandler(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([('/', MainHandler),
                                ('/blobform', BlobFormHandler),
-                               ('/upload', UploadHandler),
-                               ('/serve/([^/]+)?', ServeHandler),
-							   ('/list', ListBlobHandler)],
+                               ('/file/upload', UploadHandler),
+                               ('/file/serve/([^/]+)?', ServeHandler),
+							   ('/file/list', ListBlobHandler)],
                               debug=True)
