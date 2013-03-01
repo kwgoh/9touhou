@@ -9,72 +9,8 @@
 
     <!-- Le styles -->
     <link href="css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-        overflow-y: scroll;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-      .sidebar-nav-fixed {
-	      position:fixed;
-	      top:60px;
-	      width:21.97%;
-	  }	
-	  #topnav{
-	  	  display:none;
-	  }
-	  #file-form {
-		  width: auto;
-	  }
-	  @media (max-width: 767px) {
-	      .sidebar-nav-fixed {
-	      	margin-top: 70px;
-	        position:static;
-	        width:auto;
-	      }
-	      #topbar {
-	      	padding-left: 20px;
-	      	padding-right: 20px;
-	      	position:fixed;
-	      	width:auto;
-	      }
-	      #topnav{
-	      	display:block;
-	      }
-	      #sidenav {
-			display:none;
-	      	width:auto;	      	
-	      }
-	      #main {
-	      	margin-top: 20px !important;
-	      }
-	  }	
-	  @media (max-width: 979px) {
-	      .sidebar-nav-fixed {
-	      	margin-top: 70px;
-	        top:70px;
-	      }
-	      #topbar {
-	      	padding-left: 20px;
-	      	padding-right: 20px;	      
-	      	position:fixed;
-	      	width:auto;
-	      }
-	      #topnav {
-	      	display:block;
-	      }
-	      #sidenav {
-			display:none;
-	      	width:auto;
-	      }
-	      #main {
-	      	margin-top: 20px !important;
-	      }	      
-	  }
-    </style>
+	<link href="css/additional.css" rel="stylesheet">
+	
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="css/spacelab/bootswatch.less" rel="stylesheet/less">
     <link href="css/spacelab/variables.less" rel="stylesheet/less">
@@ -106,15 +42,9 @@
             Hello, <a href="#" class="navbar-link">{{name}}</a>
 			<button class="btn btn-inverse btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'">Login</button>
 			<button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'">Register</button>
+			<span ng-show="isadmin==true"> (Admin)</span>
           </p>          
           <div class="nav-collapse collapse">
-            <ul class="nav" id="topnav">
-              <li class="active"><a id="mp" href="#MainPage" data-toggle="tab" >Main Page</a></li>
-              <li><a id="pc" href="#PastChallenges" data-toggle="tab">Past Challenges</a></li>
-              <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
-              <li><a id="sm" href="#Submit" data-toggle="tab">Submit</a></li>
-              <li><a id="ab" href="#About" data-toggle="tab">About</a></li>
-            </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -127,7 +57,19 @@
 			<h3 id="Login">Login</h3>
 		</div>
 		<div class="modal-body">
-			
+			<div class="control-group">
+				<label class="control-label" for="UserName">Username</label>
+				<div class="controls">
+					<input type="text" ng-model="login.data.u_name" id="username"/>
+				</div>
+				<label class="control-label" for="PassWord">Password</label>
+				<div class="controls">
+					<input type="password" ng-model="login.data.u_pwd" id="password"/>
+				</div>
+				<div class="controls">
+				  <input type="submit" ng-click="getlogin()" value="Submit" data-dismiss="modal"/>
+				</div>
+			</div>			
 		</div>
 		<div class="modal-footer"></div>
 	</div>
@@ -139,7 +81,19 @@
 			<h3 id="Register">Register</h3>
 		</div>
 		<div class="modal-body">
-			
+			<div class="control-group">
+				<label class="control-label" for="UserName">Username</label>
+				<div class="controls">
+					<input type="text" ng-model="login.data.u_name" id="username"/>
+				</div>
+				<label class="control-label" for="PassWord">Password</label>
+				<div class="controls">
+					<input type="password" ng-model="login.data.u_pwd" id="password"/>
+				</div>
+				<div class="controls">
+				  <input type="submit" ng-click="registerlogin()" value="Submit" data-dismiss="modal"/>
+				</div>
+			</div>					
 		</div>
 		<div class="modal-footer"></div>
 	</div>
@@ -157,7 +111,8 @@
               <li><a id="pc" href="#PastChallenges" data-toggle="tab">Past Challenges</a></li>
               <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
               <li><a id="sm" href="#Submit" data-toggle="tab">Submit</a></li>
-              <li><a id="ab" href="#About" data-toggle="tab">About</a></li>
+              <li><a id="cc" href="#CreateChallenges" data-toggle="tab" ng-show="isadmin==true">Create Challenges</a></li>
+              <li><a id="ab" href="#ViewUploads" data-toggle="tab" ng-show="isadmin==true">View Uploads</a></li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -170,28 +125,46 @@
         		
         		<!-- Main Page Pane -->
         		<div class="tab-pane active" id="MainPage">
-		          <div class="hero-unit">
-		            <h1>Hello, {{name}}! </h1>
-		            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-		            <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-		          </div>
-		          <div class="row-fluid">
-		            <div class="span4">
-		              <h2>Heading</h2>
-		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-		              <p><a class="btn" href="#">View details &raquo;</a></p>
-		            </div><!--/span-->
-		            <div class="span4">
-		              <h2>Heading</h2>
-		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-		              <p><a class="btn" href="#">View details &raquo;</a></p>
-		            </div><!--/span-->
-		            <div class="span4">
-		              <h2>Heading</h2>
-		              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-		              <p><a class="btn" href="#">View details &raquo;</a></p>
-		            </div><!--/span-->
-		          </div><!--/row-->
+                    <div class="container-fluid">
+                        <div id="myCarousel" class="carousel slide">
+                          <div class="carousel-inner">
+                            <div class="item active">
+                              <div class="container-fluid">
+                                <div class="row-fluid">
+                                    <div class="span5">
+                                    <img src="./img/jubeat-saucer.jpg" alt="">
+                                    </div>
+                                    <div class="span7">
+                                        <div class="carousel-caption">
+                                          <h1>Hello, {{name}}!</h1>
+                                          <p class="lead">Welcome to the 9Touhou jubeat Saucer Season 3 contest page!</p>
+                                        </div>
+                                    </div>  
+                                </div>
+                              </div>
+                            </div>
+                            <div class="item" ng-repeat="chal in challenges.entities">
+                              <div class="container-fluid">
+                                  <div class="row-fluid">
+                                    <div class="span5">
+                                      <img src="./img/jubeat-saucer.jpg" alt="">
+                                    </div>
+                                    <div class="span7">
+                                        <div class="carousel-caption">
+                                          <h1>{{chal.c_name}}</h1>
+                                          <p class="lead">{{chal.c_desc}}</p>
+                                          <p>Hint: {{chal.c_hint}}</p>
+                                          <p>Points: {{chal.c_points}}</p>
+                                        </div>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                            <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                          </div>
+                        </div>
+                    </div>
 		          <div class="row-fluid">
 		            <div class="span4">
 		              <h2>Heading</h2>
@@ -213,9 +186,27 @@
 	          	
 	          	<!-- Past Challenges Pane -->
 	          	<div class="tab-pane" id="PastChallenges">
-		          <div class="hero-unit">
-		            <h1>Past Challenges</h1>
-		            <p>Hmmm, Past Challenges........</p>
+		          <div class="container-fluid">
+		            <table class="table table-striped">
+                        <thead>
+                            <th ng-repeat="(key,val) in challenges.entities[0]">
+                                {{key}}
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="chal in challenges.entities">
+                                <td ng-repeat="(key,val) in chal">
+                                    {{val}}
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 		          </div>	          	
 	          	</div>
 	          	
@@ -223,7 +214,7 @@
 	          	<div class="tab-pane" id="CurrentRanking">
 		          <div class="hero-unit">
 		            <h1>Current Ranking</h1>
-		            <p>Hmmm, Past Challenges........</p>
+		            <p>Hmmm, Current Ranking........</p>
 		          </div>	          	
 	          	</div>
 	          	
@@ -241,16 +232,44 @@
 		          </div>	          	
 	          	</div>
 	          	
-	          	<!-- About Pane -->
-	          	<div class="tab-pane" id="About">
+	          	<!-- Create Challenge Pane -->
+	          	<div class="tab-pane" id="CreateChallenges">
 		          <div class="hero-unit">
-		            <h1>About</h1>
-		            <div id="file-view" ng-hide="name=='BAKA'">
-                  <iframe id="file-view" src="/file/list">
-						</iframe>
+		            <h1>Create Challenges</h1>
+		            <div id="challenge-admin-login" ng-hide="isadmin==true">
+						<p>You have to be an administrator to view this page!</p>
 					</div>
-					<div id="file-login" ng-show="name=='BAKA'">
-						<p>You have to login to submit a file!</p>
+					<div id="challenge-submission" ng-show="isadmin==true">
+                    Enter the challenge details below: <br>
+                    Challenge Name:<br>
+					<input type="text" ng-model="challenge.data.c_name"><br>
+                    Challenge Description:<br>
+					<textarea ng-model="challenge.data.c_desc"></textarea><br>
+                    Hint:<br>
+					<textarea ng-model="challenge.data.c_hint"></textarea><br>
+                    Points:<br>
+					<input type="text" ng-model="challenge.data.c_points" disabled><br>
+                    Admin Notes:<br>
+					<textarea ng-model="challenge.data.c_notes"></textarea><br>
+                    Expires:<br>
+					<input type="text" disabled><br>
+                    Image:<br>
+					<input type="text" ng-model="challenge.data.c_blob" disabled><br>
+                    <input ng-click="addchallenge()" type="submit" name="add new item" value="Submit">
+					</div>
+		          </div>	          	
+	          	</div>
+	          	
+	          	<!-- About Pane -->
+	          	<div class="tab-pane" id="ViewUploads">
+		          <div class="hero-unit">
+		            <h1>View Uploads</h1>
+		            <div id="file-admin-login" ng-hide="isadmin==true">
+                        <p>You have to be an administrator to view this page!</p>
+					</div>
+					<div id="file-view" ng-show="isadmin==true">
+                        <iframe id="file-view" src="/file/list">
+						</iframe>
 					</div>
 		          </div>	          	
 	          	</div>	          	

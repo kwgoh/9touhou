@@ -1,0 +1,244 @@
+  /* GLOBAL STYLES
+    -------------------------------------------------- */
+    /* Padding below the footer and lighter body text */
+
+	body {
+	  padding-top: 60px;
+	  padding-bottom: 40px;
+	  overflow-y: scroll;
+	}
+	.sidebar-nav {
+	  padding: 9px 0;
+	}
+	.sidebar-nav-fixed {
+	  position:fixed;
+	  top:60px;
+	  width:21.97%;
+	}	
+	#topnav{
+	  display:none;
+	}
+	#file-form {
+	  width: auto;
+	}
+
+
+
+    /* Carousel base class */
+    .carousel {
+      margin-bottom: 60px;
+    }
+
+    .carousel .container {
+      position: relative;
+      z-index: 9;
+    }
+
+    .carousel-control {
+      height: 80px;
+      margin-top: 0;
+      font-size: 120px;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      background-color: transparent;
+      border: 0;
+    }
+
+    .carousel .item {
+      height: 300px;
+    }
+    .carousel img {
+      position: relative;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      height: 300px;
+    }
+
+    .carousel-caption {
+      background-color: transparent;
+      position: relative;
+      max-width: 550px;
+      padding: 0 20px;
+      margin-top: 100px;
+	  color: #333;
+    }
+	
+    .carousel-caption h1,
+    .carousel-caption .lead {
+      margin: 0;
+      line-height: 1.25;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+	
+    .carousel-caption p{      
+	  color: #333;
+	  line-height: 20px;
+    }
+	
+    .carousel-caption .btn {
+      margin-top: 10px;
+    }
+
+
+
+    /* MARKETING CONTENT
+    -------------------------------------------------- */
+
+    /* Center align the text within the three columns below the carousel */
+    .marketing .span4 {
+      text-align: center;
+    }
+    .marketing h2 {
+      font-weight: normal;
+    }
+    .marketing .span4 p {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+
+    /* Featurettes
+    ------------------------- */
+
+    .featurette-divider {
+      margin: 80px 0; /* Space out the Bootstrap <hr> more */
+    }
+    .featurette {
+      padding-top: 120px; /* Vertically center images part 1: add padding above and below text. */
+      overflow: hidden; /* Vertically center images part 2: clear their floats. */
+    }
+    .featurette-image {
+      margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
+    }
+
+    /* Give some space on the sides of the floated elements so text doesn't run right into it. */
+    .featurette-image.pull-left {
+      margin-right: 40px;
+    }
+    .featurette-image.pull-right {
+      margin-left: 40px;
+    }
+
+    /* Thin out the marketing headings */
+    .featurette-heading {
+      font-size: 50px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+
+
+    /* RESPONSIVE CSS
+    -------------------------------------------------- */
+
+    @media (max-width: 979px) {
+	  .sidebar-nav-fixed {
+		margin-top: 70px;
+		top:70px;
+	  }	  
+      .container.navbar-wrapper {
+        margin-bottom: 0;
+        width: auto;
+      }
+      .carousel .item {
+        height: 300px;
+      }
+      .carousel img {
+        height: 300px;
+      }
+      .carousel-caption {
+	    position: absolute;
+      }
+      .featurette {
+        height: auto;
+        padding: 0;
+      }
+      .featurette-image.pull-left,
+      .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+      }
+	  
+	  #topbar {
+		padding-left: 20px;
+		padding-right: 20px;	      
+		position:fixed;
+		width:auto;
+	  }
+	  /*#topnav {
+		display:block;
+	  }
+	  #sidenav {
+		display:none;
+		width:auto;
+	  }*/
+	  #main {
+		margin-top: 20px !important;
+	  }	   	  
+    }
+
+
+    @media (max-width: 767px) {
+	  .sidebar-nav-fixed {
+		margin-top: 70px;
+		position:static;
+		width:auto;
+	  }
+      .carousel {
+        margin-left: -20px;
+        margin-right: -20px;
+      }
+      .carousel .container {
+
+      }
+      .carousel .item {
+        height: 300px;
+      }
+      .carousel img {
+        height: 300px;
+      }
+      .carousel-caption {
+		position: absolute;	  
+        width: 65%;
+        padding: 0 50px;
+        margin-top: 100px;
+      }
+      .carousel-caption h1 {
+        font-size: 30px;
+      }
+      .carousel-caption .lead,
+      .carousel-caption .btn {
+        font-size: 18px;
+      }
+
+      .marketing .span4 + .span4 {
+        margin-top: 40px;
+      }
+
+      .featurette-heading {
+        font-size: 30px;
+      }
+      .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+      }
+	  #topbar {
+		padding-left: 20px;
+		padding-right: 20px;
+		position:fixed;
+		width:auto;
+	  }
+	  /*#topnav{
+		display:block;
+	  }
+	  #sidenav {
+		display:none;
+		width:auto;	      	
+	  }*/
+	  #main {
+		margin-top: 20px !important;
+	  }
+    }
