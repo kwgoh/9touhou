@@ -26,6 +26,18 @@
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="ico/favicon.png">
+                                   
+    <script type="text/javascript">
+
+    function song_upload(){
+      song_upload = window.open("/songform", "littleWindow", "location=no,width=480,height=300"); 
+    }
+    
+    function submission_upload(){
+      submission_upload = window.open("/blobform", "littleWindow", "location=no,width=480,height=300"); 
+    }
+
+    </script>                                   
   </head>
 
   <body ng-controller="FirstController">
@@ -110,8 +122,10 @@
               <li class="active"><a id="mp" href="#MainPage" data-toggle="tab">Main Page</a></li>
               <li><a id="pc" href="#PastChallenges" data-toggle="tab">Past Challenges</a></li>
               <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
-              <li><a id="sm" href="#Submit" data-toggle="tab">Submit</a></li>
-              <li><a id="cc" href="#CreateChallenges" data-toggle="tab" ng-show="isadmin==true">Create Challenges</a></li>
+              <li class="disabled"><a id="mm" href="#Missions" data-toggle="tab">Missions (Coming Soon!)</a></li>
+              <li class="nav-header" ng-show="isadmin==true">Admin Console</li>
+              <li><a id="mc" href="#ManageChallenges" data-toggle="tab" ng-show="isadmin==true">Manage Challenges</a></li>
+              <li><a id="ms" href="#ManageSongs" data-toggle="tab" ng-show="isadmin==true">Manage Songs</a></li>
               <li><a id="ab" href="#ViewUploads" data-toggle="tab" ng-show="isadmin==true">View Uploads</a></li>
             </ul>
           </div><!--/.well -->
@@ -132,7 +146,9 @@
                               <div class="container-fluid">
                                 <div class="row-fluid">
                                     <div class="span5">
-                                    <img src="./img/jubeat-saucer.jpg" alt="">
+                                        <div class="well">
+                                            <img src="./img/jubeat-saucer.jpg" alt="">
+                                        </div>
                                     </div>
                                     <div class="span7">
                                         <div class="carousel-caption">
@@ -147,14 +163,20 @@
                               <div class="container-fluid">
                                   <div class="row-fluid">
                                     <div class="span5">
-                                      <img src="./img/jubeat-saucer.jpg" alt="">
+                                        <div class="well">                               
+                                            <img src="./img/jubeat-saucer.jpg" alt="">
+                                        </div>
                                     </div>
                                     <div class="span7">
                                         <div class="carousel-caption">
                                           <h1>{{chal.c_name}}</h1>
                                           <p class="lead">{{chal.c_desc}}</p>
-                                          <p>Hint: {{chal.c_hint}}</p>
-                                          <p>Points: {{chal.c_points}}</p>
+                                            <ul>
+                                              <li ng-repeat="cs in chal.c_songs">
+                                                
+                                                <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                              <li>
+                                            </ul>                                          
                                         </div>
                                     </div>
                                   </div>
@@ -189,8 +211,17 @@
 		          <div class="container-fluid">
 		            <table class="table table-striped">
                         <thead>
-                            <th ng-repeat="(key,val) in challenges.entities[0]">
-                                {{key}}
+                            <th>
+                                Challenge Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Songs
+                            </th>
+                            <th>
+                                Expires
                             </th>
                             <th>
                                 Action
@@ -198,11 +229,25 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="chal in challenges.entities">
-                                <td ng-repeat="(key,val) in chal">
-                                    {{val}}
+                                <td>
+                                    {{chal.c_name}}
                                 </td>
                                 <td>
-                                    -
+                                    {{chal.c_desc}}
+                                </td>
+                                <td>
+                                    <ul>
+                                      <li ng-repeat="cs in chal.c_songs">
+                                        <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
+                                        <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                      <li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    {{chal.c_date}}
+                                </td>
+                                <td>
+                                     <button class="btn btn-inverse btn-small"  onclick="submission_upload()"  ng-hide="name=='BAKA'">Submit Files</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -218,62 +263,230 @@
 		          </div>	          	
 	          	</div>
 	          	
-	          	<!-- Submit Pane -->
-	          	<div class="tab-pane" id="Submit">
+	          	<!-- Missions Pane>
+	          	<div class="tab-pane" id="Missions">
 		          <div class="hero-unit">
 		            <h1>Submit</h1>
 		            <div id="file-submission" ng-hide="name=='BAKA'">
-						<iframe id="file-form" src="/blobform">
+						<!--iframe id="file-form" src="/blobform">
 						</iframe>
+
 					</div>
 					<div id="file-login" ng-show="name=='BAKA'">
 						<p>You have to login to submit a file!</p>
 					</div>
 		          </div>	          	
-	          	</div>
+	          	</div -->
 	          	
 	          	<!-- Create Challenge Pane -->
-	          	<div class="tab-pane" id="CreateChallenges">
-		          <div class="hero-unit">
-		            <h1>Create Challenges</h1>
-		            <div id="challenge-admin-login" ng-hide="isadmin==true">
-						<p>You have to be an administrator to view this page!</p>
-					</div>
-					<div id="challenge-submission" ng-show="isadmin==true">
-                    Enter the challenge details below: <br>
-                    Challenge Name:<br>
-					<input type="text" ng-model="challenge.data.c_name"><br>
-                    Challenge Description:<br>
-					<textarea ng-model="challenge.data.c_desc"></textarea><br>
-                    Hint:<br>
-					<textarea ng-model="challenge.data.c_hint"></textarea><br>
-                    Points:<br>
-					<input type="text" ng-model="challenge.data.c_points" disabled><br>
-                    Admin Notes:<br>
-					<textarea ng-model="challenge.data.c_notes"></textarea><br>
-                    Expires:<br>
-					<input type="text" disabled><br>
-                    Image:<br>
-					<input type="text" ng-model="challenge.data.c_blob" disabled><br>
-                    <input ng-click="addchallenge()" type="submit" name="add new item" value="Submit">
-					</div>
+	          	<div class="tab-pane" id="ManageChallenges">
+		          <div class="container-fluid">
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateChallenge">Add New Challenge</button> 
+		            <table class="table table-striped">
+                        <thead>
+                            <th>
+                                Challenge Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Admin Notes
+                            </th>
+                            <th>
+                                Songs
+                            </th>
+                            <th>
+                                Expires
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="chal in challenges.entities">
+                                <td>
+                                    {{chal.c_name}}
+                                </td>
+                                <td>
+                                    {{chal.c_desc}}
+                                </td>
+                                <td>
+                                    {{chal.c_notes}}
+                                </td>
+                                <td>
+                                    <ul>
+                                      <li ng-repeat="cs in chal.c_songs">
+                                        <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
+                                        <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                      <li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    {{chal.c_date}}
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="modal hide fade" id="CreateChallenge" style="display:none">
+                        <div class="modal-header">
+                            <a class="close" data-dismiss="modal">x</a>
+                            <h3 id="Login">Create Challenge</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="control-group">
+                                <label class="control-label" for="ChalName">Challenge Name:</label>
+                                <div class="controls">
+                                    <input type="text" ng-model="challenge.data.c_name" id="c_name"/>
+                                </div>
+                                <label class="control-label" for="ChalDesc">Description</label>
+                                <div class="controls">
+                                    <textarea style="width: 200px; height: 50px; resize: none;" ng-model="challenge.data.c_desc" id="c_desc"></textarea>
+                                </div>
+                                <label class="control-label" for="ChalNotes">Admin Notes</label>
+                                <div class="controls">
+                                    <textarea style="width: 200px; height: 50px; resize: none;" ng-model="challenge.data.c_notes" id="c_desc"></textarea>
+                                </div>
+                                <label class="control-label" for="ChalSongs">Songs</label>
+                                <div class="controls">
+                                    <ul>
+                                      <li ng-repeat="songdata in challenge.data.c_songs">
+                                          <span>{{songdata.s_name}} ({{songdata.s_difficulty}})</span>
+                                      </li>
+                                    </ul>
+                                    <select ng-model="c_song.s_name" ng-options="songselect.s_name as songselect.s_name for songselect in songs.entities"></select>
+                                    <select ng-model="c_song.s_difficulty">
+                                        <option value="Basic" selected>Basic</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Extreme">Extreme</option>
+                                    </select>
+                                    <button class="btn btn-inverse btn-small" ng-click="addsongtochallenge()">Add</button> 
+                                </div>
+                                <label class="control-label" for="ChalExpires">Expires</label>
+                                <div class="controls">
+                                    <input type="date" ng.model="challenge.data.c_date" id="c_date">
+                                </div>
+                                <div class="controls">
+                                  <input type="submit" ng-click="addchallenge()" value="Submit" data-dismiss="modal"/>
+                                  <input type="submit" button ng-click="cancelchallenge()" value="Cancel" data-dismiss="modal"/>
+                                </div>
+                            </div>			
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>                    
+                  </div>
+                  </div>
+	          	<!-- Manage Songs Pane -->
+	          	<div class="tab-pane" id="ManageSongs">
+		          <div class="container-fluid">
+                    <button class="btn btn-inverse btn-small"  onclick="song_upload()">Add New Song</button> 
+		            <table class="table table-striped">
+                        <thead>
+                            <th>
+                                Image
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Composer
+                            </th>
+                            <th>
+                                Details
+                            </th>
+                            <th>
+                                Upload Date
+                            </th>
+                            <th>
+                                Upload By
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="song in songs.entities">
+                                <td>
+                                    <img src="/file/serve/{{song.s_blob}}" style="width: 100px">
+                                </td>
+                                <td>
+                                    {{song.s_name}}
+                                </td>
+                                <td>
+                                    {{song.s_comp}}
+                                </td>
+                                <td>
+                                    {{song.s_details}}
+                                </td>
+                                <td>
+                                    {{song.s_date}}
+                                </td>
+                                <td>
+                                    {{song.s_uploadby}}
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 		          </div>	          	
 	          	</div>
 	          	
 	          	<!-- About Pane -->
 	          	<div class="tab-pane" id="ViewUploads">
-		          <div class="hero-unit">
-		            <h1>View Uploads</h1>
-		            <div id="file-admin-login" ng-hide="isadmin==true">
-                        <p>You have to be an administrator to view this page!</p>
-					</div>
-					<div id="file-view" ng-show="isadmin==true">
-                        <iframe id="file-view" src="/file/list">
-						</iframe>
-					</div>
-		          </div>	          	
-	          	</div>	          	
-	     	</div>
+                  <div class="container-fluid">
+		            <table class="table table-striped">
+                        <thead>
+                            <th>
+                                Image
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Owner
+                            </th>
+                            <th>
+                                Upload Date
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="file in blobfiles.entities">
+                                <td>
+                                    <a href="/file/serve/{{file.f_blob}}">Link</a>
+                                </td>
+                                <td>
+                                    {{file.f_name}}
+                                </td>
+                                <td>
+                                    {{file.f_desc}}
+                                </td>
+                                <td>
+                                    {{file.f_owner}}
+                                </td>
+                                <td>
+                                    {{file.f_date}}
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+		          </div>	  
+                </div>
+              
 	     </div><!--/span-->	        
       </div><!--/row-->
 

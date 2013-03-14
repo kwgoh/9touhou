@@ -1,0 +1,31 @@
+9Touhou To-Do List (in order of priority):
+
+ - Challenges
+    - Each Challenge has a short list of songs and their pictures (1-4/challenge)
+    - Countdown for each challenge (or at least the deadline)
+    - Must show current top score to beat for each challenge
+    - Points given after challenge closed (1st: 5, 2nd: 3, 3rd: 2, Rest: 1)
+    - Bonus points for guessing challenge theme (hidden until guessed)
+   
+ - Accounts
+    - Participant/Admin
+    - Participants have list of completed achievements
+   
+ - Achievements
+     - Each account has personal list.
+     - Admins have a table to edit achievement values for each player (filtering recommended)
+     - Achievements have point values
+     
+ - Missions (Monthly - Do before April 1st)
+     - Specialized page for each mission
+     - Spans entire month
+     - Help page required for more complex missions (e.g. "Marisa Tanked My Score With An Incredible Hand")
+     - Scoring by difficulty - (Easy: 4, Medium: 7, Hard: 10, Lunatic: 12)
+    
+ - Admin Change Log
+     - Updates whenever administrators make changes on the console (deleting files, adding/modifying challenges/achievements/missions etc.)
+     
+ - Notifications
+     - Sent to participants whenever an admin has verified their submissions.
+     - "Congrats, your file was successful for XXX challenge/achievement/mission."
+     - "Sorry, your file was unsuccessful for XXX challenge/achievement/mission."
