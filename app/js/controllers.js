@@ -158,6 +158,7 @@ function FirstController($scope,$resource) {
 			});  
 	};
 
+  $scope.listsubmissions();
 	$scope.retrievesession();
 	$scope.listchallenge();
 	$scope.listsongs();
