@@ -10,8 +10,9 @@
     <!-- Le styles -->
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/additional.css" rel="stylesheet">
-    
+    <link href="css/angular-ui.min.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/jquery-ui-1.10.2.custom.min.css" rel="stylesheet">
     <link href="css/spacelab/bootswatch.less" rel="stylesheet/less">
     <link href="css/spacelab/variables.less" rel="stylesheet/less">
     
@@ -30,11 +31,11 @@
     <script type="text/javascript">
       
       function song_upload(){
-        song_upload = window.open("/songform", "littleWindow", "location=no,width=480,height=300"); 
+        song_upload = window.open("/songform", "_blank", "location=no,width=480,height=300"); 
       }
       
       function submission_upload(){
-        submission_upload = window.open("/blobform", "littleWindow", "location=no,width=480,height=300"); 
+        submission_upload = window.open("/blobform", "_blank", "location=no,width=480,height=300"); 
       }
       
     </script>                                   
@@ -55,6 +56,7 @@
             <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'">Login</button>
             <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'">Register</button>
             <span ng-show="isadmin==true"> (Admin)</span>
+            <button ng-hide="name=='BAKA'" ng-click="logout()">Logout</button>
           </p>          
           <div class="nav-collapse collapse">
           </div><!--/.nav-collapse -->
@@ -120,10 +122,12 @@
             <ul class="nav nav-list">
               <li class="nav-header">Navigation</li>
               <li class="active"><a id="mp" href="#MainPage" data-toggle="tab">Main Page</a></li>
-              <li><a id="pc" href="#PastChallenges" data-toggle="tab">Past Challenges</a></li>
+              <li><a id="cc" href="#CurrentChallenges" data-toggle="tab">Current Challenges</a></li>
               <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
+              <li><a id="mp" href="#MyProfile" data-toggle="tab">My Profile</a></li>
               <li class="disabled"><a id="mm" href="#Missions" data-toggle="tab">Missions (Coming Soon!)</a></li>
               <li class="nav-header" ng-show="isadmin==true">Admin Console</li>
+              <li><a id="mu" href="#ManageUsers" data-toggle="tab" ng-show="isadmin==true">Manage Users</a></li>
               <li><a id="mc" href="#ManageChallenges" data-toggle="tab" ng-show="isadmin==true">Manage Challenges</a></li>
               <li><a id="ms" href="#ManageSongs" data-toggle="tab" ng-show="isadmin==true">Manage Songs</a></li>
               <li><a id="ab" href="#ViewUploads" data-toggle="tab" ng-show="isadmin==true">View Uploads</a></li>
@@ -154,36 +158,40 @@
                             <div class="carousel-caption">
                               <h1>Hello, {{name}}!</h1>
                               <p class="lead">Welcome to the 9Touhou jubeat Saucer Season 3 contest page!</p>
+                              <p>There will be weekly site maintenance on Wednesdays from 1000 hrs till 1600 hrs (UTC +0800).</p>
                             </div>
                           </div>  
                         </div>
                       </div>
                     </div>
-                    <div class="item" ng-repeat="chal in challenges.entities">
-                      <div class="container-fluid">
-                        <div class="row-fluid">
-                          <div class="span5">
-                            <div class="well">                               
-                              <img src="./img/jubeat-saucer.jpg" alt="">
-                            </div>
-                          </div>
-                          <div class="span7">
-                            <div class="carousel-caption">
-                              <h1>{{chal.c_name}}</h1>
-                              <p class="lead">{{chal.c_desc}}</p>
-                              <ul>
-                                <li ng-repeat="cs in chal.c_songs">
-                                  
-                                  <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
-                                  <li>
-                                </ul>                                          
+                    <!--div ui-if="!!challenges.entities.length"-->
+                        <div class="item" ng-repeat="chal in challenges.entities">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">                               
+                                  <img src="/file/serve/{{chal.c_songs[0].s_blob}}" alt="./img/jubeat-saucer.jpg">
+                                </div>
+                              </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>{{chal.c_name}}</h1>
+                                  <p class="lead">{{chal.c_desc}}</p>
+                                  <div ui-if="!!chal.c_songs.length">
+                                      <ul>
+                                        <li ng-repeat="cs in chal.c_songs">
+                                        <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                        <li>
+                                      </ul>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                    <!--/div-->    
                     <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-                    <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                    <!--a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a-->
                   </div>
                 </div>
               </div>
@@ -206,8 +214,8 @@
               </div><!--/row-->
             </div>
             
-            <!-- Past Challenges Pane -->
-            <div class="tab-pane" id="PastChallenges">
+            <!-- Current Challenges Pane -->
+            <div class="tab-pane" id="CurrentChallenges">
               <div class="container-fluid">
                 <table class="table table-striped">
                   <thead>
@@ -227,33 +235,53 @@
                       Action
                     </th>
                   </thead>
-                  <tbody>
-                    <tr ng-repeat="chal in challenges.entities">
-                      <td>
-                        {{chal.c_name}}
-                      </td>
-                      <td>
-                        {{chal.c_desc}}
-                      </td>
-                      <td>
-                        <ul>
-                          <li ng-repeat="cs in chal.c_songs">
-                            <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
-                            <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
-                            <li>
-                          </ul>
-                      </td>
-                      <td>
-                        {{chal.c_date}}
-                      </td>
-                      <td>
-                        <button class="btn btn-inverse btn-small"  onclick="submission_upload()"  ng-hide="name=='BAKA'">Submit Files</button>
-                      </td>
-                    </tr>
+                  <tbody ui-if="!!challenges.entities.length">
+                        <tr ng-repeat="chal in challenges.entities">
+                          <td>
+                            {{chal.c_name}}
+                          </td>
+                          <td>
+                            {{chal.c_desc}}
+                          </td>
+                          <td>
+                            <div ui-if="!!chal.c_songs">
+                                <ul>
+                                  <li ng-repeat="cs in chal.c_songs">
+                                    <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
+                                    <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                  <li>
+                                </ul>
+                            </div>
+                          </td>
+                          <td>
+                            {{chal.c_date}}
+                          </td>
+                          <td>
+                            <button class="btn btn-inverse btn-small"  onclick="submission_upload()"  ng-hide="name=='BAKA'">Submit Files</button>
+                          </td>
+                        </tr>
                   </tbody>
                 </table>
               </div>	          	
             </div>
+            
+            <!-- My Profile Pane -->
+            <div class="tab-pane" id="MyProfile">
+              <div class="hero-unit" ng-show="name=='BAKA'">
+                <h1>My Profile</h1>
+                <p>You have to be logged in to view your profile!</p>
+              </div>
+              <div class="hero-unit" ng-hide="name=='BAKA'">
+                <h1>{{name}}</h1>
+                <p>Points Acquired: {{points}}</p>
+                <p>Achievements Unlocked:
+                    <ul>
+                        <li></li>
+                    <ul>
+                </p>
+              </div>	          	              
+            </div>
+            
             
             <!-- Current Ranking Pane -->
             <div class="tab-pane" id="CurrentRanking">
@@ -264,8 +292,52 @@
             </div>
             
             <!-- Missions Pane-->
+            <!--div class="tab-pane" id="Missions">
+              <div class="hero-unit">
+                <h1>Missions</h1>
+                <p>Hmmm, Missions........</p>
+              </div>	          	
+            </div-->
             
-            <!-- Create Challenge Pane -->
+            <!-- Manage Users Pane-->
+            <!div class="tab-pane" id="Manage Users">
+              <div class="container-fluid">
+                <table class="table table-striped">
+                  <thead>
+                    <th>
+                      Username
+                    </th>
+                    <th>
+                      Is Admin?
+                    </th>
+                    <th>
+                      Points
+                    </th>
+                    <th>
+                      Action
+                    </th>
+                  </thead>
+                  <tbody ui-if="!!users.entities.length">
+                        <tr ng-repeat="user in users.entities">
+                          <td>
+                            {{user.u_name}}
+                          </td>
+                          <td>
+                            {{user.u_admin}}
+                          </td>
+                          <td>
+                            {{user.u_points}}
+                          </td>
+                          <td>
+                            -
+                          </td>
+                        </tr>
+                  </tbody>
+                </table>
+              </div>	          	
+            </div>
+            
+            <!-- Manage Challenge Pane -->
             <div class="tab-pane" id="ManageChallenges">
               <div class="container-fluid">
                 <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateChallenge">Add New Challenge</button> 
@@ -284,13 +356,16 @@
                       Songs
                     </th>
                     <th>
+                      Upload By
+                    </th>
+                    <th>
                       Expires
                     </th>
                     <th>
                       Action
                     </th>
                   </thead>
-                  <tbody>
+                  <tbody ui-if="!!challenges.entities.length">
                     <tr ng-repeat="chal in challenges.entities">
                       <td>
                         {{chal.c_name}}
@@ -302,59 +377,69 @@
                         {{chal.c_notes}}
                       </td>
                       <td>
-                        <ul>
-                          <li ng-repeat="cs in chal.c_songs">
-                            <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
-                            <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
-                            <li>
-                          </ul>
+                        <div ui-if="!!chal.c_songs.length">
+                            <ul>
+                              <li ng-repeat="cs in chal.c_songs">
+                                <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
+                                <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                              <li>
+                            </ul>
+                        </div>
+                      </td>
+                      <td>
+                        {{chal.c_uploadby}}
                       </td>
                       <td>
                         {{chal.c_date}}
                       </td>
                       <td>
-                        -
+                          <form ng-submit="deletechallenge({{chal.id}})">
+                            <input type="submit" name="Delete" value="Delete">
+                          </form>
                       </td>
                     </tr>
                   </tbody>
                 </table>
                 <div class="modal hide fade" id="CreateChallenge" style="display:none">
                   <div class="modal-header">
-                    <a class="close" data-dismiss="modal">x</a>
+                    <a class="close" ng-click="cancelchallenge()" data-dismiss="modal">x</a>
                     <h3 id="Login">Create Challenge</h3>
                   </div>
                   <div class="modal-body">
+                    <input type="hidden" ng-model="challenge.data.c_uploadby">
                     <div class="control-group">
                       <label class="control-label" for="ChalName">Challenge Name:</label>
                       <div class="controls">
-                        <input type="text" ng-model="challenge.data.c_name" id="c_name"/>
+                        <input type="text" ng-model="challenge.data.c_name"/>
                       </div>
                       <label class="control-label" for="ChalDesc">Description</label>
                       <div class="controls">
-                        <textarea style="width: 200px; height: 50px; resize: none;" ng-model="challenge.data.c_desc" id="c_desc"></textarea>
+                        <textarea style="width: 250px; height: 35px; resize: none;" ng-model="challenge.data.c_desc"></textarea>
                       </div>
                       <label class="control-label" for="ChalNotes">Admin Notes</label>
                       <div class="controls">
-                        <textarea style="width: 200px; height: 50px; resize: none;" ng-model="challenge.data.c_notes" id="c_desc"></textarea>
+                        <textarea style="width: 250px; height: 35px; resize: none;" ng-model="challenge.data.c_notes"></textarea>
                       </div>
                       <label class="control-label" for="ChalSongs">Songs</label>
                       <div class="controls">
-                        <ul>
-                          <li ng-repeat="songdata in challenge.data.c_songs">
-                            <span>{{songdata.s_name}} ({{songdata.s_difficulty}})</span>
-                          </li>
-                        </ul>
+                        <div ui-if="!!challenge.data.c_songs.length">
+                            <ul>
+                              <li ng-repeat="songdata in challenge.data.c_songs">
+                                <span>{{songdata.s_name}} ({{songdata.s_difficulty}})</span>
+                              </li>
+                            </ul>
+                        </div>
                         <select ng-model="c_song.s_name" ng-options="songselect.s_name as songselect.s_name for songselect in songs.entities"></select>
                         <select ng-model="c_song.s_difficulty">
-                          <option value="Basic" selected>Basic</option>
-                          <option value="Advanced">Advanced</option>
-                          <option value="Extreme">Extreme</option>
+                          <option value="BSC" selected>BSC (Basic)</option>
+                          <option value="ADV">ADV (Advanced)</option>
+                          <option value="EXT">EXT (Extreme)</option>
                         </select>
                         <button class="btn btn-inverse btn-small" ng-click="addsongtochallenge()">Add</button> 
                       </div>
                       <label class="control-label" for="ChalExpires">Expires</label>
                       <div class="controls">
-                        <input type="date" ng.model="challenge.data.c_date" id="c_date">
+                        <input ui-date ui-date-format ng-model="challenge.data.c_date"></input> {{challenge.data.c_date}}
                       </div>
                       <div class="controls">
                         <input type="submit" ng-click="addchallenge()" value="Submit" data-dismiss="modal"/>
@@ -371,7 +456,7 @@
             <!-- Manage Songs Pane -->
             <div class="tab-pane" id="ManageSongs">
               <div class="container-fluid">
-                <button class="btn btn-inverse btn-small"  onclick="song_upload()">Add New Song</button> 
+                <button class="btn btn-inverse btn-small" onclick="song_upload()">Add New Song</button> 
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -396,7 +481,7 @@
                       Action
                     </th>
                   </thead>
-                  <tbody>
+                  <tbody ui-if="!!songs.entities.length">
                     <tr ng-repeat="song in songs.entities">
                       <td>
                         <img src="/file/serve/{{song.s_blob}}" style="width: 100px">
@@ -417,7 +502,9 @@
                         {{song.s_uploadby}}
                       </td>
                       <td>
-                        -
+                          <form ng-submit="deletesong({{song.id}})">
+                            <input type="submit" name="Delete" value="Delete">
+                          </form>
                       </td>
                     </tr>
                   </tbody>
@@ -425,7 +512,7 @@
               </div>	          	
             </div>
             
-            <!-- About Pane -->
+            <!-- View Uploads Pane -->
             <div class="tab-pane" id="ViewUploads">
               <div class="container-fluid">
                 <table class="table table-striped">
@@ -449,7 +536,7 @@
                       Action
                     </th>
                   </thead>
-                  <tbody>
+                  <tbody ui-if="!!blobfiles.entities.length" >
                     <tr ng-repeat="file in blobfiles.entities">
                       <td>
                         <a href="/file/serve/{{file.f_blob}}">Link</a>
@@ -467,7 +554,9 @@
                         {{file.f_date}}
                       </td>
                       <td>
-                        -
+                          <form ng-submit="deletesubmission({{file.id}})">
+                            <input type="submit" name="Delete" value="Delete">
+                          </form>
                       </td>
                     </tr>
                   </tbody>
@@ -489,12 +578,14 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="lib/angular/angular.min.js"></script>
-    <script src="lib/angular/angular-resource.min.js"></script>
-    <script src="js/controllers.js"></script>
-    <script src="js/app.js"></script>
-    <script src="../test/lib/angular/angular-mocks.js"></script>
     <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular/angular-ui.min.js"></script>
+    <script src="lib/angular/angular-resource.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="../test/lib/angular/angular-mocks.js"></script>
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>
     <script src="js/bootstrap-modal.js"></script>
