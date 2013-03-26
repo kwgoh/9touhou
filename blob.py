@@ -18,10 +18,10 @@ def handle_404(request, response, exception):
     response.write('<html><body>')
     response.write('<link href="http://9touhou.appspot.com/app/css/bootstrap.css" rel="stylesheet">')
     response.write('<div class="hero-unit">')
-    response.write('<img src="http://9touhou.appspot.com/app/img/ICECAR.jpg" style="display:block; margin-left:auto; margin-right:auto"/>')
+    response.write('<img src="http://9touhou.appspot.com/app/img/chirumiru_chiruno.jpg" style="display:block; margin-left:auto; margin-right:auto"/>')
     response.write('<h3 style="text-align:center">WHEEEEEEEEEEEE........</h3>')
-    response.write('<p class="lead" style="text-align:center">Something funny happened, and the site is now misbehaving.</p>')
-    response.write('<p class="lead" style="text-align:center">Please refresh the page in a little while, or click <a href="http://9touhou.appspot.com">here</a> to return to the main website.</p>')
+    response.write('<p class="lead" style="text-align:center">Looks like nothing of note exists here. Did you get the address right?</p>')
+    response.write('<p class="lead" style="text-align:center">Click <a href="http://9touhou.appspot.com">here</a> to return to the main website.</p>')
     response.write('<p style="text-align:center">Error Type: 404.</p>')
     response.write('</div></body></html>')
     response.set_status(404)
@@ -69,6 +69,7 @@ class SGT(datetime.tzinfo):
     
 class BlobData(db.Model):
   file_name = db.StringProperty(required=True)
+  file_purpose = db.StringProperty()
   file_desc = db.StringProperty()
   file_date = db.DateTimeProperty()
   file_owner = db.StringProperty()
@@ -94,6 +95,7 @@ class BlobData(db.Model):
       file_date = file_date.astimezone(sgt)
       entity = {'f_name': object.file_name,
               'id': object.key().id(),
+              'f_purpose': object.file_purpose,
               'f_desc': object.file_desc,
               'f_date': file_date.strftime("%Y-%m-%d %H:%M:%S"),
               'f_owner': object.file_owner,
@@ -112,14 +114,19 @@ class BlobData(db.Model):
     
     if entity:
         delete_blob_key = entity.file_blob_key
-        
+        b_name = entity.file_name
         entity.delete()
         
         if delete_blob_key:
             delete_key = blobstore.BlobKey(delete_blob_key)
             delete_blob = blobstore.BlobInfo(delete_key)
             delete_blob.delete()
-            
+        
+        # Logging
+        l_msg = b_name + " was deleted."
+        new_log = Log(log_message=l_msg)
+        new_log.put()    
+        
         result = {'method':'delete_model_success',
                   'id': model_id
                   }
@@ -175,7 +182,7 @@ class SongData(db.Model):
     
     if entity:
         delete_blob_key = entity.song_blob_key
-        
+        s_name = entity.song_name
         entity.delete()
         
         if delete_blob_key:
@@ -183,6 +190,11 @@ class SongData(db.Model):
             delete_blob = blobstore.BlobInfo(delete_key)
             delete_blob.delete()
             
+        # Logging
+        l_msg = s_name + " was deleted."
+        new_log = Log(log_message=l_msg)
+        new_log.put()    
+        
         result = {'method':'delete_model_success',
                   'id': model_id
                   }
@@ -214,6 +226,11 @@ class User(db.Model):
     
     entity.put()
     
+    # Logging
+    l_msg = entity.user_name + " has registered."
+    new_log = Log(log_message=l_msg)
+    new_log.put()
+    
     result = {'u_name':jsonData['u_name'],
               'u_admin': bool(False),
               'u_points': 0}
@@ -226,15 +243,16 @@ class User(db.Model):
     theQuery = User.all()
 
     objects = theQuery.run()
+    entities = []
     for object in objects:
       entity = {'u_name':object.user_name,
               'id': object.key().id(),
-              'u_admin': object.user_isadmin,
+              'u_admin': str(object.user_isadmin),
               'u_points': object.user_points}
       entities.append(entity)
     result = {'method':'get_entities',
               'en_type': 'User',
-              'entities': entities}       
+              'entities': entities}      
     return result
     
   @staticmethod
@@ -243,7 +261,7 @@ class User(db.Model):
     
     result = {'u_name':theobject.user_name,
               'id': theobject.key().id(),
-              'u_admin': theobject.user_isadmin,
+              'u_admin': str(theobject.user_isadmin),
               'u_points': theobject.user_points}
     return result
     
@@ -318,15 +336,22 @@ class Challenge(db.Model):
   def add(data):
      
     jsonData = json.loads(data)
+    c_expiry = datetime.datetime.strptime(jsonData['c_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    c_expiry = c_expiry + datetime.timedelta( 0, 23*60*60 )
     entity = Challenge(challenge_name=jsonData['c_name'],
                     challenge_description=jsonData['c_desc'],
                     challenge_admin_notes=jsonData['c_notes'],
                     challenge_date=datetime.datetime.now(SGT()),
                     challenge_upload_by=jsonData['c_uploadby'],
-                    challenge_expiry=datetime.datetime.strptime(jsonData['c_date'], "%Y-%m-%dT%H:%M:%S.%fZ"))# 2013-03-26T16:00:00.000Z
+                    challenge_expiry=c_expiry)# 2013-03-26T16:00:00.000Z
                     #2013-03-15T07:13:34.034360
     
     entity.put()
+    
+    # Logging
+    l_msg = entity.challenge_upload_by + " has posted '" + entity.challenge_name + "'."
+    new_log = Log(log_message=l_msg)
+    new_log.put()
     
     challengeSongs = jsonData['c_songs'];
     count = 0
@@ -358,31 +383,36 @@ class Challenge(db.Model):
     sgt = SGT()
     entities = []
     for object in objects:
-      c_songs_query = Challenge_Songs.all().filter('challenge_id', object.key().id()).run()
       
-      c_songs = []
-      
-      if c_songs_query:
-        for c_s in c_songs_query:
-          c_song_blob = ""
-          c_song_data = SongData.all().filter('song_name',c_s.song_name).get()
-          if c_song_data:
-            c_song_blob = c_song_data.song_blob_key
-          c_entity = {'s_name': c_s.song_name,
-                's_difficulty': c_s.difficulty,
-                's_blob': c_song_blob}
-          c_songs.append(c_entity)
-          
       challenge_expiry = object.challenge_expiry.replace(tzinfo=utc)
-      challenge_expiry = challenge_expiry.astimezone(sgt)
-      entity = {'c_name': object.challenge_name,
-              'id': object.key().id(),
-              'c_desc': object.challenge_description,
-              'c_notes': object.challenge_admin_notes,
-              'c_uploadby': object.challenge_upload_by,
-              'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
-              'c_songs': c_songs}
-      entities.append(entity)
+      current_time = datetime.datetime.now().replace(tzinfo=utc)
+      if current_time < challenge_expiry:
+      
+        challenge_expiry = challenge_expiry.astimezone(sgt)
+        c_songs_query = Challenge_Songs.all().filter('challenge_id', object.key().id()).run()
+        
+        c_songs = []
+        
+        if c_songs_query:
+          for c_s in c_songs_query:
+            c_song_blob = ""
+            c_song_data = SongData.all().filter('song_name',c_s.song_name).get()
+            if c_song_data:
+              c_song_blob = c_song_data.song_blob_key
+            c_entity = {'s_name': c_s.song_name,
+                  's_difficulty': c_s.difficulty,
+                  's_blob': c_song_blob}
+            c_songs.append(c_entity)
+            
+        entity = {'c_name': object.challenge_name,
+                'id': object.key().id(),
+                'c_desc': object.challenge_description,
+                'c_notes': object.challenge_admin_notes,
+                'c_uploadby': object.challenge_upload_by,
+                'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
+                'c_songs': c_songs}
+        entities.append(entity)
+      
     result = {'method':'get_entities',
               'en_type': 'Challenge',
               'entities': entities}       
@@ -418,7 +448,16 @@ class Challenge(db.Model):
               'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
               'c_songs': c_songs}
     return result
+  
+  @staticmethod
+  def get_name(model_id):
+    entity = Challenge.get_by_id(int(model_id))
     
+    if entity:
+      return entity.challenge_name
+    else:
+      return "N/A"
+  
   #You can't name it delete since db.Model already has a delete method
   @staticmethod
   def remove(model_id):
@@ -428,6 +467,7 @@ class Challenge(db.Model):
     if entity:
         c_songs_query = Challenge_Songs.all().filter('challenge_id', entity.key().id()).run()
         
+        c_name = entity.challenge_name        
         entity.delete()
         
         if c_songs_query:
@@ -437,6 +477,11 @@ class Challenge(db.Model):
         result = {'method':'delete_model_success',
                   'id': model_id
                   }
+            
+        # Logging
+        l_msg = c_name + " was deleted."
+        new_log = Log(log_message=l_msg)
+        new_log.put()          
     else:
         result = {'method':'delete_model_not_found'}
     
@@ -467,24 +512,69 @@ class Challenge(db.Model):
               }
     return result
 
+class Achievement(db.Model):
+  achievement_name = db.StringProperty()
+  achievement_points = db.IntegerProperty()
+  
+class Log(db.Model):
+  log_date = db.DateTimeProperty(auto_now_add=True)
+  log_message = db.StringProperty()
+  
+  def to_dict(self):
+       d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       d["id"] = self.key().id()
+       return d
+  
+  @staticmethod
+  def get_entities():
+    #update ModelCount when adding
+    theQuery = Log.all()
+    theQuery.order('-log_date')
+
+    objects = theQuery.run(limit=30)
+    utc = UTC()
+    sgt = SGT()
+    entities = []
+    for object in objects:
+      l_date = object.log_date.replace(tzinfo=utc)
+      l_date = l_date.astimezone(sgt)
+      entity = {'l_date':l_date.strftime("%Y-%m-%d %H:%M:%S"),
+              'id': object.key().id(),
+              'l_msg': object.log_message}
+      entities.append(entity)
+    result = {'method':'get_entities',
+              'en_type': 'Log',
+              'entities': entities}      
+    return result
+    
+class RandomNews(db.Model):
+  time_stamp = db.DateTimeProperty()
+  message = db.StringProperty()
+  
+#Handlers    
+    
 class BlobFormHandler(webapp2.RequestHandler):
-  def get(self):
+  def get(self, model_id):
+    challenge = ""
+    if model_id:
+      challenge = Challenge.get_name(int(model_id))
     upload_url = blobstore.create_upload_url('/file/upload')
     self.response.headers['Content-Type'] = 'text/html; charset=UTF-8'
-    self.response.out.write('<html ng-app="myApp"><body ng-controller="FormController"><link href="app/css/bootstrap.css" rel="stylesheet">')
-    self.response.out.write('<script src="app/js/jquery.js"></script>')
-    self.response.out.write('<script src="app/js/jquery-ui-1.10.2.custom.min.js"></script>')
-    self.response.out.write('<script src="app/lib/angular/angular.min.js"></script>')
-    self.response.out.write('<script src="app/lib/angular/angular-ui.min.js"></script>')
-    self.response.out.write('<script src="app/lib/angular/angular-resource.min.js"></script>')
-    self.response.out.write('<script src="app/js/app.js"></script>')
-    self.response.out.write('<script src="app/js/controllers.js"></script>')
-    self.response.out.write('<script src="test/lib/angular/angular-mocks.js"></script>')
+    self.response.out.write('<html ng-app="myApp"><body ng-controller="FormController"><link href="../app/css/bootstrap.css" rel="stylesheet">')
+    self.response.out.write('<script src="../app/js/jquery.js"></script>')
+    self.response.out.write('<script src="../app/js/jquery-ui-1.10.2.custom.min.js"></script>')
+    self.response.out.write('<script src="../app/lib/angular/angular.min.js"></script>')
+    self.response.out.write('<script src="../app/lib/angular/angular-ui.min.js"></script>')
+    self.response.out.write('<script src="../app/lib/angular/angular-resource.min.js"></script>')
+    self.response.out.write('<script src="../app/js/app.js"></script>')
+    self.response.out.write('<script src="../app/js/controllers.js"></script>')
+    self.response.out.write('<script src="../test/lib/angular/angular-mocks.js"></script>')
     self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
     self.response.out.write('Name of file:<br> <input type="text" name="filename"><br>')
     self.response.out.write('Description:<br> <input type="text" name="filedescription"><br>')
-    self.response.out.write('Upload File: <input type="file" name="file"><br>')
-    self.response.out.write('Uploaded By: {{name}} <input type="hidden" name="fileowner" value="{{name}}"><br>')
+    self.response.out.write('Upload File: <br><input type="file" name="file"><br>')
+    self.response.out.write('Purpose: <br>%s <input type="hidden" name="filepurpose" value="%s"><br>' % (challenge, challenge))
+    self.response.out.write('Uploaded By: <br>{{name}} <input type="hidden" name="fileowner" value="{{name}}"><br>')
     self.response.out.write('<input type="submit" name="submit" value="Submit">')
     self.response.out.write('</form></body></html>')
 
@@ -505,8 +595,8 @@ class SongFormHandler(webapp2.RequestHandler):
     self.response.out.write('Name of Song:<br> <input type="text" name="s_name"><br>')
     self.response.out.write('Composer:<br> <input type="text" name="s_comp"><br>')
     self.response.out.write('Song Details:<br> <input type="text" name="s_details"><br>')
-    self.response.out.write('Uploaded By: {{name}} <input type="hidden" name="s_uploadby" value="{{name}}"><br>')
-    self.response.out.write('Upload File: <input type="file" name="song"><br>')
+    self.response.out.write('Upload File: <br><input type="file" name="song"><br>')
+    self.response.out.write('Uploaded By: <br>{{name}} <input type="hidden" name="s_uploadby" value="{{name}}"><br>')
     self.response.out.write('<input type="submit" name="submit" value="Submit">')
     self.response.out.write('</form></body></html>')
 
@@ -518,6 +608,10 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     f_desc = self.request.POST.get('filedescription')
     #f_desc = blob_decode(base64.b64decode(f_desc))
     f_owner = self.request.POST.get('fileowner')
+    f_purpose = self.request.POST.get('filepurpose')
+    if f_purpose is None:
+      f_purpose = ""
+    
     blob_info = upload_files[0]
     
     try:
@@ -525,8 +619,16 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
              file_desc=f_desc,
              file_date=datetime.datetime.now(SGT()),
              file_owner=f_owner,
+             file_purpose=f_purpose,
              file_blob_key=str(blob_info.key()))
         b.put()
+                    
+        # Logging
+        l_msg = f_owner + " has submitted '" + f_name + "' for '" + f_purpose + "'."
+        new_log = Log(log_message=l_msg)
+        #new_log.log_date = file_date
+        new_log.put()
+        
         self.redirect('/status/success')
         
     except BadValueError:
@@ -554,7 +656,12 @@ class SongUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
              song_upload_by=s_uploadby,
              song_blob_key=str(blob_info.key()))
         s.put()
-    
+
+        # Logging
+        l_msg = s_uploadby + " has added the song '" + s_name + "'."
+        new_log = Log(log_message=l_msg)
+        new_log.put()
+        
         self.redirect('/status/success')
         
     except BadValueError:
@@ -648,6 +755,24 @@ class ActionHandler(webapp2.RequestHandler):
     
     return self.respond(result)
     
+  def verify_user(self):
+    jsonData = json.loads(self.request.body)
+    
+    # Query interface constructs a query using instance methods
+    q = User.all()
+    objects = q.run()
+    
+    result = {'error':'User does not exist!'}    
+    for object in objects:
+      if jsonData['u_name']==object.user_name:
+        result = {'error':'User details are invalid!'}
+        if jsonData['u_admin']==str(object.user_isadmin).lower():
+          result = {'u_name':object.user_name,
+                    'u_admin':object.user_isadmin,
+                    'u_points':object.user_points}
+    
+    return self.respond(result)
+    
   def create_challenge(self):
     jsonData = json.loads(self.request.body)
     result = Challenge.add(json.dumps(jsonData))
@@ -673,10 +798,15 @@ class ActionHandler(webapp2.RequestHandler):
     result = SongData.remove(model_id)
     
     return self.respond(result)
+    
+  def list_logs(self):
+    result = Log.get_entities()
+    
+    return self.respond(result)
         
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=MainHandler),
-    webapp2.Route('/blobform', handler=BlobFormHandler),
+    webapp2.Route('/blobform/<model_id>', handler=BlobFormHandler),
     webapp2.Route('/file/upload', handler=UploadHandler),
     webapp2.Route('/songform', handler=SongFormHandler),
     webapp2.Route('/file/songupload', handler=SongUploadHandler),
@@ -688,11 +818,13 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/login/login', handler=ActionHandler, handler_method='login'),
     webapp2.Route('/login/register', handler=ActionHandler, handler_method='register'),
     webapp2.Route('/user/list', handler=ActionHandler, handler_method='list_users'),
+    webapp2.Route('/user/verify', handler=ActionHandler, handler_method='verify_user'),
     webapp2.Route('/challenge/create', handler=ActionHandler, handler_method='create_challenge'),
     webapp2.Route('/challenge/list', handler=ActionHandler, handler_method='list_challenge'),
     webapp2.Route('/challenge/remove/<model_id>', handler=ActionHandler, handler_method='delete_challenge'),
     webapp2.Route('/songdata/list', handler=ActionHandler, handler_method='list_songs'),
-    webapp2.Route('/songdata/remove/<model_id>', handler=ActionHandler, handler_method='delete_songs')],
+    webapp2.Route('/songdata/remove/<model_id>', handler=ActionHandler, handler_method='delete_songs'),
+    webapp2.Route('/log/list', handler=ActionHandler, handler_method='list_logs')],
     debug=True)
 app.error_handlers[404] = handle_404
 app.error_handlers[500] = handle_500

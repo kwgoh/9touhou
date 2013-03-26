@@ -1,10 +1,6 @@
 'use strict';
 
-  //var myApp = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','ngResource', 'analytics','ngMockE2E']);
   var myApp = angular.module('myApp', ['ui.directives', 'ngResource']);
- //var myApp = angular.module('myApp', ['ngResource','ngMockE2E']);
-  
-  //var myApp = angular.module('myApp', ['ngResource', 'ui.directives']);
 
   myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: FirstController});

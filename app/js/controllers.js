@@ -3,10 +3,13 @@
 /* Controllers */
 
 function FormController($scope) {
-    $scope.name = "BAKA";
+  $scope.name = "BAKA";
 	$scope.isadmin = "";
-    $scope.points = 0;
-    
+  //$scope.points = 0;
+
+
+  /* Login/Register/Session */
+  
 	$scope.retrievesession = function() {
 		if (!localStorage.getItem('u_name') || !localStorage.getItem('u_admin') || !localStorage.getItem('u_points')) {
 			localStorage.removeItem('u_name');
@@ -14,7 +17,7 @@ function FormController($scope) {
 			localStorage.removeItem('u_points');				
 			$scope.name = "BAKA";
 			$scope.isadmin = "";
-            $scope.points = 0;
+      //$scope.points = 0;
 		} else {
 			$scope.name = localStorage.getItem('u_name');
 			if (localStorage.getItem('u_admin') === "true") {
@@ -22,7 +25,7 @@ function FormController($scope) {
 			} else {
 				$scope.isadmin = false;
 			}
-			$scope.points = localStorage.getItem('u_points');
+			//$scope.points = localStorage.getItem('u_points');
 		}
 	}
     
@@ -32,62 +35,91 @@ function FormController($scope) {
 function FirstController($scope,$resource) {
 	$scope.name = "BAKA";
 	$scope.isadmin = "";
-    $scope.points = 0;
+  $scope.points = 0;
 	$scope.company = "9Touhou";
 	
-    $scope.showdetails = false;
-    $scope.apikey = "DESU";
+  $scope.showdetails = false;
+  $scope.apikey = "DESU";
 	
+  //$scope.remote_url = "9.9touhou.appspot.com";
 	$scope.remote_url = "9touhou.appspot.com";
-    $scope.waiting = "Ready";
-	
+  $scope.waiting = "Ready";
+
 	/* Login/Users */					
 	$scope.login = {};
 	$scope.login.data = {"u_name":"","u_pwd":""};
 
 	$scope.retrievesession = function() {
+    $scope.VerifyLogin = $resource('http://:remote_url/user/verify', 
+					{"remote_url":$scope.remote_url},{'save': { method: 'POST',    params: {} }});
 		if (!localStorage.getItem('u_name') || !localStorage.getItem('u_admin') || !localStorage.getItem('u_points')) {
 			localStorage.removeItem('u_name');
 			localStorage.removeItem('u_admin');
 			localStorage.removeItem('u_points');				
 			$scope.name = "BAKA";
 			$scope.isadmin = "";
-            $scope.points = 0;
+      $scope.points = 0;
 		} else {
-			$scope.name = localStorage.getItem('u_name');
-			if (localStorage.getItem('u_admin') === "true") {
-				$scope.isadmin = true;
-			} else {
-				$scope.isadmin = false;
-			}
-			$scope.points = localStorage.getItem('u_points');
+      $scope.verify = {};
+      $scope.verify.data = {'u_name':localStorage.getItem('u_name'),'u_admin':localStorage.getItem('u_admin')};
+      $scope.waiting = "Loading";
+      var v_user = new $scope.VerifyLogin($scope.verify.data);
+      v_user.$save(function(response) { 
+        var result = response;
+        if (result.error === undefined) {
+          $scope.name = result.u_name;
+          $scope.isadmin = result.u_admin;
+          $scope.points = result.u_points;
+          localStorage.setItem('u_name', $scope.name);
+          localStorage.setItem('u_admin', $scope.isadmin);
+          localStorage.setItem('u_points', $scope.points);
+          if ($scope.isadmin === true) {
+            $scope.listsubmissions();
+            $scope.listsongs();
+            $scope.listlogs();
+          }
+			  } else {
+          localStorage.removeItem('u_name');
+          localStorage.removeItem('u_admin');
+          localStorage.removeItem('u_points');				
+          $scope.name = "BAKA";
+          $scope.isadmin = "";
+          $scope.points = 0;
+			  }
+      });
+      $scope.waiting = "Ready";
 		}
 	}
 	
 	$scope.logout = function() {
 		localStorage.removeItem('u_name');
 		localStorage.removeItem('u_admin');
-        localStorage.removeItem('u_points');
+    localStorage.removeItem('u_points');
 		$scope.name = "BAKA";
 		$scope.isadmin = "";
-        $scope.points = 0;
+    $scope.points = 0;
 	}
 	
 	$scope.getlogin = function(){
 	  $scope.LoadLogin = $resource('http://:remote_url/login/login', 
-					{"remote_url":$scope.remote_url},                       {'save': { method: 'POST',    params: {} }});
+					{"remote_url":$scope.remote_url},{'save': { method: 'POST',    params: {} }});
    
 	  $scope.waiting = "Loading";
 	  var login = new $scope.LoadLogin($scope.login.data);
 	  login.$save(function(response) { 
 			  var result = response;
 			  if (result.error === undefined) {
-				$scope.name = result.u_name;
-				$scope.isadmin = result.u_admin;
-                $scope.points = result.u_points;
-				localStorage.setItem('u_name', $scope.name);
-				localStorage.setItem('u_admin', $scope.isadmin);
-				localStorage.setItem('u_points', $scope.points);
+          $scope.name = result.u_name;
+          $scope.isadmin = result.u_admin;
+          $scope.points = result.u_points;
+          localStorage.setItem('u_name', $scope.name);
+          localStorage.setItem('u_admin', $scope.isadmin);
+          localStorage.setItem('u_points', $scope.points);
+          if ($scope.isadmin === true) {
+            $scope.listsubmissions();
+            $scope.listsongs();
+            $scope.listlogs();
+          }
 			  } else {
 				alert(result.error);
 			  }
@@ -105,16 +137,22 @@ function FirstController($scope,$resource) {
 	  login.$save(function(response) { 
 			  var result = response;
 			  if (result.error === undefined) {
-				$scope.name = result.u_name;
-				$scope.isadmin = result.u_admin;
-                $scope.points = result.u_points;
-				localStorage.setItem('u_name', $scope.name);
-				localStorage.setItem('u_admin', $scope.isadmin);
-				localStorage.setItem('u_points', $scope.points);
+          $scope.name = result.u_name;
+          $scope.isadmin = result.u_admin;
+          $scope.points = result.u_points;
+          localStorage.setItem('u_name', $scope.name);
+          localStorage.setItem('u_admin', $scope.isadmin);
+          localStorage.setItem('u_points', $scope.points);
+          if ($scope.isadmin === true) {
+            $scope.listsubmissions();
+            $scope.listsongs();
+            $scope.listlogs();
+          }
 			  } else {
 				alert(result.error);
 			  }
 			  $scope.login.data = {"u_name":"","u_pwd":""};
+              $scope.listusers();
 			  $scope.waiting = "Ready";
 			}); 
 	};	
@@ -130,7 +168,24 @@ function FirstController($scope,$resource) {
 			  $scope.waiting = "Ready";
 			});  
 	};
-    
+	
+  /* Filtering */
+  
+  $scope.userRanking = function(user) {
+    return user.u_points != 0;
+  }
+  
+  $scope.predicate_users = '-name';
+  
+  $scope.expireChallenge = function(chal) {
+    return (new Date(chal.c_date) < new Date());
+  }
+  
+  /* Countdown */
+  
+  
+  
+      
 	/* Challenge (Admins) */
 					
 	$scope.challenge = {};
@@ -243,9 +298,25 @@ function FirstController($scope,$resource) {
 	  $scope.listsubmissions();
 	};
     
-	$scope.listsubmissions();
+  /* Logs (Admins) */
+  
+     
+	$scope.listlogs = function(){
+	  $scope.RecentLogs = $resource('http://:remote_url/log/list', 
+					{"remote_url":$scope.remote_url},
+					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+					
+	  $scope.waiting = "Updating";       
+	  $scope.RecentLogs.get(function(response) { 
+			  $scope.logs = response;
+			  $scope.waiting = "Ready";
+			});  
+	}; 
+    
+	//$scope.listsubmissions();
 	$scope.retrievesession();
 	$scope.listchallenge();
-	$scope.listsongs();
+	//$scope.listsongs();
+  $scope.listusers();
+  //$scope.listlogs();
 }
-
