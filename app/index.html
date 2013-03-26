@@ -129,10 +129,13 @@
                 <li><a id="cc" href="#CurrentChallenges" data-toggle="tab">Current Challenges</a></li>
                 <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
                 <li><a id="mp" href="#MyProfile" data-toggle="tab" ng-cloak>My Profile</a></li>
-                <li class="disabled"><a id="mm" href="#Missions" data-toggle="tab">Missions (Coming Soon!)</a></li>
+                <li class="disabled"><a id="mm" ng-show="isadmin==false">Missions (Coming Soon!)</a></li>
+                <li><a id="mm" href="#Missions" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Missions (Under Construction)</a></li>
+				
                 <li class="nav-header" ng-show="isadmin==true" ng-cloak>Admin Console</li>
                 <li><a id="mu" href="#ManageUsers" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Users</a></li>
                 <li><a id="mc" href="#ManageChallenges" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Challenges</a></li>
+                <li><a id="ms" href="#ManageAchievements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Achievements (Under Construction)</a></li>
                 <li><a id="ms" href="#ManageSongs" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Songs</a></li>
                 <li><a id="ab" href="#ViewSubmissions" data-toggle="tab" ng-show="isadmin==true" ng-cloak>View Submissions</a></li>
                 <li><a id="lg" href="#ViewLogs" data-toggle="tab" ng-show="isadmin==true" ng-cloak>View Logs</a></li>
@@ -208,7 +211,7 @@
                   <div class="span4">
                     <h2>About 9Touhou</h2>
                     <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View more &raquo;</a></p>
+                    <p><a class="btn btn-inverse btn-small" href="#">View more &raquo;</a></p>
                   </div><!--/span-->
                   <div class="span4">
                     <h2>Top Scorers</h2>
@@ -325,12 +328,20 @@
               </div>
               
               <!-- Missions Pane-->
-              <!--div class="tab-pane" id="Missions">
+              <div class="tab-pane" id="Missions">
                 <div class="hero-unit">
                   <h1>Missions</h1>
-                  <p>Hmmm, Missions........</p>
+                  <p class="lead">Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  
+				  <h3>Objectives</h3>
+				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  
+				  <h3>Rules</h3>
+				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  
+				  
                 </div>	          	
-              </div-->
+              </div>
               
               <!-- Manage Users Pane-->
               <div class="tab-pane" id="ManageUsers">
@@ -430,7 +441,7 @@
                         </td>
                         <td>
                             <form ng-submit="deletechallenge({{chal.id}})">
-                              <input type="submit" name="Delete" value="Delete">
+                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
                             </form>
                         </td>
                       </tr>
@@ -489,6 +500,39 @@
                   </div>                    
                 </div>
               </div>
+
+              <!-- Manage Achievements Pane-->
+              <div class="tab-pane" id="ManageAchievements">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Achievement Name
+                      </th>
+                      <th>
+                        Points Awarded
+                      </th>
+                      <th ng-repeat="user in users.entities | filter:userIsNotAdmin">
+                        {{user.u_name}}
+                      </th>
+                    </thead>
+                    <tbody>
+					  <tr>
+						<td>
+							-
+						</td>
+						<td>
+							-
+						</td>
+						<td ng-repeat="user in users.entities | filter:userIsNotAdmin">
+							-
+						</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>	 	          	
+              </div>
               
               <!-- Manage Songs Pane -->
               <div class="tab-pane" id="ManageSongs">
@@ -541,7 +585,7 @@
                         </td>
                         <td>
                             <form ng-submit="deletesong({{song.id}})">
-                              <input type="submit" name="Delete" value="Delete">
+                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
                             </form>
                         </td>
                       </tr>

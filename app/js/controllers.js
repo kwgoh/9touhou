@@ -175,6 +175,14 @@ function FirstController($scope,$resource) {
     return user.u_points != 0;
   }
   
+  $scope.userIsAdmin = function(user) {
+	return user.u_admin === "True" || user.u_admin === true;
+  }
+  
+  $scope.userIsNotAdmin = function(user) {
+	return user.u_admin === "False" || user.u_admin === false;
+  }
+  
   $scope.predicate_users = '-name';
   
   $scope.expireChallenge = function(chal) {
