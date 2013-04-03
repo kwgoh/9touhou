@@ -115,6 +115,8 @@ class BlobData(db.Model):
     if entity:
         delete_blob_key = entity.file_blob_key
         b_name = entity.file_name
+        b_purpose = entity.file_purpose
+        b_owner = entity.file_owner
         entity.delete()
         
         if delete_blob_key:
@@ -123,9 +125,14 @@ class BlobData(db.Model):
             delete_blob.delete()
         
         # Logging
-        l_msg = b_name + " was deleted."
+        l_msg = "The submission '" + b_name + "' for '" + b_purpose + "' was deleted."
         new_log = Log(log_message=l_msg)
-        new_log.put()    
+        new_log.put()   
+        
+        n_msg = "Your submission '" + b_name + "' has been processed for '" + b_purpose + "'."
+        new_notification = Notification(notification_message=n_msg,
+                                        notification_user=b_owner)
+        new_notification.put()
         
         result = {'method':'delete_model_success',
                   'id': model_id
@@ -291,7 +298,7 @@ class User(db.Model):
         result = {'method':'delete_model_not_found'}
     
     return result
-
+    
   #data is a dictionary that must be merged with current json data and stored. 
   @staticmethod
   def edit_entity(model_id, data):
@@ -313,6 +320,9 @@ class User(db.Model):
               }
     return result
 
+class Challenge_Theme(db.Model):
+  theme_name = db.StringProperty()
+    
 class Challenge_Songs(db.Model):
   challenge_id = db.IntegerProperty(required=True,default=0)
   song_name = db.StringProperty(required=True,default="")
@@ -386,32 +396,32 @@ class Challenge(db.Model):
       
       challenge_expiry = object.challenge_expiry.replace(tzinfo=utc)
       current_time = datetime.datetime.now().replace(tzinfo=utc)
-      if current_time < challenge_expiry:
+      #if current_time < challenge_expiry:
       
-        challenge_expiry = challenge_expiry.astimezone(sgt)
-        c_songs_query = Challenge_Songs.all().filter('challenge_id', object.key().id()).run()
-        
-        c_songs = []
-        
-        if c_songs_query:
-          for c_s in c_songs_query:
-            c_song_blob = ""
-            c_song_data = SongData.all().filter('song_name',c_s.song_name).get()
-            if c_song_data:
-              c_song_blob = c_song_data.song_blob_key
-            c_entity = {'s_name': c_s.song_name,
-                  's_difficulty': c_s.difficulty,
-                  's_blob': c_song_blob}
-            c_songs.append(c_entity)
-            
-        entity = {'c_name': object.challenge_name,
-                'id': object.key().id(),
-                'c_desc': object.challenge_description,
-                'c_notes': object.challenge_admin_notes,
-                'c_uploadby': object.challenge_upload_by,
-                'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
-                'c_songs': c_songs}
-        entities.append(entity)
+      challenge_expiry = challenge_expiry.astimezone(sgt)
+      c_songs_query = Challenge_Songs.all().filter('challenge_id', object.key().id()).run()
+      
+      c_songs = []
+      
+      if c_songs_query:
+        for c_s in c_songs_query:
+          c_song_blob = ""
+          c_song_data = SongData.all().filter('song_name',c_s.song_name).get()
+          if c_song_data:
+            c_song_blob = c_song_data.song_blob_key
+          c_entity = {'s_name': c_s.song_name,
+                's_difficulty': c_s.difficulty,
+                's_blob': c_song_blob}
+          c_songs.append(c_entity)
+          
+      entity = {'c_name': object.challenge_name,
+              'id': object.key().id(),
+              'c_desc': object.challenge_description,
+              'c_notes': object.challenge_admin_notes,
+              'c_uploadby': object.challenge_upload_by,
+              'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
+              'c_songs': c_songs}
+      entities.append(entity)
       
     result = {'method':'get_entities',
               'en_type': 'Challenge',
@@ -451,13 +461,35 @@ class Challenge(db.Model):
   
   @staticmethod
   def get_name(model_id):
-    entity = Challenge.get_by_id(int(model_id))
-    
-    if entity:
-      return entity.challenge_name
-    else:
+    try:
+      entity = Challenge.get_by_id(int(model_id))
+      
+      if entity:
+        return entity.challenge_name
+      else:
+        return "N/A"
+    except ValueError:
       return "N/A"
-  
+      
+  @staticmethod
+  def check_if_expired(model_id):
+    utc = UTC()
+    sgt = SGT()
+    try:
+      entity = Challenge.get_by_id(int(model_id))
+      
+      if entity:
+        challenge_expiry = entity.challenge_expiry.replace(tzinfo=utc)
+        current_time = datetime.datetime.now().replace(tzinfo=utc)
+        if current_time >= challenge_expiry:
+          return True
+        else:
+          return False
+      else:
+        return True
+    except ValueError:
+      return True
+      
   #You can't name it delete since db.Model already has a delete method
   @staticmethod
   def remove(model_id):
@@ -512,10 +544,153 @@ class Challenge(db.Model):
               }
     return result
 
+class Achievement_User(db.Model):
+  achievement_id = db.IntegerProperty()
+  achievement_user = db.StringProperty()
+  
+  def to_dict(self):
+       d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       d["id"] = self.key().id()
+       return d
+
+  @staticmethod
+  def add(data):
+     
+    jsonData = json.loads(data)
+    
+    result = ""
+    a_id = int(jsonData['a_id'])
+    a_user = jsonData['a_user']
+    if a_id:
+      achievement = Achievement.get_entity(a_id)
+      users = User.all().run()
+      for user in users:
+        if user.user_name == a_user:
+        
+          user.user_points += int(achievement['a_points'])
+          
+          entity = Achievement_User(achievement_id=int(jsonData['a_id']),
+                          achievement_user=jsonData['a_user'])
+          
+          entity.put()
+          
+          user.put()
+        
+          # Logging
+          l_msg = entity.achievement_user + " has been awarded the achievement: '" + achievement['a_name'] + "'."
+          new_log = Log(log_message=l_msg)
+          new_log.put()
+          
+          n_msg = "You have been awarded " + achievement['a_points'] + " point(s) for attaining the achievement '" + achievement['a_name'] + "'."
+          notify = Notification(notification_user=user.user_name,
+                                    notification_message=n_msg)
+          notify.put()
+          
+          result = {'a_id': jsonData['a_id'],
+                    'a_user': jsonData['a_user']}
+              
+    return result
+
+  @staticmethod
+  def get_entities():
+    #update ModelCount when adding
+    theQuery = Achievement_User.all()
+
+    objects = theQuery.run()
+    entities = []
+    for object in objects:
+      entity = {'a_id':object.achievement_id,
+              'id': object.key().id(),
+              'a_user': object.achievement_user,}
+      entities.append(entity)
+    result = {'method':'get_entities',
+              'en_type': 'Achievement_User',
+              'entities': entities}      
+    return result 
+    
 class Achievement(db.Model):
   achievement_name = db.StringProperty()
   achievement_points = db.IntegerProperty()
+  achievement_upload_by = db.StringProperty()
   
+  def to_dict(self):
+       d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       d["id"] = self.key().id()
+       return d
+
+  @staticmethod
+  def add(data):
+     
+    jsonData = json.loads(data)
+    
+    entity = Achievement(achievement_name=jsonData['a_name'],
+                    achievement_points=int(jsonData['a_points']),
+                    achievement_upload_by=jsonData['a_uploadby'])
+    
+    entity.put()
+    
+    # Logging
+    l_msg = entity.achievement_upload_by + " has created the achievement: '" + entity.achievement_name + "'."
+    new_log = Log(log_message=l_msg)
+    new_log.put()
+
+    result = {'a_name': jsonData['a_name'],
+              'a_points': jsonData['a_points'],
+              'a_uploadby': jsonData['a_uploadby']}
+              
+    return result
+
+  @staticmethod
+  def get_entity(model_id):
+    theobject = Achievement.get_by_id(int(model_id))
+    
+    result = {'a_name':theobject.achievement_name,
+              'id': theobject.key().id(),
+              'a_points': theobject.achievement_points,
+              'a_uploadby': theobject.achievement_upload_by}
+    return result
+    
+  @staticmethod
+  def get_entities():
+    #update ModelCount when adding
+    theQuery = Achievement.all()
+
+    objects = theQuery.run()
+    entities = []
+    for object in objects:
+      entity = {'a_name':object.achievement_name,
+              'id': object.key().id(),
+              'a_points': object.achievement_points,
+              'a_uploadby': object.achievement_upload_by}
+      entities.append(entity)
+    result = {'method':'get_entities',
+              'en_type': 'Achievement',
+              'entities': entities}      
+    return result 
+    
+  #You can't name it delete since db.Model already has a delete method
+  @staticmethod
+  def remove(model_id):
+    #update model count when deleting
+    entity = Achievement.get_by_id(int(model_id))
+        
+    if entity:
+        a_name = entity.achievement_name        
+        entity.delete()
+            
+        result = {'method':'delete_model_success',
+                  'id': model_id
+                  }
+            
+        # Logging
+        l_msg = a_name + " was deleted."
+        new_log = Log(log_message=l_msg)
+        new_log.put()          
+    else:
+        result = {'method':'delete_model_not_found'}
+    
+    return result
+    
 class Log(db.Model):
   log_date = db.DateTimeProperty(auto_now_add=True)
   log_message = db.StringProperty()
@@ -546,6 +721,39 @@ class Log(db.Model):
               'en_type': 'Log',
               'entities': entities}      
     return result
+
+class Notification(db.Model):
+  notification_date = db.DateTimeProperty(auto_now_add=True)
+  notification_user = db.StringProperty()
+  notification_message = db.StringProperty()
+  
+  def to_dict(self):
+       d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       d["id"] = self.key().id()
+       return d
+  
+  @staticmethod
+  def get_entities(u_name):
+    #update ModelCount when adding
+    theQuery = Notification.all()
+    theQuery.order('-notification_date')
+
+    objects = theQuery.run(limit=30)
+    utc = UTC()
+    sgt = SGT()
+    entities = []
+    for object in objects:
+      if object.notification_user == u_name:
+        n_date = object.notification_date.replace(tzinfo=utc)
+        n_date = n_date.astimezone(sgt)
+        entity = {'n_date':n_date.strftime("%Y-%m-%d %H:%M:%S"),
+                'id': object.key().id(),
+                'n_msg': object.notification_message}
+        entities.append(entity)
+    result = {'method':'get_entities',
+              'en_type': 'Notification',
+              'entities': entities}      
+    return result
     
 class RandomNews(db.Model):
   time_stamp = db.DateTimeProperty()
@@ -558,6 +766,45 @@ class BlobFormHandler(webapp2.RequestHandler):
     challenge = ""
     if model_id:
       challenge = Challenge.get_name(int(model_id))
+      expired = Challenge.check_if_expired(int(model_id))
+      if (challenge != "N/A" and expired != True):
+        upload_url = blobstore.create_upload_url('/file/upload')
+        self.response.headers['Content-Type'] = 'text/html; charset=UTF-8'
+        self.response.out.write('<html ng-app="myApp"><body ng-controller="FormController"><link href="../app/css/bootstrap.css" rel="stylesheet">')
+        self.response.out.write('<script src="../app/js/jquery.js"></script>')
+        self.response.out.write('<script src="../app/js/jquery-ui-1.10.2.custom.min.js"></script>')
+        self.response.out.write('<script src="../app/lib/angular/angular.min.js"></script>')
+        self.response.out.write('<script src="../app/lib/angular/angular-ui.min.js"></script>')
+        self.response.out.write('<script src="../app/lib/angular/angular-resource.min.js"></script>')
+        self.response.out.write('<script src="../app/js/app.js"></script>')
+        self.response.out.write('<script src="../app/js/controllers.js"></script>')
+        self.response.out.write('<script src="../test/lib/angular/angular-mocks.js"></script>')
+        self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
+        self.response.out.write('Name of file:<br> <input type="text" name="filename"><br>')
+        self.response.out.write('Description:<br> <input type="text" name="filedescription"><br>')
+        self.response.out.write('Upload File: <br><input type="file" name="file"><br>')
+        self.response.out.write('Purpose: <br>%s <input type="hidden" name="filepurpose" value="%s"><br>' % (challenge, challenge))
+        self.response.out.write('Uploaded By: <br>{{name}} <input type="hidden" name="fileowner" value="{{name}}"><br>')
+        self.response.out.write('<input type="submit" name="submit" value="Submit">')
+        self.response.out.write('</form></body></html>')
+      elif (challenge != "N/A" and expired == True):
+        self.response.out.write('<html><body><link href="../app/css/bootstrap.css" rel="stylesheet">')
+        self.response.out.write("We're sorry, but the challenge you are looking for has already expired.")
+        self.response.out.write('</body></html>')
+      else:
+        self.response.out.write('<html><body><link href="../app/css/bootstrap.css" rel="stylesheet">')
+        self.response.out.write("We're sorry, but the challenge you are looking for does not exist.")
+        self.response.out.write('</body></html>')        
+    else:
+      self.response.out.write('<html><body><link href="../app/css/bootstrap.css" rel="stylesheet">')
+      self.response.out.write("We're sorry, but the challenge you are looking for does not exist.")
+      self.response.out.write('</body></html>')
+    
+class MissionFormHandler(webapp2.RequestHandler):
+  def get(self, reason):
+    purpose = ""
+    if reason:
+      purpose = reason
     upload_url = blobstore.create_upload_url('/file/upload')
     self.response.headers['Content-Type'] = 'text/html; charset=UTF-8'
     self.response.out.write('<html ng-app="myApp"><body ng-controller="FormController"><link href="../app/css/bootstrap.css" rel="stylesheet">')
@@ -573,7 +820,7 @@ class BlobFormHandler(webapp2.RequestHandler):
     self.response.out.write('Name of file:<br> <input type="text" name="filename"><br>')
     self.response.out.write('Description:<br> <input type="text" name="filedescription"><br>')
     self.response.out.write('Upload File: <br><input type="file" name="file"><br>')
-    self.response.out.write('Purpose: <br>%s <input type="hidden" name="filepurpose" value="%s"><br>' % (challenge, challenge))
+    self.response.out.write('Purpose: <br>%s <input type="hidden" name="filepurpose" value="%s"><br>' % (purpose, purpose))
     self.response.out.write('Uploaded By: <br>{{name}} <input type="hidden" name="fileowner" value="{{name}}"><br>')
     self.response.out.write('<input type="submit" name="submit" value="Submit">')
     self.response.out.write('</form></body></html>')
@@ -784,6 +1031,52 @@ class ActionHandler(webapp2.RequestHandler):
     
     return self.respond(result)
 
+  def score_challenge(self):
+    jsonData = json.loads(self.request.body)
+    c_id = jsonData['c_id']
+    c_rankings = jsonData['c_rankings']
+    c_scoreby = jsonData['c_scoreby']
+    result = ""
+    
+    
+    if c_id:
+      c_name = Challenge.get_name(c_id)
+      if c_name != "N/A":
+        result = c_scoreby + " has given the results for " + c_name + ": "
+        entities = User.all().run()
+        
+        for entity in entities:
+          for ranking in c_rankings:
+            if ranking['u_name'] == entity.user_name:
+              n_msg = ""
+              if ranking['u_earned'] == "1st":
+                entity.user_points += 5
+                n_msg = "You have been awarded 5 points for getting 1st place for " + c_name + "!"
+              if ranking['u_earned'] == "2nd":
+                entity.user_points += 3
+                n_msg = "You have been awarded 3 points for getting 2nd place for " + c_name + "!"
+              if ranking['u_earned'] == "3rd":
+                entity.user_points += 2
+                n_msg = "You have been awarded 2 points for getting 3rd place for " + c_name + "!"
+              if ranking['u_earned'] == "Participation":
+                entity.user_points += 1
+                n_msg = "You have been awarded 1 point for getting participation for " + c_name + "!"
+              result += ranking['u_earned'] + " - " + entity.user_name + " "
+              entity.put()
+              
+              if n_msg != "":
+                notify = Notification(notification_user=entity.user_name,
+                                    notification_message=n_msg)
+                notify.put()
+                
+        Challenge.remove(c_id)
+        
+      
+    
+    r_log = Log(log_message=result)
+    r_log.put()
+    return self.respond(result)
+    
   def delete_challenge(self, model_id):
     result = Challenge.remove(model_id)
     
@@ -803,9 +1096,79 @@ class ActionHandler(webapp2.RequestHandler):
     result = Log.get_entities()
     
     return self.respond(result)
-        
+    
+  def list_notifications(self, u_name):
+    result = Notification.get_entities(u_name)
+    
+    return self.respond(result)
+    
+  def list_achievements(self):
+    result = Achievement.get_entities()
+    
+    return self.respond(result)
+    
+  def create_achievement(self):
+    jsonData = json.loads(self.request.body)
+    result = Achievement.add(json.dumps(jsonData))
+    
+    return self.respond(result)
+ 
+  def delete_achievement(self, model_id):
+    result = Achievement.remove(model_id)
+    
+    return self.respond(result)
+  
+  def award_achievement(self):
+    
+    jsonData = json.loads(self.request.body)
+    result = Achievement_User.add(json.dumps(jsonData))
+    
+    return self.respond(result)
+    
+  def list_achievement_users(self):
+    result = Achievement_User.get_entities()
+    
+    return self.respond(result)
+
+  def reward_theme(self):
+    jsonData = json.loads(self.request.body)
+    #This will be changed. Or not.
+    t_name = jsonData['t_name']
+    t_rewards = jsonData['t_rewards']
+    t_scoreby = jsonData['t_scoreby']
+    
+    result = t_scoreby + " has given the results for those who guessed '" + t_name + "': "
+    entities = User.all().run()
+    
+    for entity in entities:
+      for reward in t_rewards:
+        if reward['u_name'] == entity.user_name:
+          n_msg = ""
+          if reward['u_earned'] == "1st":
+            entity.user_points += 3
+            n_msg = "You have been awarded 3 points for being the 1st person to guess the current challenge theme - '" + t_name + "'!"
+          if reward['u_earned'] == "2nd":
+            entity.user_points += 2
+            n_msg = "You have been awarded 2 points for being the 2nd person to guess the current challenge theme - '" + t_name + "'!"
+          if reward['u_earned'] == "3rd":
+            entity.user_points += 1
+            n_msg = "You have been awarded 1 point for being the 3rd person to guess the current challenge theme - '" + t_name + "'!"
+          result += reward['u_earned'] + " - " + entity.user_name + " "
+          entity.put()
+          
+          if n_msg != "":
+            notify = Notification(notification_user=entity.user_name,
+                                notification_message=n_msg)
+            notify.put()
+
+    r_log = Log(log_message=result)
+    r_log.put()
+    return self.respond(result)            
+                    
+    
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=MainHandler),
+    webapp2.Route('/missionform/<reason>', handler=MissionFormHandler),
     webapp2.Route('/blobform/<model_id>', handler=BlobFormHandler),
     webapp2.Route('/file/upload', handler=UploadHandler),
     webapp2.Route('/songform', handler=SongFormHandler),
@@ -822,9 +1185,17 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/challenge/create', handler=ActionHandler, handler_method='create_challenge'),
     webapp2.Route('/challenge/list', handler=ActionHandler, handler_method='list_challenge'),
     webapp2.Route('/challenge/remove/<model_id>', handler=ActionHandler, handler_method='delete_challenge'),
+    webapp2.Route('/challenge/score', handler=ActionHandler, handler_method='score_challenge'),
     webapp2.Route('/songdata/list', handler=ActionHandler, handler_method='list_songs'),
     webapp2.Route('/songdata/remove/<model_id>', handler=ActionHandler, handler_method='delete_songs'),
-    webapp2.Route('/log/list', handler=ActionHandler, handler_method='list_logs')],
+    webapp2.Route('/log/list', handler=ActionHandler, handler_method='list_logs'),
+    webapp2.Route('/notification/list/<u_name>', handler=ActionHandler, handler_method='list_notifications'),
+    webapp2.Route('/achievement/list', handler=ActionHandler, handler_method='list_achievements'),
+    webapp2.Route('/achievement/create', handler=ActionHandler, handler_method='create_achievement'),
+    webapp2.Route('/achievement/remove/<model_id>', handler=ActionHandler, handler_method='delete_achievement'),
+    webapp2.Route('/achievement/award', handler=ActionHandler, handler_method='award_achievements'),
+    webapp2.Route('/achievement/listusers', handler=ActionHandler, handler_method='list_achievement_users'),
+    webapp2.Route('/theme/reward', handler=ActionHandler, handler_method='reward_theme')],
     debug=True)
 app.error_handlers[404] = handle_404
-app.error_handlers[500] = handle_500
+#app.error_handlers[500] = handle_500

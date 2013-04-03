@@ -40,6 +40,11 @@
         sn_upload.focus();
       }
       
+      function mission_upload(purpose){
+        sn_upload = window.open("/missionform/" + purpose, "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
+        sn_upload.focus();
+      }
+      
     </script>
   </head>
   
@@ -61,9 +66,7 @@
               <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'" ng-cloak>Register</button>
               <span ng-show="isadmin==true" ng-cloak> (Admin)</span>
               <button class="btn btn-inverse btn-small" ng-hide="name=='BAKA'" ng-click="logout()" ng-cloak>Logout</button>
-            </p>          
-            <div class="nav-collapse collapse">
-            </div><!--/.nav-collapse -->
+            </p>
           </div>
         </div>
       </div>
@@ -122,6 +125,9 @@
           
           <!-- Navigation Sidebar (Access separate panes). -->
           <div class="span3">
+            <!--video controls="" autoplay="" name="media">
+              <source src="http://abab.dip.jp/piano/tohokouma_6boss_p.mp3" type="audio/mpeg">
+            </video-->
             <div class="well sidebar-nav sidebar-nav-fixed" id="sidenav">
               <ul class="nav nav-list">
                 <li class="nav-header">Navigation</li>
@@ -129,10 +135,10 @@
                 <li><a id="cc" href="#CurrentChallenges" data-toggle="tab">Current Challenges</a></li>
                 <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
                 <li><a id="mp" href="#MyProfile" data-toggle="tab" ng-cloak>My Profile</a></li>
-                <li class="disabled"><a id="mm" ng-show="isadmin==false">Missions (Coming Soon!)</a></li>
-                <li><a id="mm" href="#Missions" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Missions (Under Construction)</a></li>
+                <li><a id="mm" href="#Missions" data-toggle="tab" >Missions</a></li>
 				
                 <li class="nav-header" ng-show="isadmin==true" ng-cloak>Admin Console</li>
+                <li><a id="an" href="#ManageAnnouncements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Announcements/News (Under Construction)</a></li>
                 <li><a id="mu" href="#ManageUsers" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Users</a></li>
                 <li><a id="mc" href="#ManageChallenges" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Challenges</a></li>
                 <li><a id="ms" href="#ManageAchievements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Achievements (Under Construction)</a></li>
@@ -151,85 +157,129 @@
               
               <!-- Main Page Pane -->
               <div class="tab-pane active" id="MainPage">
-                <div class="container-fluid">
-                  <div id="myCarousel" class="carousel slide">
-                    <div class="carousel-inner">
-                      <div class="item active">
-                        <div class="container-fluid">
-                          <div class="row-fluid">
-                            <div class="span5">
-                              <div class="well">
-                                <img src="./img/jubeat-saucer.jpg" alt="">
+                <div id="baka-page">
+                  <div class="container-fluid">
+                    <div id="myCarousel" class="carousel slide">
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">
+                                  <img src="./img/jubeat-saucer.jpg" alt="">
+                                </div>
                               </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>Hello, {{name}}!</h1>
+                                  <p class="lead">Welcome to the 9Touhou jubeat Saucer Season 3 contest page!</p>
+                                  <p>There will be weekly site maintenance on Wednesdays from 1000 hrs till 1600 hrs (UTC +0800).</p>
+                                </div>
+                              </div>  
                             </div>
-                            <div class="span7">
-                              <div class="carousel-caption">
-                                <h1>Hello, {{name}}!</h1>
-                                <p class="lead">Welcome to the 9Touhou jubeat Saucer Season 3 contest page!</p>
-                                <p>There will be weekly site maintenance on Wednesdays from 1000 hrs till 1600 hrs (UTC +0800).</p>
-                              </div>
-                            </div>  
                           </div>
                         </div>
-                      </div>
-                      <!--div ui-if="!!challenges.entities.length"-->
-                          <div class="item" ng-repeat="chal in challenges.entities" ng-cloak>
-                            <div class="container-fluid">
-                              <div class="row-fluid">
-                                <div class="span5">
-                                  <div class="well">                               
-                                    <img src="/file/serve/{{chal.c_songs[0].s_blob}}" alt="./img/jubeat-saucer.jpg">
-                                  </div>
+                        <!-- Announcements will go here -->
+                        <div class="item">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">
+                                  <img src="./img/missions-bg/Remilia.jpg" alt="">
                                 </div>
-                                <div class="span7">
-                                  <div class="carousel-caption">
-                                    <h1>{{chal.c_name}}</h1>
-                                    <p>{{chal.c_desc}}</p>
-                                    <div ui-if="!!chal.c_songs.length">
-                                        <ul>
-                                          <li ng-repeat="cs in chal.c_songs">
-                                          <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
-                                          </li>
-                                        </ul>
+                              </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>April's Mission is Out!</h1>
+                                  <p class="lead">Wanted - Assistants at the Scarlet Devil Mansion!</p>
+                                  <p>Must be capable of performing a variety of housekeeping tasks. Babysitting or teaching experience optional, but recommended. Enquiries within after daylight hours.</p>
+                                </div>
+                              </div>  
+                            </div>
+                          </div>
+                        </div> 
+                        <div class="item">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">
+                                  <img src="./img/jubeat-saucer.jpg" alt="">
+                                </div>
+                              </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>Scores for Challenge A01 have been released!</h1>
+                                  <p class="lead">The challenge theme has been successfully guessed as "Ani-songs"!</p>
+                                  <p>We only had 4 participants this time around - do remember to post your submissions on time!</p>
+                                </div>
+                              </div>  
+                            </div>
+                          </div>
+                        </div>                      
+                        <!--div ui-if="!!challenges.entities.length"-->
+                            <div class="item" ng-repeat="chal in challenges.entities | filter:activeChallenge" ng-cloak>
+                              <div class="container-fluid">
+                                <div class="row-fluid">
+                                  <div class="span5">
+                                    <div class="well">                               
+                                      <img src="/file/serve/{{chal.c_songs[0].s_blob}}" alt="./img/jubeat-saucer.jpg">
                                     </div>
-                                    <p id="c{{chal.id}}" class="lead">
-                                      Expires: {{chal.c_date}}
-                                    </p>
-                                    <button class="btn btn-inverse"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                                  </div>
+                                  <div class="span7">
+                                    <div class="carousel-caption">
+                                      <h1>{{chal.c_name}}</h1>
+                                      <p>{{chal.c_desc}}</p>
+                                      <div ui-if="!!chal.c_songs.length">
+                                          <ul>
+                                            <li ng-repeat="cs in chal.c_songs">
+                                            <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                            </li>
+                                          </ul>
+                                      </div>
+                                      <div ng-hide="expireChallenge(chal)">
+                                        <p id="c{{chal.id}}" class="lead">
+                                          Expires: {{chal.c_date}}
+                                        </p>
+                                        <button class="btn btn-inverse"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                                      </div>
+                                      <div ng-show="expireChallenge(chal)">
+                                        Expired
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                      <!--/div-->    
+                        <!--/div-->    
+                      </div>
+                      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
                     </div>
-                    <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-                    <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
                   </div>
+                  <div class="row-fluid marketing">
+                    <div class="span4">
+                      <h2>About 9Touhou</h2>
+                      <p>Coming soon........</p>
+                      <p><a class="btn btn-inverse btn-small" href="#">View more &raquo;</a></p>
+                    </div><!--/span-->
+                    <div class="span4">
+                      <h2>Top Scorers</h2>
+                      <ol>
+                        <li ng-repeat="user in users.entities | orderBy:'-u_points' | filter:userRanking | limitTo: 3" ng-cloak>
+                          {{user.u_name}} ({{user.u_points}})
+                        </li>
+                      </ol>
+                    </div><!--/span-->
+                    <div class="span4">
+                      <h2>Latest News</h2>
+                      <ul>
+                        <li>
+                          Coming soon........
+                        </li>
+                      </ul>
+                    </div><!--/span-->
+                  </div><!--/row-->
                 </div>
-                <div class="row-fluid">
-                  <div class="span4">
-                    <h2>About 9Touhou</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn btn-inverse btn-small" href="#">View more &raquo;</a></p>
-                  </div><!--/span-->
-                  <div class="span4">
-                    <h2>Top Scorers</h2>
-                    <ol>
-                      <li ng-repeat="user in users.entities | orderBy:'-u_points' | filter:userRanking | limitTo: 3" ng-cloak>
-                        {{user.u_name}} ({{user.u_points}})
-                      </li>
-                    </ol>
-                  </div><!--/span-->
-                  <div class="span4">
-                    <h2>Latest News</h2>
-                    <ul>
-                      <li>
-                        Coming soon........
-                      </li>
-                    </ul>
-                  </div><!--/span-->
-                </div><!--/row-->
               </div>
               
               <!-- Current Challenges Pane -->
@@ -271,11 +321,17 @@
                                   </ul>
                               </div>
                             </td>
-                            <td>
+                            <td ng-hide="expireChallenge(chal)">
                               {{chal.c_date}}
                             </td>
-                            <td>
+                            <td ng-hide="expireChallenge(chal)">
                               <button class="btn btn-inverse btn-small"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                            </td>
+                            <td ng-show="expireChallenge(chal)" ng-cloak>
+                              Expired
+                            </td>
+                            <td ng-show="expireChallenge(chal)" ng-cloak>
+                              -
                             </td>
                           </tr>
                     </tbody>
@@ -285,19 +341,69 @@
               
               <!-- My Profile Pane -->
               <div class="tab-pane" id="MyProfile">
-                <div class="hero-unit" ng-show="name=='BAKA'">
+                <div class="well" ng-show="name=='BAKA'">
                   <h1>My Profile</h1>
                   <p>You have to be logged in to view your profile!</p>
                 </div>
-                <div class="hero-unit" ng-hide="name=='BAKA'">
+                <div class="well" ng-hide="name=='BAKA'">
                   <h1>{{name}}</h1>
-                  <p>Points Acquired: {{points}}</p>
-                  <p>Achievements Unlocked:
-                      <ul>
-                          <li></li>
-                      </ul>
-                  </p>
-                </div>	          	              
+                  <h3>Points Acquired: {{points}}</h3>
+                  <div class="row-fluid">
+                    <div class="span6">
+                      <h3>Achievements Unlocked:</h3>
+                      <table class="table table-striped">
+                        <thead>
+                          <th>
+                            Achievement Name
+                          </th>
+                          <th>
+                            Points Awarded
+                          </th>
+                          <th>
+                            Status/Action
+                          </th>
+                        </thead>
+                        <tbody ui-if="!!achievements.entities.length">
+                          <tr ng-repeat="achievement in achievements.entities">
+                            <td>
+                              {{achievement.a_name}}
+                            </td>
+                            <td>
+                              {{achievement.a_points}}
+                            </td>
+                            <td>
+                             -
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="span6">
+                      <h3>Notifications</h3>
+                      <button class="btn btn-inverse btn-small" ng-click="listnotifications()" ng-cloak>Refresh</button> 
+                      <table class="table table-striped">
+                        <thead>
+                          <th>
+                            Date
+                          </th>
+                          <th>
+                            Notification
+                          </th>
+                        </thead>
+                        <tbody ui-if="!!notifications.entities.length">
+                          <tr ng-repeat="notification in notifications.entities">
+                            <td>
+                              {{notification.n_date}}
+                            </td>
+                            <td>
+                              {{notification.n_msg}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>                      
+                    </div>
+                  </div>
+                </div>
               </div>
               
               
@@ -329,18 +435,102 @@
               
               <!-- Missions Pane-->
               <div class="tab-pane" id="Missions">
-                <div class="hero-unit">
-                  <h1>Missions</h1>
-                  <p class="lead">Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-				  
-				  <h3>Objectives</h3>
-				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-				  
-				  <h3>Rules</h3>
-				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-				  
-				  
-                </div>	          	
+                <div>
+                  <figure class="fluidratio">
+                    <div class="mission">
+                      <div class="mission-row">
+                        <h1><span>Remilia's Mission: Chores of the Scarlet Devil Mansion</span></h1>
+                        <p class="lead"><span>Remilia is unhappy because Sakuya has decided to, of all things, take leave for a day. This means *someone* has to help cover her duties.</span></p>
+                        <p class="lead"><span>Fortunately, most of the chores seem to be more or less covered by the other maids (including Remilia's all-important tea-time). However, 4 chores remain........</span></p>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <h3><span>Instructions</span></h3>
+                        <p><span style="font-weight:bold">To complete a chore, play the required song on all 3 difficulties (BSC, ADV, EXT) on a single credit and achieve a minimum total score for all 3. Failing any of the songs will result in the immediate failure of the mission in question.</span></p>
+                        <p><span>Submissions for each chore should consist of two parts: </span>
+                        <ul>
+                          <li><span style="font-weight:bold">A screenshot of the relevant e-Amusement Gate records (<a href="./img/missions-data/Mission1.jpg" target="_blank">example</a>)</span> - this will show that the required song has been played and cleared on all difficulties, and;</li>
+                          <li><span style="font-weight:bold">A screenshot of your in-game Total Score Ranking</span> - this will verify that those plays are indeed from the same credit.</li>
+                        </ul>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">
+                              <img  style="width:100%" src="/file/serve/AMIfv94yW0J3nbkDx_Ira0zNGbjigyaMB1L-ZmjHhg4DVzdR6mhru7_r7_NsOqs5LqG2lm36tfL-PH26Iu4gd3U__BPHEFLc8YITbmbYtrWkHAKnIHjAH9tvy_lz0jLni17GdVv2lOvEQugF3V2mouoXKIKGqDkFsfzN0IryV_OY26VBkqK2qiI">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Easy: Wake Meiling</span></h3>
+                            <p><span>China has fallen asleep again. Go wake her!</span></p>
+                            <p><span style="font-weight:bold">Mission: Play 'Just Awake', and achieve a total score of at least 2550000.</span></p>
+                            <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Easy: Wake Meiling')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">                               
+                              <img style="width:100%" src="/file/serve/AMIfv97VO0S6HqsIUWRSfaSH5GiQ6f4px-QL8n-9aeRJHLKIWfacE_iL-ittfyp9VE3qzJW3PzJQReN35dzJLxpJGwHe2yunYh6IUf0V_PMUsPqzEj7pjmKIFY1gMB--iZzMQ7aWsGgXPTRsl0_BXPXYN3Uvm7j-IMYqP03tgC4qK5Q1HDDka8g">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Normal: Find Koakuma</span></h3>
+                            <p><span>Koakuma is reportedly missing. Search for her in Voile Library!</span></p>
+                            <p><span style="font-weight:bold">Mission: Play '†渚の小悪魔ラヴリィ～レデイオ†' (Nagisa no Koakuma), and achieve a total score of at least 2700000.</span></p>
+                            <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Normal: Find Koakuma')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">                               
+                              <img style="width:100%" src="/file/serve/AMIfv96ZjNjdZFkxz2ew6KOxAek5IJfHVCLdvev54wcscen97T8QySgmy1CmkXg1yy5An8BERRONu24PHdu3U0SpLD770LUilGEhwNyqbb9IE_PfBwEccKrKzKzlm8jftWwhJlzA7vkT9RVl1anld0hdVA4vzeAbEsyrUn99iBUfmTllyUzz69c">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Hard: Help Patchouli</span></h3>
+                            <p><span>Patchouli is getting harassed by an intruder trying to steal books. Chase the intruder away!</span></p>
+                            <p><span style="font-weight:bold">Mission: Play 'Riot of Color', and achieve a total score of at least 2800000.</span></p>
+                             <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Hard: Help Patchouli')" ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mission-row">                      
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">                               
+                              <img  style="width:100%" src="/file/serve/AMIfv967QsvCUso1fdJZppbRsGXw6bKBLmroBfBg5fg9nEDN3gPvZBGdVoQHmGXm7OSnwdZWDbB4dpy6P4HeHOgs9OmeDV2ZHYluuUEe1w52SHpG5p2j_6_K1hbw0dcinZ2KPPLsDp-OFtIeGwhIpg5y2UBN38jpsPfEIhYyBhbkSL8qbfXDjT0">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Lunatic: Babysit Flandre</span></h3>
+                            <p><span>Flandre is bored. How long can you last?</span></p>
+                            <p><span style="font-weight:bold">Mission: Play 'Beastie Starter', and achieve a total score of at least 2850000.</span></p>
+                            <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Lunatic: Babysit Flandre')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <br/>
+                      <br/>
+                    </div>
+                  </figure>
+                </div>
+              </div>
+
+              <!-- Manage Announcements/News Pane-->
+              <div class="tab-pane" id="ManageAnnouncements">
+                <div class="well">
+                  <h1>Manage Announcements/News</h1>
+                  <p class="lead">Hmmm, Announcements/News........</p>
+                </div>
               </div>
               
               <!-- Manage Users Pane-->
@@ -387,6 +577,8 @@
               <div class="tab-pane" id="ManageChallenges">
                 <div class="container-fluid">
                   <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateChallenge" ng-cloak>Add New Challenge</button>
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreChallenge"  ng-cloak>Score Challenge</button>                 
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ThemeRewards"  ng-cloak>Theme Rewards</button>                 
                   <button class="btn btn-inverse btn-small" ng-click="listchallenge()" ng-cloak>Refresh</button>                 
                   <table class="table table-striped">
                     <thead>
@@ -436,13 +628,16 @@
                         <td>
                           {{chal.c_uploadby}}
                         </td>
-                        <td>
+                        <td ng-hide="expireChallenge(chal)">
                           {{chal.c_date}}
                         </td>
+                        <td ng-show="expireChallenge(chal)">
+                          Expired
+                        </td>
                         <td>
-                            <form ng-submit="deletechallenge({{chal.id}})">
-                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
-                            </form>
+                          <form ng-submit="deletechallenge({{chal.id}})">
+                            <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                          </form>
                         </td>
                       </tr>
                     </tbody>
@@ -497,14 +692,97 @@
                     </div>
                     <div class="modal-footer">
                     </div>
-                  </div>                    
+                  </div>
+
+                  <div class="modal hide fade" id="ScoreChallenge" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelscoring()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Score Challenge</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="c_scoring.data.c_uploadby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Challenge Name:</label>
+                        <div class="controls">
+                          <select ng-model="c_scoring.data.c_id" ng-options="chalselect.id as chalselect.c_name for chalselect in challenges.entities"></select> {{c_scoring.data.c_id}}
+                        </div>
+                        <label class="control-label" for="ChalDesc">Rankings</label>
+                        <div class="controls">
+                          <div ui-if="!!c_scoring.data.c_rankings.length">
+                              <ul>
+                                <li ng-repeat="rankingdata in c_scoring.data.c_rankings">
+                                  <span>{{rankingdata.u_earned}}: {{rankingdata.u_name}}</span>
+                                </li>
+                              </ul>
+                          </div>
+                          <select ng-model="c_ranking.u_name" ng-options="userselect.u_name as userselect.u_name for userselect in users.entities"></select>
+                          <select ng-model="c_ranking.u_earned">
+                            <option value="1st" selected>1st Place (5 pts)</option>
+                            <option value="2nd">2nd Place (3 pts)</option>
+                            <option value="3rd">3rd Place (2 pts)</option>
+                            <option value="Participation">Participation (1 pts)</option>
+                          </select>
+                          <button class="btn btn-inverse btn-small" ng-click="addrankingtoscoring()">Add</button>
+                        </div>
+                        <div class="controls">
+                          <input type="submit" ng-click="submitscoring()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelscoring()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>
+
+
+                  <div class="modal hide fade" id="ThemeRewards" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelreward()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Theme Rewards</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="t_scoring.data.t_scoreby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Theme Name:</label>
+                        <div class="controls">
+                          <input ng-model="t_scoring.data.t_name"></input>
+                        </div>
+                        <label class="control-label" for="ChalDesc">Rewards</label>
+                        <div class="controls">
+                          <div ui-if="!!t_scoring.data.t_rewards.length">
+                              <ul>
+                                <li ng-repeat="rewarddata in t_scoring.data.t_rewards">
+                                  <span>{{rewarddata.u_earned}}: {{rewarddata.u_name}}</span>
+                                </li>
+                              </ul>
+                          </div>
+                          <select ng-model="t_reward.u_name" ng-options="userselect.u_name as userselect.u_name for userselect in users.entities"></select>
+                          <select ng-model="t_reward.u_earned">
+                            <option value="1st" selected>1st Place (3 pts)</option>
+                            <option value="2nd">2nd Place (2 pts)</option>
+                            <option value="3rd">3rd Place (1 pts)</option>
+                          </select>
+                          <button class="btn btn-inverse btn-small" ng-click="addrewardtotheme()">Add</button>
+                        </div>
+                        <div class="controls">
+                          <input type="submit" ng-click="submitreward()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelreward()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>
+
+                  
                 </div>
               </div>
 
               <!-- Manage Achievements Pane-->
               <div class="tab-pane" id="ManageAchievements">
                 <div class="container-fluid">
-                  <button class="btn btn-inverse btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
+                  <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>                  
                   <table class="table table-striped">
                     <thead>
                       <th>
@@ -513,24 +791,66 @@
                       <th>
                         Points Awarded
                       </th>
+                      <th>
+                        Action
+                      </th>
                       <th ng-repeat="user in users.entities | filter:userIsNotAdmin">
                         {{user.u_name}}
                       </th>
                     </thead>
-                    <tbody>
-					  <tr>
-						<td>
-							-
-						</td>
-						<td>
-							-
-						</td>
-						<td ng-repeat="user in users.entities | filter:userIsNotAdmin">
-							-
-						</td>
+                    <tbody ui-if="!!achievements.entities.length">
+                      <tr ng-repeat="achievement in achievements.entities">
+                        <td>
+                          {{achievement.a_name}}
+                        </td>
+                        <td>
+                          {{achievement.a_points}}
+                        </td>
+                        <td>
+                            <form ng-submit="deleteachievement({{achievement.id}})">
+                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                            </form>
+                        </td>
+                        <td ng-repeat="user in users.entities | filter:userIsNotAdmin">
+                          {{achievement.id}} {{user.u_name}}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
+                  
+                  <div class="modal hide fade" id="CreateAchievement" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelachievement()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Create Achievement</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="achievement.data.a_uploadby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Achievement Name</label>
+                        <div class="controls">
+                          <input type="text" ng-model="achievement.data.a_name"/>
+                        </div>
+                        <label class="control-label" for="ChalDesc">Achievement Points</label>
+                        <div class="controls">
+                          <select ng-model="achievement.data.a_points">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                          </select>
+                        </div>                        
+                        <div class="controls">
+                          <input type="submit" ng-click="addachievement()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelachievement()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>                  
                 </div>	 	          	
               </div>
               
@@ -685,7 +1005,7 @@
           </div><!--/span-->	        
         </div><!--/row-->
         
-        <hr>
+        <br/>
       </div><!--/.fluid-container-->
     </div>
     <div id="footer">

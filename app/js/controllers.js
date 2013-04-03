@@ -73,6 +73,8 @@ function FirstController($scope,$resource) {
           localStorage.setItem('u_name', $scope.name);
           localStorage.setItem('u_admin', $scope.isadmin);
           localStorage.setItem('u_points', $scope.points);
+          $scope.listnotifications();
+          $scope.listachievements();
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
@@ -115,6 +117,8 @@ function FirstController($scope,$resource) {
           localStorage.setItem('u_name', $scope.name);
           localStorage.setItem('u_admin', $scope.isadmin);
           localStorage.setItem('u_points', $scope.points);
+          $scope.listnotifications();
+          $scope.listachievements();
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
@@ -143,6 +147,8 @@ function FirstController($scope,$resource) {
           localStorage.setItem('u_name', $scope.name);
           localStorage.setItem('u_admin', $scope.isadmin);
           localStorage.setItem('u_points', $scope.points);
+          $scope.listnotifications();
+          $scope.listachievements();
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
@@ -186,33 +192,140 @@ function FirstController($scope,$resource) {
   $scope.predicate_users = '-name';
   
   $scope.expireChallenge = function(chal) {
-    return (new Date(chal.c_date) < new Date());
+    return (new Date(chal.c_date) <= new Date());
   }
   
+  $scope.activeChallenge = function(chal) {
+    return (new Date(chal.c_date) > new Date());
+  }
   /* Countdown */
   
+  /* Notifications */
+  
+  $scope.listnotifications = function(){
+	  $scope.LoadAllNotifications = $resource('http://:remote_url/notification/list/:u_name', 
+					{"remote_url":$scope.remote_url,"u_name":$scope.name},
+					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+					
+	  $scope.waiting = "Updating";       
+	  $scope.LoadAllNotifications.get(function(response) { 
+			  $scope.notifications = response;
+			  $scope.waiting = "Ready";
+			});  
+	};
+	 
+  /* Achievement (Admins) */
+  
+  $scope.achievement = {}
+  $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""}
+  
+  $scope.cancelachievement = function() {
+    $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""};    
+  }
+  
+  $scope.listachievementsusers = function() {
+    $scope.listachievements();
+    $scope.listachievementawards();
+    $scope.listusers();
+  }
+  
+  $scope.addachievement = function(){
+    $scope.achievement.data.a_uploadby = $scope.name;
+	  $scope.SaveAchievement = $resource('http://:remote_url/achievement/create', 
+					{"remote_url":$scope.remote_url},                       
+          {'save': { method: 'POST',    params: {} }});
+   
+	  $scope.waiting = "Loading";
+	  var achievement = new $scope.SaveAchievement($scope.achievement.data);
+	  achievement.$save(function(response) { 
+			  var result = response;
+        $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""}
+        $scope.waiting = "Ready";
+			});
+	  $scope.listachievementsusers();
+    $scope.listlogs(); 
+	};	
   
   
-      
+	$scope.deleteachievement = function(model_id){
+	  $scope.DeleteAchievement = $resource('http://:remote_url/achievement/remove/:id', 
+					{"remote_url":$scope.remote_url, "id":model_id},
+					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+					
+	  $scope.waiting = "Updating";       
+	  $scope.DeleteAchievement.get(function(response) { 
+			  $scope.waiting = "Ready";
+			}); 
+	  $scope.listachievementsusers();
+    $scope.listlogs(); 
+	};
+  
+	$scope.listachievements = function(){
+	  $scope.LoadAllAchievement = $resource('http://:remote_url/achievement/list', 
+					{"remote_url":$scope.remote_url},
+					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+					
+	  $scope.waiting = "Updating";       
+	  $scope.LoadAllAchievement.get(function(response) { 
+			  $scope.achievements = response;
+			  $scope.waiting = "Ready";
+			});  
+	};
+
+  $scope.awardachievement = function(){
+    $scope.achievement.data.a_uploadby = $scope.name;
+	  $scope.SaveAchievement = $resource('http://:remote_url/achievement/award', 
+					{"remote_url":$scope.remote_url},                       
+          {'save': { method: 'POST',    params: {} }});
+   
+	  $scope.waiting = "Loading";
+	  var achievement = new $scope.SaveAchievement($scope.achievement.data);
+	  achievement.$save(function(response) { 
+			  var result = response;
+        $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""}
+        $scope.waiting = "Ready";
+			});
+    $scope.listnotifications();
+	  $scope.listachievementsusers();
+    $scope.listlogs(); 
+	};	
+  
+	$scope.listachievementawards = function(){
+	  $scope.LoadAllAward = $resource('http://:remote_url/achievement/listusers', 
+					{"remote_url":$scope.remote_url},
+					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+					
+	  $scope.waiting = "Updating";       
+	  $scope.LoadAllAward.get(function(response) { 
+			  $scope.achievements = response;
+			  $scope.waiting = "Ready";
+			});  
+	};
+  
 	/* Challenge (Admins) */
 					
 	$scope.challenge = {};
 	$scope.challenge.data = {"c_name":"","c_desc":"","c_date":"","c_uploadby":"","c_songs":[],"c_notes":"","c_blob":""};
+  
+  $scope.c_song = {"s_name":"","s_difficulty":""};
 	
-    $scope.c_song = {"s_name":"","s_difficulty":""};
-    
-    $scope.addsongtochallenge = function() {
-        $scope.challenge.data.c_songs.push($scope.c_song);
-        $scope.c_song = {"s_name":"","s_difficulty":""};
-    }
-    
-    $scope.cancelchallenge = function() {
-        $scope.challenge.data = {"c_name":"","c_desc":"","c_date":"","c_uploadby":"","c_songs":[],"c_notes":"","c_blob":""};    
-        $scope.c_song = {"s_name":"","s_difficulty":""};
-    }
+  $scope.c_scoring = {};
+  $scope.c_scoring.data = {"c_id":"","c_scoreby":"","c_rankings":[]};
+  
+  $scope.c_ranking = {"u_name":"","u_earned":""};
+  
+  $scope.addsongtochallenge = function() {
+      $scope.challenge.data.c_songs.push($scope.c_song);
+      $scope.c_song = {"s_name":"","s_difficulty":""};
+  }
+  
+  $scope.cancelchallenge = function() {
+      $scope.challenge.data = {"c_name":"","c_desc":"","c_date":"","c_uploadby":"","c_songs":[],"c_notes":"","c_blob":""};    
+      $scope.c_song = {"s_name":"","s_difficulty":""};
+  }
     
 	$scope.addchallenge = function(){
-      $scope.challenge.data.c_uploadby = $scope.name;
+    $scope.challenge.data.c_uploadby = $scope.name;
 	  $scope.SaveChallenge = $resource('http://:remote_url/challenge/create', 
 					{"remote_url":$scope.remote_url},                       {'save': { method: 'POST',    params: {} }});
    
@@ -223,7 +336,8 @@ function FirstController($scope,$resource) {
 			  $scope.challenge.data = {"c_name":"","c_desc":"","c_date":"","c_uploadby":"","c_songs":[],"c_notes":"","c_blob":""};
 			  $scope.waiting = "Ready";
 			});
-	  $scope.listchallenge(); 
+	  $scope.listchallenge();
+    $scope.listlogs(); 
 	};	
  
 	$scope.listchallenge = function(){
@@ -237,7 +351,35 @@ function FirstController($scope,$resource) {
 			  $scope.waiting = "Ready";
 			});  
 	};
-	 
+
+  $scope.addrankingtoscoring = function() {
+      $scope.c_scoring.data.c_rankings.push($scope.c_ranking);
+      $scope.c_ranking = {"u_name":"","u_earned":""};
+  }
+  
+  $scope.cancelscoring = function() {
+      $scope.c_scoring.data = {"c_id":"","c_scoreby":"","c_rankings":[]};
+      $scope.c_ranking = {"u_name":"","u_earned":""};
+  }
+
+    
+	$scope.submitscoring = function(){
+    $scope.c_scoring.data.c_scoreby = $scope.name;
+	  $scope.ScoreChallenge = $resource('http://:remote_url/challenge/score', 
+					{"remote_url":$scope.remote_url}, 
+          {'save': { method: 'POST',    params: {} }});
+   
+	  $scope.waiting = "Loading";
+	  var c_scored = new $scope.ScoreChallenge($scope.c_scoring.data);
+	  c_scored.$save(function(response) { 
+			  var c_s = response;
+        $scope.c_scoring.data = {"c_id":"","c_scoreby":"","c_rankings":[]};
+        $scope.waiting = "Ready";
+			});
+	  $scope.listchallenge();
+    $scope.listlogs(); 
+	};	  
+  
 	$scope.deletechallenge = function(model_id){
 	  $scope.DeleteChallenge = $resource('http://:remote_url/challenge/remove/:id', 
 					{"remote_url":$scope.remote_url, "id":model_id},
@@ -247,9 +389,46 @@ function FirstController($scope,$resource) {
 	  $scope.DeleteChallenge.get(function(response) { 
 			  $scope.waiting = "Ready";
 			}); 
-	  $scope.listchallenge(); 
+	  $scope.listchallenge();
+    $scope.listlogs(); 
 	};
 	
+  /* Theme (Admins) */
+  
+	
+  $scope.t_scoring = {};
+  $scope.t_scoring.data = {"t_name":"","t_scoreby":"","t_rewards":[]};
+  
+  $scope.t_reward = {"u_name":"","u_earned":""};
+  
+
+  $scope.addrewardtotheme = function() {
+      $scope.t_scoring.data.t_rewards.push($scope.t_reward);
+      $scope.t_reward = {"u_name":"","u_earned":""};
+  }
+  
+  $scope.cancelreward = function() {
+      $scope.t_scoring.data = {"t_name":"","t_scoreby":"","t_rewards":[]};
+      $scope.t_reward = {"u_name":"","u_earned":""};
+  }
+
+    
+	$scope.submitreward = function(){
+    $scope.t_scoring.data.t_scoreby = $scope.name;
+	  $scope.ScoreTheme = $resource('http://:remote_url/theme/reward', 
+					{"remote_url":$scope.remote_url}, 
+          {'save': { method: 'POST',    params: {} }});
+   
+	  $scope.waiting = "Loading";
+	  var t_scored = new $scope.ScoreTheme($scope.t_scoring.data);
+	  t_scored.$save(function(response) { 
+			  var t_s = response;
+        $scope.t_scoring.data = {"t_name":"","t_scoreby":"","t_rewards":[]};
+        $scope.waiting = "Ready";
+			});
+    $scope.listlogs(); 
+	};	    
+  
 	/* Songs (Admins) */
 	
 	$scope.song = {};
@@ -277,10 +456,11 @@ function FirstController($scope,$resource) {
 	  $scope.DeleteSong.get(function(response) { 
 			  $scope.waiting = "Ready";
 			});
-	  $scope.listsongs();  
+	  $scope.listsongs();
+    $scope.listlogs();  
 	};
     
-    /* File Submissions (Admins) */
+  /* File Submissions (Admins) */
     
 	$scope.listsubmissions = function(){
 	  $scope.LoadAllFiles = $resource('http://:remote_url/file/list', 
@@ -303,7 +483,9 @@ function FirstController($scope,$resource) {
 	  $scope.DeleteFile.get(function(response) { 
 			  $scope.waiting = "Ready";
 			}); 
+    $scope.listnotifications();
 	  $scope.listsubmissions();
+    $scope.listlogs();
 	};
     
   /* Logs (Admins) */

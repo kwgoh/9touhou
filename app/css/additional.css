@@ -2,26 +2,104 @@
     -------------------------------------------------- */
     /* Padding below the footer and lighter body text */
 
-	body {
-	  padding-top: 60px;
-	  padding-bottom: 40px;
-	  overflow-y: scroll;
-	}
-	.sidebar-nav {
-	  padding: 9px 0;
-	}
-	.sidebar-nav-fixed {
-	  position:fixed;
-	  top:60px;
-	  width:21.97%;
-	}	
-	#topnav{
-	  display:none;
-	}
-	#file-form {
-	  width: auto;
-	}
+    body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+      overflow-y: scroll;
+      background-color: rgba(63, 0, 0, 1)
+    }
+    .tab-content {
+      overflow: auto;
+      background-color: rgba(238, 238, 238, 0.7);
+      border-radius: 6px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      padding-top: 10px;
+    }
+    
+    .tab-pane .well {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    
+    .sidebar-nav {
+      padding: 9px 0;
+    }
+    .sidebar-nav-fixed {
+      position:fixed;
+      top:60px;
+      width:21.97%;
+    }	
+    #topnav{
+      display:none;
+    }
+    #file-form {
+      width: auto;
+    }
+    #baka-page {
+      background-color: rgba(238, 238, 238, 0.3);
+      border-radius: 6px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      padding: 10px;
+    }
+    div.mission {
+      /*stuff here*/
+      padding: 19px;
+    }
+    div.mission-row {
+      /*stuff here*/
+      min-height: 20px;
+      padding: 19px;
+      margin-bottom: 20px;
+      background-color: rgba(238, 238, 238, 0.7);
+      border: 1px solid #e3e3e3;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    }    
+    
+    figure.fluidratio {
+      padding-top: 5%;  /* slope */
+      height: auto;  /* start height */
 
+      background-image: url(../img/missions-bg/Remilia.jpg);
+      background-size: cover;
+      -moz-background-size: cover;  /* Firefox 3.6 */
+      background-position: center;  
+      border-radius: 6px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      /*box-shadow: inset 0px 0px 2px 2px #aaa, 3px 3px 5px 0px #eee;*/
+    }
+   
+    .mission-pic {
+      margin-top: 20px;
+    }
+    
+    figure h1 {
+      color: #333333; 
+      padding: 10px; 
+    }
+    
+    figure h3 {
+      color: #333333; 
+      padding: 10px; 
+    }
+    
+    figure p {
+      color: #333333; 
+      padding: 10px; 
+    }
+    
+    
+    figure li {
+      color: #333333; 
+      padding: 10px; 
+    }
     /* 
       Allow angular.js to be loaded in body, hiding cloaked elements until 
       templates compile.  The !important is important given that there may be 
@@ -33,7 +111,11 @@
 
     /* Carousel base class */
     .carousel {
-      margin-bottom: 60px;
+      margin-top: 20px;
+      /*background-color: rgba(238,238,238,0.3);*/
+      border-radius: 6px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
     }
 
     .carousel .container {
@@ -52,6 +134,7 @@
 
     .carousel .item {
       height: 300px;
+      margin: 20px 0px 60px 0px;
     }
     .carousel img {
       position: relative;
@@ -62,12 +145,12 @@
     }
 
     .carousel-caption {
-      background-color: transparent;
       position: relative;
       max-width: 550px;
       padding: 0 20px;
       margin-top: 100px;
-	  color: #333;
+      color: #333;
+      background-color: transparent;
     }
 	
     .carousel-caption h1,
@@ -78,8 +161,8 @@
     }
 	
     .carousel-caption p{      
-	  color: #333;
-	  line-height: 20px;
+      color: #333;
+      line-height: 20px;
     }
 	
     .carousel-caption .btn {
@@ -92,11 +175,19 @@
     -------------------------------------------------- */
 
     /* Center align the text within the three columns below the carousel */
+    .marketing {
+      border-radius: 6px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      padding: 20px 0px 20px 0px;
+      margin-bottom: 10px;
+    }
+    
     .marketing .span4 {
       text-align: center;
     }
     .marketing h2 {
-      font-weight: normal;
+    
     }
     .marketing .span4 p {
       margin-left: 10px;
@@ -140,10 +231,10 @@
     -------------------------------------------------- */
 
     @media (max-width: 979px) {
-	  .sidebar-nav-fixed {
-		margin-top: 70px;
-		top:70px;
-	  }	  
+      .sidebar-nav-fixed {
+        margin-top: 70px;
+        top:70px;
+      }	  
       .container.navbar-wrapper {
         margin-bottom: 0;
         width: auto;
@@ -155,7 +246,24 @@
         height: 300px;
       }
       .carousel-caption {
-	    position: absolute;
+        background-color: rgba(49,49,49,0.3);
+        border-radius: 6px;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        position: absolute;
+        color: rgb(224, 224, 224);
+      }
+      .carousel-caption h1,
+      .carousel-caption .lead {
+        margin: 0;
+        color: rgb(224, 224, 224);
+        line-height: 1.25;
+        text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      }
+    
+      .carousel-caption p{      
+        color: rgb(224, 224, 224);
+        line-height: 20px;
       }
       .featurette {
         height: auto;
@@ -168,32 +276,25 @@
         max-width: 40%;
         margin: 0 auto 20px;
       }
-	  
-	  #topbar {
-		padding-left: 20px;
-		padding-right: 20px;	      
-		position:fixed;
-		width:auto;
-	  }
-	  /*#topnav {
-		display:block;
-	  }
-	  #sidenav {
-		display:none;
-		width:auto;
-	  }*/
-	  #main {
-		margin-top: 20px !important;
-	  }	   	  
+      
+      #topbar {
+      padding-left: 20px;
+      padding-right: 20px;	      
+      position:fixed;
+      width:auto;
+      }
+      #main {
+      margin-top: 20px !important;
+      }	   	  
     }
 
 
     @media (max-width: 767px) {
-	  .sidebar-nav-fixed {
-		margin-top: 70px;
-		position:static;
-		width:auto;
-	  }
+      .sidebar-nav-fixed {
+        margin-top: 70px;
+        position:static;
+        width:auto;
+      }
       .carousel {
         margin-left: -20px;
         margin-right: -20px;
@@ -208,19 +309,34 @@
         height: 300px;
       }
       .carousel-caption {
-		position: absolute;	  
+        position: absolute;	  
         width: 65%;
         padding: 0 50px;
         margin-top: 100px;
+        background-color: rgba(49,49,49,0.3);
+        border-radius: 6px;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        color: rgb(224, 224, 224);
       }
       .carousel-caption h1 {
         font-size: 30px;
+        color: rgb(224, 224, 224);
       }
       .carousel-caption .lead,
       .carousel-caption .btn {
         font-size: 18px;
+        color: rgb(224, 224, 224);
       }
-
+      
+      .marketing {
+        background-color: rgba(238,238,238,0.3);
+        border-radius: 6px;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        padding: 20px 0px 20px 0px;
+        margin-bottom: 10px;
+      }
       .marketing .span4 + .span4 {
         margin-top: 40px;
       }
@@ -232,20 +348,13 @@
         font-size: 18px;
         line-height: 1.5;
       }
-	  #topbar {
-		padding-left: 20px;
-		padding-right: 20px;
-		position:fixed;
-		width:auto;
-	  }
-	  /*#topnav{
-		display:block;
-	  }
-	  #sidenav {
-		display:none;
-		width:auto;	      	
-	  }*/
-	  #main {
-		margin-top: 20px !important;
-	  }
+      #topbar {
+        padding-left: 20px;
+        padding-right: 20px;
+        position:fixed;
+        width:auto;
+      }
+      #main {
+        margin-top: 20px !important;
+      }
     }
