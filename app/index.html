@@ -45,6 +45,10 @@
         sn_upload.focus();
       }
       
+      function achievement_upload(){
+        sn_upload = window.open("/achievementform", "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
+        sn_upload.focus();
+      }      
     </script>
   </head>
   
@@ -141,7 +145,7 @@
                 <li><a id="an" href="#ManageAnnouncements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Announcements/News (Under Construction)</a></li>
                 <li><a id="mu" href="#ManageUsers" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Users</a></li>
                 <li><a id="mc" href="#ManageChallenges" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Challenges</a></li>
-                <li><a id="ms" href="#ManageAchievements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Achievements (Under Construction)</a></li>
+                <li><a id="ms" href="#ManageAchievements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Achievements</a></li>
                 <li><a id="ms" href="#ManageSongs" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Songs</a></li>
                 <li><a id="ab" href="#ViewSubmissions" data-toggle="tab" ng-show="isadmin==true" ng-cloak>View Submissions</a></li>
                 <li><a id="lg" href="#ViewLogs" data-toggle="tab" ng-show="isadmin==true" ng-cloak>View Logs</a></li>
@@ -198,24 +202,7 @@
                             </div>
                           </div>
                         </div> 
-                        <div class="item">
-                          <div class="container-fluid">
-                            <div class="row-fluid">
-                              <div class="span5">
-                                <div class="well">
-                                  <img src="./img/jubeat-saucer.jpg" alt="">
-                                </div>
-                              </div>
-                              <div class="span7">
-                                <div class="carousel-caption">
-                                  <h1>Scores for Challenge A01 have been released!</h1>
-                                  <p class="lead">The challenge theme has been successfully guessed as "Ani-songs"!</p>
-                                  <p>We only had 4 participants this time around - do remember to post your submissions on time!</p>
-                                </div>
-                              </div>  
-                            </div>
-                          </div>
-                        </div>                      
+                    
                         <!--div ui-if="!!challenges.entities.length"-->
                             <div class="item" ng-repeat="chal in challenges.entities | filter:activeChallenge" ng-cloak>
                               <div class="container-fluid">
@@ -351,6 +338,9 @@
                   <div class="row-fluid">
                     <div class="span6">
                       <h3>Achievements Unlocked:</h3>
+                      <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button>
+                      <button class="btn btn-inverse btn-small"  onclick="achievement_upload()"  ng-hide="name=='BAKA'" ng-cloak>Submit Files For Achievements</button>
+                      <table class="table table-striped">
                       <table class="table table-striped">
                         <thead>
                           <th>
@@ -372,7 +362,9 @@
                               {{achievement.a_points}}
                             </td>
                             <td>
-                             -
+                              <span class="badge" ng-repeat="award in achievementawards.entities | filter:{a_id : achievement.id, a_user : name}">
+                              DONE
+                              </span>
                             </td>
                           </tr>
                         </tbody>
@@ -447,10 +439,10 @@
                       <div class="mission-row">
                         <h3><span>Instructions</span></h3>
                         <p><span style="font-weight:bold">To complete a chore, play the required song on all 3 difficulties (BSC, ADV, EXT) on a single credit and achieve a minimum total score for all 3. Failing any of the songs will result in the immediate failure of the mission in question.</span></p>
-                        <p><span>Submissions for each chore should consist of two parts: </span>
+                        <p><span>Submissions for each chore should consist of the following: </span></p>
                         <ul>
-                          <li><span style="font-weight:bold">A screenshot of the relevant e-Amusement Gate records (<a href="./img/missions-data/Mission1.jpg" target="_blank">example</a>)</span> - this will show that the required song has been played and cleared on all difficulties, and;</li>
-                          <li><span style="font-weight:bold">A screenshot of your in-game Total Score Ranking</span> - this will verify that those plays are indeed from the same credit.</li>
+                          <li><span style="font-weight:bold">[Mandatory] A screenshot of the relevant e-Amusement Gate records (<a href="./img/missions-data/Mission1.jpg" target="_blank">example</a>)</span> - this will show that the required song has been played and cleared on all difficulties, and;</li>
+                          <li><span style="font-weight:bold">[Recommended] A screenshot of your in-game Total Score Ranking</span> - this will help us verify that those plays are indeed from the same credit.</li>
                         </ul>
                       </div>
                       
@@ -715,7 +707,7 @@
                                 </li>
                               </ul>
                           </div>
-                          <select ng-model="c_ranking.u_name" ng-options="userselect.u_name as userselect.u_name for userselect in users.entities"></select>
+                          <select ng-model="c_ranking.u_name" ng-options="userselect.u_name as userselect.u_name for userselect in users.entities | filter:userIsNotAdmin"></select>
                           <select ng-model="c_ranking.u_earned">
                             <option value="1st" selected>1st Place (5 pts)</option>
                             <option value="2nd">2nd Place (3 pts)</option>
@@ -782,7 +774,8 @@
               <div class="tab-pane" id="ManageAchievements">
                 <div class="container-fluid">
                   <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
-                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>                  
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#AwardAchievement" ng-cloak>Award Achievement</button>                  
                   <table class="table table-striped">
                     <thead>
                       <th>
@@ -791,11 +784,11 @@
                       <th>
                         Points Awarded
                       </th>
+                      <th width="70%">
+                        Awarded To
+                      </th>
                       <th>
                         Action
-                      </th>
-                      <th ng-repeat="user in users.entities | filter:userIsNotAdmin">
-                        {{user.u_name}}
                       </th>
                     </thead>
                     <tbody ui-if="!!achievements.entities.length">
@@ -807,12 +800,14 @@
                           {{achievement.a_points}}
                         </td>
                         <td>
+                          <span class="badge" ng-repeat="award in achievementawards.entities | filter:{a_id : achievement.id}">
+                          {{award.a_user}}
+                          </span>
+                        </td>
+                        <td>
                             <form ng-submit="deleteachievement({{achievement.id}})">
                               <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
                             </form>
-                        </td>
-                        <td ng-repeat="user in users.entities | filter:userIsNotAdmin">
-                          {{achievement.id}} {{user.u_name}}
                         </td>
                       </tr>
                     </tbody>
@@ -850,7 +845,33 @@
                     </div>
                     <div class="modal-footer">
                     </div>
-                  </div>                  
+                  </div>
+              
+                  <div class="modal hide fade" id="AwardAchievement" style="display:none">
+                        <div class="modal-header">
+                          <a class="close" ng-click="cancelaward()" data-dismiss="modal">x</a>
+                          <h3 id="Login">Award Achievement</h3>
+                        </div>
+                        <div class="modal-body">
+                          <input type="hidden" ng-model="awardachievement.data.a_uploadby">
+                          <div class="control-group">
+                            <label class="control-label" for="ChalDesc">Achievement</label>
+                            <div class="controls">
+                              <select ng-model="awardachievement.data.a_id" ng-options="achievement.id as achievement.a_name for achievement in achievements.entities"></select>
+                            </div>                        
+                            <label class="control-label" for="ChalDesc">User</label>
+                            <div class="controls">
+                              <select ng-model="awardachievement.data.a_user" ng-options="user.u_name as user.u_name for user in users.entities | filter:userIsNotAdmin"></select>
+                            </div>
+                            <div class="controls">
+                              <input type="submit" ng-click="awardachievement()" value="Submit" data-dismiss="modal"/>
+                              <input type="submit" ng-click="cancelaward()" value="Cancel" data-dismiss="modal"/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                   </div>                  
                 </div>	 	          	
               </div>
               

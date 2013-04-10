@@ -74,7 +74,7 @@ function FirstController($scope,$resource) {
           localStorage.setItem('u_admin', $scope.isadmin);
           localStorage.setItem('u_points', $scope.points);
           $scope.listnotifications();
-          $scope.listachievements();
+          $scope.listachievementsusers();
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
@@ -118,7 +118,7 @@ function FirstController($scope,$resource) {
           localStorage.setItem('u_admin', $scope.isadmin);
           localStorage.setItem('u_points', $scope.points);
           $scope.listnotifications();
-          $scope.listachievements();
+          $scope.listachievementsusers();
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
@@ -198,6 +198,7 @@ function FirstController($scope,$resource) {
   $scope.activeChallenge = function(chal) {
     return (new Date(chal.c_date) > new Date());
   }
+  
   /* Countdown */
   
   /* Notifications */
@@ -216,11 +217,18 @@ function FirstController($scope,$resource) {
 	 
   /* Achievement (Admins) */
   
-  $scope.achievement = {}
-  $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""}
+  $scope.achievement = {};
+  $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""};
+  
+  $scope.awardachievement = {};
+  $scope.awardachievement.data = {"a_id":"","a_user":"","a_uploadby":""};
   
   $scope.cancelachievement = function() {
     $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""};    
+  }
+  
+  $scope.cancelaward = function() {
+    $scope.awardachievement.data = {"a_id":"","a_user":"","a_uploadby":""};  
   }
   
   $scope.listachievementsusers = function() {
@@ -236,8 +244,8 @@ function FirstController($scope,$resource) {
           {'save': { method: 'POST',    params: {} }});
    
 	  $scope.waiting = "Loading";
-	  var achievement = new $scope.SaveAchievement($scope.achievement.data);
-	  achievement.$save(function(response) { 
+	  var achieve = new $scope.SaveAchievement($scope.achievement.data);
+	  achieve.$save(function(response) { 
 			  var result = response;
         $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""}
         $scope.waiting = "Ready";
@@ -273,16 +281,16 @@ function FirstController($scope,$resource) {
 	};
 
   $scope.awardachievement = function(){
-    $scope.achievement.data.a_uploadby = $scope.name;
-	  $scope.SaveAchievement = $resource('http://:remote_url/achievement/award', 
+    $scope.awardachievement.data.a_uploadby = $scope.name;
+	  $scope.AwardAchievement = $resource('http://:remote_url/achievement/award', 
 					{"remote_url":$scope.remote_url},                       
           {'save': { method: 'POST',    params: {} }});
    
 	  $scope.waiting = "Loading";
-	  var achievement = new $scope.SaveAchievement($scope.achievement.data);
-	  achievement.$save(function(response) { 
+	  var awarding = new $scope.AwardAchievement($scope.awardachievement.data);
+	  awarding.$save(function(response) { 
 			  var result = response;
-        $scope.achievement.data = {"a_name":"","a_points":"","a_uploadby":""}
+        $scope.awardachievement.data = {"a_id":"","a_user":"","a_uploadby":""};
         $scope.waiting = "Ready";
 			});
     $scope.listnotifications();
@@ -297,7 +305,7 @@ function FirstController($scope,$resource) {
 					
 	  $scope.waiting = "Updating";       
 	  $scope.LoadAllAward.get(function(response) { 
-			  $scope.achievements = response;
+			  $scope.achievementawards = response;
 			  $scope.waiting = "Ready";
 			});  
 	};

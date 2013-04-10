@@ -581,7 +581,7 @@ class Achievement_User(db.Model):
           new_log = Log(log_message=l_msg)
           new_log.put()
           
-          n_msg = "You have been awarded " + achievement['a_points'] + " point(s) for attaining the achievement '" + achievement['a_name'] + "'."
+          n_msg = "You have been awarded " + str(achievement['a_points']) + " point(s) for attaining the achievement '" + achievement['a_name'] + "'."
           notify = Notification(notification_user=user.user_name,
                                     notification_message=n_msg)
           notify.put()
@@ -601,7 +601,7 @@ class Achievement_User(db.Model):
     for object in objects:
       entity = {'a_id':object.achievement_id,
               'id': object.key().id(),
-              'a_user': object.achievement_user,}
+              'a_user': object.achievement_user}
       entities.append(entity)
     result = {'method':'get_entities',
               'en_type': 'Achievement_User',
@@ -799,7 +799,33 @@ class BlobFormHandler(webapp2.RequestHandler):
       self.response.out.write('<html><body><link href="../app/css/bootstrap.css" rel="stylesheet">')
       self.response.out.write("We're sorry, but the challenge you are looking for does not exist.")
       self.response.out.write('</body></html>')
-    
+
+class AchievementFormHandler(webapp2.RequestHandler):
+  def get(self):
+    achievements = Achievement.get_entities()
+    upload_url = blobstore.create_upload_url('/file/upload')
+    self.response.headers['Content-Type'] = 'text/html; charset=UTF-8'
+    self.response.out.write('<html ng-app="myApp"><body ng-controller="FormController"><link href="../app/css/bootstrap.css" rel="stylesheet">')
+    self.response.out.write('<script src="../app/js/jquery.js"></script>')
+    self.response.out.write('<script src="../app/js/jquery-ui-1.10.2.custom.min.js"></script>')
+    self.response.out.write('<script src="../app/lib/angular/angular.min.js"></script>')
+    self.response.out.write('<script src="../app/lib/angular/angular-ui.min.js"></script>')
+    self.response.out.write('<script src="../app/lib/angular/angular-resource.min.js"></script>')
+    self.response.out.write('<script src="../app/js/app.js"></script>')
+    self.response.out.write('<script src="../app/js/controllers.js"></script>')
+    self.response.out.write('<script src="../test/lib/angular/angular-mocks.js"></script>')
+    self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
+    self.response.out.write('Name of file:<br> <input type="text" name="filename"><br>')
+    self.response.out.write('Description:<br> <input type="text" name="filedescription"><br>')
+    self.response.out.write('Upload File: <br><input type="file" name="file"><br>')
+    self.response.out.write('Purpose: <br><select name="filepurpose">')
+    for achievement in achievements['entities']:
+      self.response.out.write('<option value="%s">%s</option>' % (achievement['a_name'], achievement['a_name']))
+    self.response.out.write('</select><br>')
+    self.response.out.write('Uploaded By: <br>{{name}} <input type="hidden" name="fileowner" value="{{name}}"><br>')
+    self.response.out.write('<input type="submit" name="submit" value="Submit">')
+    self.response.out.write('</form></body></html>')
+      
 class MissionFormHandler(webapp2.RequestHandler):
   def get(self, reason):
     purpose = ""
@@ -1170,6 +1196,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=MainHandler),
     webapp2.Route('/missionform/<reason>', handler=MissionFormHandler),
     webapp2.Route('/blobform/<model_id>', handler=BlobFormHandler),
+    webapp2.Route('/achievementform', handler=AchievementFormHandler),
     webapp2.Route('/file/upload', handler=UploadHandler),
     webapp2.Route('/songform', handler=SongFormHandler),
     webapp2.Route('/file/songupload', handler=SongUploadHandler),
@@ -1193,7 +1220,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/achievement/list', handler=ActionHandler, handler_method='list_achievements'),
     webapp2.Route('/achievement/create', handler=ActionHandler, handler_method='create_achievement'),
     webapp2.Route('/achievement/remove/<model_id>', handler=ActionHandler, handler_method='delete_achievement'),
-    webapp2.Route('/achievement/award', handler=ActionHandler, handler_method='award_achievements'),
+    webapp2.Route('/achievement/award', handler=ActionHandler, handler_method='award_achievement'),
     webapp2.Route('/achievement/listusers', handler=ActionHandler, handler_method='list_achievement_users'),
     webapp2.Route('/theme/reward', handler=ActionHandler, handler_method='reward_theme')],
     debug=True)
