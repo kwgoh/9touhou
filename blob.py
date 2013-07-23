@@ -97,7 +97,7 @@ class BlobData(db.Model):
               'id': object.key().id(),
               'f_purpose': object.file_purpose,
               'f_desc': object.file_desc,
-              'f_date': file_date.strftime("%Y-%m-%d %H:%M:%S"),
+              'f_date': file_date.strftime("%d %b %Y %H:%M:%S"),
               'f_owner': object.file_owner,
               'f_blob': object.file_blob_key}
       entities.append(entity)
@@ -172,7 +172,7 @@ class SongData(db.Model):
               'id': object.key().id(),
               's_comp': object.song_composer,
               's_details': object.song_details,
-              's_date': song_date.strftime("%Y-%m-%d %H:%M:%S"),
+              's_date': song_date.strftime("%d %b %Y %H:%M:%S"),
               's_uploadby': object.song_upload_by,
               's_blob': object.song_blob_key}
       entities.append(entity)
@@ -419,7 +419,7 @@ class Challenge(db.Model):
               'c_desc': object.challenge_description,
               'c_notes': object.challenge_admin_notes,
               'c_uploadby': object.challenge_upload_by,
-              'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
+              'c_date': challenge_expiry.strftime("%d %b %Y %H:%M:%S"),
               'c_songs': c_songs}
       entities.append(entity)
       
@@ -455,7 +455,7 @@ class Challenge(db.Model):
               'c_desc': theobject.challenge_description,
               'c_notes': theobject.challenge_admin_notes,
               'c_uploadby': theobject.challenge_upload_by,
-              'c_date': challenge_expiry.strftime("%Y-%m-%d %H:%M:%S"),
+              'c_date': challenge_expiry.strftime("%d %b %Y %H:%M:%S"),
               'c_songs': c_songs}
     return result
   
@@ -532,7 +532,7 @@ class Challenge(db.Model):
     if jsonData['c_uploadby']!='':
       entity.challenge_upload_by=jsonData['c_uploadby']
     if jsonData['c_date']!='':
-      entity.challenge_expiry=jsonData['c_date'].strftime("%Y-%m-%d %H:%M:%S")
+      entity.challenge_expiry=jsonData['c_date'].strftime("%d %b %Y %H:%M:%S")
     if jsonData['c_notes']!='':
       entity.challenge_admin_notes=jsonData['c_notes']
     if jsonData['c_blob']!='':
@@ -713,7 +713,7 @@ class Log(db.Model):
     for object in objects:
       l_date = object.log_date.replace(tzinfo=utc)
       l_date = l_date.astimezone(sgt)
-      entity = {'l_date':l_date.strftime("%Y-%m-%d %H:%M:%S"),
+      entity = {'l_date':l_date.strftime("%d %b %Y %H:%M:%S"),
               'id': object.key().id(),
               'l_msg': object.log_message}
       entities.append(entity)
@@ -738,18 +738,23 @@ class Notification(db.Model):
     theQuery = Notification.all()
     theQuery.order('-notification_date')
 
-    objects = theQuery.run(limit=30)
+    objects = theQuery.run()
     utc = UTC()
     sgt = SGT()
     entities = []
+    count = 0
     for object in objects:
       if object.notification_user == u_name:
         n_date = object.notification_date.replace(tzinfo=utc)
         n_date = n_date.astimezone(sgt)
-        entity = {'n_date':n_date.strftime("%Y-%m-%d %H:%M:%S"),
+        entity = {'n_date':n_date.strftime("%d %b %Y %H:%M:%S"),
                 'id': object.key().id(),
                 'n_msg': object.notification_message}
         entities.append(entity)
+        count += 1
+        if count == 30:
+          break
+          
     result = {'method':'get_entities',
               'en_type': 'Notification',
               'entities': entities}      
@@ -876,7 +881,7 @@ class SongFormHandler(webapp2.RequestHandler):
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
   def post(self):
     upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
-    f_name = self.request.POST.get('filename')
+    f_name = self.request.POST.get('filename') + "***"
     #f_name = blob_decode(base64.b64decode(f_name))
     f_desc = self.request.POST.get('filedescription')
     #f_desc = blob_decode(base64.b64decode(f_desc))

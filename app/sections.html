@@ -1,0 +1,878 @@
+              <!-- Main Page Pane -->
+              <div class="tab-pane active" id="MainPage">
+                <div id="baka-page">
+                  <div class="container-fluid">
+                    <div id="myCarousel" class="carousel slide">
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">
+                                  <img src="./img/jubeat-saucer.jpg" alt="">
+                                </div>
+                              </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>Hello, {{name}}!</h1>
+                                  <p class="lead">Welcome to the 9Touhou jubeat Saucer Season 3 contest page!</p>
+                                  <p>There will be weekly site maintenance on Wednesdays from 1000 hrs till 1600 hrs (UTC +0800).</p>
+                                </div>
+                              </div>  
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Announcements will go here -->
+                        <div class="item">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">
+                                  <img src="./img/missions-bg/Remilia.jpg" alt="">
+                                </div>
+                              </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>April's Mission is Out!</h1>
+                                  <p class="lead">Wanted - Assistants at the Scarlet Devil Mansion!</p>
+                                  <p>Must be capable of performing a variety of housekeeping tasks. Babysitting or teaching experience optional, but recommended. Enquiries within after daylight hours.</p>
+                                </div>
+                              </div>  
+                            </div>
+                          </div>
+                        </div> 
+                        <div class="item">
+                          <div class="container-fluid">
+                            <div class="row-fluid">
+                              <div class="span5">
+                                <div class="well">
+                                  <img src="/file/serve/AMIfv95IdVnZVlsf2Ke3Qe74UvZrli-qmm9sHQ0Bk7SI34a6_pVpIon0u8CF_4WmE-uOFrZryGp6NH_dUn2UmYfXd7kMbxcCIy_Fj0ME-W4esc1dvbE0ZRLN_gX3wecLqrxmO-s9L80ZjRUyXRZlQb-c1hYBvueWfv1NOcHvn5gwUNEdT4DP27M" alt="">
+                                </div>
+                              </div>
+                              <div class="span7">
+                                <div class="carousel-caption">
+                                  <h1>Scores for A03 and WoW WoW released!</h1>
+                                  <p class="lead">Participation is picking up! Keep up the good work!</p>
+                                  <p>Remember to upload your submissions on time - late entries will no longer be entertained.</p>
+                                </div>
+                              </div>  
+                            </div>
+                          </div>
+                        </div>                     
+                        <!--div ui-if="!!challenges.entities.length"-->
+                            <div class="item" ng-repeat="chal in challenges.entities | filter:activeChallenge" ng-cloak>
+                              <div class="container-fluid">
+                                <div class="row-fluid">
+                                  <div class="span5">
+                                    <div class="well">                               
+                                      <img src="/file/serve/{{chal.c_songs[0].s_blob}}" alt="./img/jubeat-saucer.jpg">
+                                    </div>
+                                  </div>
+                                  <div class="span7">
+                                    <div class="carousel-caption">
+                                      <h1>{{chal.c_name}}</h1>
+                                      <p>{{chal.c_desc}}</p>
+                                      <div ui-if="!!chal.c_songs.length">
+                                          <ul>
+                                            <li ng-repeat="cs in chal.c_songs">
+                                            <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                            </li>
+                                          </ul>
+                                      </div>
+                                      <div ng-hide="expireChallenge(chal)">
+                                        <p id="c{{chal.id}}" class="lead">
+                                          Expires: {{chal.c_date}}
+                                        </p>
+                                        <button class="btn btn-inverse"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                                      </div>
+                                      <div ng-show="expireChallenge(chal)">
+                                        Expired
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        <!--/div-->    
+                      </div>
+                      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                    </div>
+                  </div>
+                  <div class="row-fluid marketing">
+                    <div class="span4">
+                      <h2>About 9Touhou</h2>
+                      <p>Coming soon........</p>
+                      <p><a class="btn btn-inverse btn-small" href="#">View more &raquo;</a></p>
+                    </div><!--/span-->
+                    <div class="span4">
+                      <h2>Top Scorers</h2>
+                      <ol>
+                        <li ng-repeat="user in users.entities | orderBy:'-u_points' | filter:userRanking | limitTo: 3" ng-cloak>
+                          {{user.u_name}} ({{user.u_points}})
+                        </li>
+                      </ol>
+                    </div><!--/span-->
+                    <div class="span4">
+                      <h2>Latest News</h2>
+                      <ul>
+                        <li>
+                          Coming soon........
+                        </li>
+                      </ul>
+                    </div><!--/span-->
+                  </div><!--/row-->
+                </div>
+              </div>
+             
+              <!-- Current Challenges Pane -->
+              <div class="tab-pane" id="CurrentChallenges">
+                <div class="container-fluid">
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Challenge Name
+                      </th>
+                      <th>
+                        Description
+                      </th>
+                      <th>
+                        Songs
+                      </th>
+                      <th>
+                        Expires
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!challenges.entities.length">
+                          <tr ng-repeat="chal in challenges.entities">
+                            <td>
+                              {{chal.c_name}}
+                            </td>
+                            <td>
+                              {{chal.c_desc}}
+                            </td>
+                            <td>
+                              <div ui-if="!!chal.c_songs">
+                                  <ul>
+                                    <li ng-repeat="cs in chal.c_songs">
+                                      <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
+                                      <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </td>
+                            <td ng-hide="expireChallenge(chal)">
+                              {{chal.c_date}}
+                            </td>
+                            <td ng-hide="expireChallenge(chal)">
+                              <button class="btn btn-inverse btn-small"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                            </td>
+                            <td ng-show="expireChallenge(chal)" ng-cloak>
+                              Expired
+                            </td>
+                            <td ng-show="expireChallenge(chal)" ng-cloak>
+                              -
+                            </td>
+                          </tr>
+                    </tbody>
+                  </table>
+                </div>	          	
+              </div>
+              
+              <!-- My Profile Pane -->
+              <div class="tab-pane" id="MyProfile">
+                <div class="well" ng-show="name=='BAKA'">
+                  <h1>My Profile</h1>
+                  <p>You have to be logged in to view your profile!</p>
+                </div>
+                <div class="well" ng-hide="name=='BAKA'">
+                  <h1>{{name}}</h1>
+                  <h3>Points Acquired: {{points}}</h3>
+                  <div class="row-fluid">
+                    <div class="span6">
+                      <h3>Achievements Unlocked:</h3>
+                      <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button>
+                      <button class="btn btn-inverse btn-small"  onclick="achievement_upload()"  ng-hide="name=='BAKA'" ng-cloak>Submit Files For Achievements</button>
+                      <table class="table table-striped">
+                        <thead>
+                          <th>
+                            Achievement Name
+                          </th>
+                          <th>
+                            Points Awarded
+                          </th>
+                          <th>
+                            Status/Action
+                          </th>
+                        </thead>
+                        <tbody ui-if="!!achievements.entities.length">
+                          <tr ng-repeat="achievement in achievements.entities">
+                            <td>
+                              {{achievement.a_name}}
+                            </td>
+                            <td>
+                              {{achievement.a_points}}
+                            </td>
+                            <td>
+                              <span class="badge" ng-repeat="award in achievementawards.entities | filter:{a_id : achievement.id, a_user : name}">
+                              DONE
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="span6">
+                      <h3>Notifications</h3>
+                      <button class="btn btn-inverse btn-small" ng-click="listnotifications()" ng-cloak>Refresh</button> 
+                      <table class="table table-striped">
+                        <thead>
+                          <th>
+                            Date
+                          </th>
+                          <th>
+                            Notification
+                          </th>
+                        </thead>
+                        <tbody ui-if="!!notifications.entities.length">
+                          <tr ng-repeat="notification in notifications.entities">
+                            <td>
+                              {{notification.n_date}}
+                            </td>
+                            <td>
+                              {{notification.n_msg}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+              <!-- Current Ranking Pane -->
+              <div class="tab-pane" id="CurrentRanking">
+                <div class="container-fluid">
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Username
+                      </th>
+                      <th>
+                        Points
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!users.entities.length">
+                          <tr ng-repeat="user in users.entities | orderBy:'-u_points' | filter:userRanking">
+                            <td>
+                              {{user.u_name}}
+                            </td>
+                            <td>
+                              {{user.u_points}}
+                            </td>
+                          </tr>
+                    </tbody>
+                  </table>
+                </div>	 	        	
+              </div>
+              
+              <!-- Missions Pane-->
+              <div class="tab-pane" id="Missions">
+                <div>
+                  <figure class="fluidratio">
+                    <div class="mission">
+                      <div class="mission-row">
+                        <h1><span>Remilia's Mission: Chores of the Scarlet Devil Mansion</span></h1>
+                        <p class="lead"><span>Remilia is unhappy because Sakuya has decided to, of all things, take leave for a day. This means *someone* has to help cover her duties.</span></p>
+                        <p class="lead"><span>Fortunately, most of the chores seem to be more or less covered by the other maids (including Remilia's all-important tea-time). However, 4 chores remain........</span></p>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <h3><span>Instructions</span></h3>
+                        <p><span style="font-weight:bold">To complete a chore, play the required song on all 3 difficulties (BSC, ADV, EXT) on a single credit and achieve a minimum total score for all 3. Failing any of the songs will result in the immediate failure of the mission in question.</span></p>
+                        <p><span>Submissions for each chore should consist of the following: </span></p>
+                        <ul>
+                          <li><span style="font-weight:bold">[Mandatory] A screenshot of the relevant e-Amusement Gate records (<a href="./img/missions-data/Mission1.jpg" target="_blank">example</a>)</span> - this will show that the required song has been played and cleared on all difficulties, and;</li>
+                          <li><span style="font-weight:bold">[Recommended] A screenshot of your in-game Total Score Ranking</span> - this will help us verify that those plays are indeed from the same credit.</li>
+                        </ul>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">
+                              <img  style="width:100%" src="/file/serve/AMIfv94yW0J3nbkDx_Ira0zNGbjigyaMB1L-ZmjHhg4DVzdR6mhru7_r7_NsOqs5LqG2lm36tfL-PH26Iu4gd3U__BPHEFLc8YITbmbYtrWkHAKnIHjAH9tvy_lz0jLni17GdVv2lOvEQugF3V2mouoXKIKGqDkFsfzN0IryV_OY26VBkqK2qiI">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Easy: Wake Meiling</span></h3>
+                            <p><span>China has fallen asleep again. Go wake her!</span></p>
+                            <p><span style="font-weight:bold">Mission: Play 'Just Awake', and achieve a total score of at least 2550000.</span></p>
+                            <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Easy: Wake Meiling')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">                               
+                              <img style="width:100%" src="/file/serve/AMIfv97VO0S6HqsIUWRSfaSH5GiQ6f4px-QL8n-9aeRJHLKIWfacE_iL-ittfyp9VE3qzJW3PzJQReN35dzJLxpJGwHe2yunYh6IUf0V_PMUsPqzEj7pjmKIFY1gMB--iZzMQ7aWsGgXPTRsl0_BXPXYN3Uvm7j-IMYqP03tgC4qK5Q1HDDka8g">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Normal: Find Koakuma</span></h3>
+                            <p><span>Koakuma is reportedly missing. Search for her in Voile Library!</span></p>
+                            <p><span style="font-weight:bold">Mission: Play '†渚の小悪魔ラヴリィ～レデイオ†' (Nagisa no Koakuma), and achieve a total score of at least 2700000.</span></p>
+                            <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Normal: Find Koakuma')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mission-row">
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">                               
+                              <img style="width:100%" src="/file/serve/AMIfv96ZjNjdZFkxz2ew6KOxAek5IJfHVCLdvev54wcscen97T8QySgmy1CmkXg1yy5An8BERRONu24PHdu3U0SpLD770LUilGEhwNyqbb9IE_PfBwEccKrKzKzlm8jftWwhJlzA7vkT9RVl1anld0hdVA4vzeAbEsyrUn99iBUfmTllyUzz69c">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Hard: Help Patchouli</span></h3>
+                            <p><span>Patchouli is getting harassed by an intruder trying to steal books. Chase the intruder away!</span></p>
+                            <p><span style="font-weight:bold">Mission: Play 'Riot of Color', and achieve a total score of at least 2800000.</span></p>
+                             <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Hard: Help Patchouli')" ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mission-row">                      
+                        <div class="row-fluid">
+                          <div class="span3">
+                            <div class="well" id="mission-pic">                               
+                              <img  style="width:100%" src="/file/serve/AMIfv967QsvCUso1fdJZppbRsGXw6bKBLmroBfBg5fg9nEDN3gPvZBGdVoQHmGXm7OSnwdZWDbB4dpy6P4HeHOgs9OmeDV2ZHYluuUEe1w52SHpG5p2j_6_K1hbw0dcinZ2KPPLsDp-OFtIeGwhIpg5y2UBN38jpsPfEIhYyBhbkSL8qbfXDjT0">
+                            </div>
+                          </div>
+                          <div class="span9">
+                            <h3><span>Chore Lunatic: Babysit Flandre</span></h3>
+                            <p><span>Flandre is bored. How long can you last?</span></p>
+                            <p><span style="font-weight:bold">Mission: Play 'Beastie Starter', and achieve a total score of at least 2850000.</span></p>
+                            <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('Chore Lunatic: Babysit Flandre')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <br/>
+                      <br/>
+                    </div>
+                  </figure>
+                </div>
+              </div>
+
+              <!-- Manage Announcements/News Pane-->
+              <div class="tab-pane" id="ManageAnnouncements">
+                <div class="well">
+                  <h1>Manage Announcements/News</h1>
+                  <p class="lead">Hmmm, Announcements/News........</p>
+                </div>
+              </div>
+              
+              <!-- Manage Users Pane-->
+              <div class="tab-pane" id="ManageUsers">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        <a href="" ng-click="predicate_users = 'u_name'; reverse=false">Username</a>
+                        (<a href ng-click="predicate_users = '-u_name'; reverse=false">^</a>)
+                      </th>
+                      <th>
+                        <a href="" ng-click="predicate_users = 'u_admin'; reverse=!reverse">Is Admin?</a>
+                      </th>
+                      <th>
+                        <a href="" ng-click="predicate_users = 'u_points'; reverse=!reverse">Points</a>
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!users.entities.length">
+                          <tr ng-repeat="user in users.entities | orderBy:predicate_users:reverse">
+                            <td>
+                              {{user.u_name}}
+                            </td>
+                            <td>
+                              {{user.u_admin}}
+                            </td>
+                            <td>
+                              {{user.u_points}}
+                            </td>
+                            <td>
+                              -
+                            </td>
+                          </tr>
+                    </tbody>
+                  </table>
+                </div>	 	          	
+              </div>
+              
+              <!-- Manage Challenge Pane -->
+              <div class="tab-pane" id="ManageChallenges">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateChallenge" ng-cloak>Add New Challenge</button>
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreChallenge"  ng-cloak>Score Challenge</button>                 
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ThemeRewards"  ng-cloak>Theme Rewards</button>                 
+                  <button class="btn btn-inverse btn-small" ng-click="listchallenge()" ng-cloak>Refresh</button>                 
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Challenge Name
+                      </th>
+                      <th>
+                        Description
+                      </th>
+                      <th>
+                        Admin Notes
+                      </th>
+                      <th>
+                        Songs
+                      </th>
+                      <th>
+                        Upload By
+                      </th>
+                      <th>
+                        Expires
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!challenges.entities.length">
+                      <tr ng-repeat="chal in challenges.entities">
+                        <td>
+                          {{chal.c_name}}
+                        </td>
+                        <td>
+                          {{chal.c_desc}}
+                        </td>
+                        <td>
+                          {{chal.c_notes}}
+                        </td>
+                        <td>
+                          <div ui-if="!!chal.c_songs.length">
+                              <ul>
+                                <li ng-repeat="cs in chal.c_songs">
+                                  <img src="/file/serve/{{cs.s_blob}}" style="width: 100px">
+                                  <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                </li>
+                              </ul>
+                          </div>
+                        </td>
+                        <td>
+                          {{chal.c_uploadby}}
+                        </td>
+                        <td ng-hide="expireChallenge(chal)">
+                          {{chal.c_date}}
+                        </td>
+                        <td ng-show="expireChallenge(chal)">
+                          Expired
+                        </td>
+                        <td>
+                          <form ng-submit="deletechallenge({{chal.id}})">
+                            <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                          </form>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="modal hide fade" id="CreateChallenge" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelchallenge()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Create Challenge</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="challenge.data.c_uploadby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Challenge Name:</label>
+                        <div class="controls">
+                          <input type="text" ng-model="challenge.data.c_name"/>
+                        </div>
+                        <label class="control-label" for="ChalDesc">Description</label>
+                        <div class="controls">
+                          <textarea style="width: 250px; height: 35px; resize: none;" ng-model="challenge.data.c_desc"></textarea>
+                        </div>
+                        <label class="control-label" for="ChalNotes">Admin Notes</label>
+                        <div class="controls">
+                          <textarea style="width: 250px; height: 35px; resize: none;" ng-model="challenge.data.c_notes"></textarea>
+                        </div>
+                        <label class="control-label" for="ChalSongs">Songs</label>
+                        <div class="controls">
+                          <div ui-if="!!challenge.data.c_songs.length">
+                              <ul>
+                                <li ng-repeat="songdata in challenge.data.c_songs">
+                                  <span>{{songdata.s_name}} ({{songdata.s_difficulty}})</span>
+                                </li>
+                              </ul>
+                          </div>
+                          <select ng-model="c_song.s_name" ng-options="songselect.s_name as songselect.s_name for songselect in songs.entities"></select>
+                          <select ng-model="c_song.s_difficulty">
+                            <option value="BSC" selected>BSC (Basic)</option>
+                            <option value="ADV">ADV (Advanced)</option>
+                            <option value="EXT">EXT (Extreme)</option>
+                          </select>
+                          <button class="btn btn-inverse btn-small" ng-click="addsongtochallenge()">Add</button> 
+                        </div>
+                        <label class="control-label" for="ChalExpires">Expires</label>
+                        <div class="controls">
+                          <input ui-date ui-date-format ng-model="challenge.data.c_date"></input><br/> 
+                          (All challenges expire at 2300 hrs (+0800) on the given date.)
+                        </div>
+                        <div class="controls">
+                          <input type="submit" ng-click="addchallenge()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelchallenge()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>
+
+                  <div class="modal hide fade" id="ScoreChallenge" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelscoring()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Score Challenge</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="c_scoring.data.c_uploadby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Challenge Name:</label>
+                        <div class="controls">
+                          <select ng-model="c_scoring.data.c_id" ng-options="chalselect.id as chalselect.c_name for chalselect in challenges.entities"></select> {{c_scoring.data.c_id}}
+                        </div>
+                        <label class="control-label" for="ChalDesc">Rankings</label>
+                        <div class="controls">
+                          <div ui-if="!!c_scoring.data.c_rankings.length">
+                              <ul>
+                                <li ng-repeat="rankingdata in c_scoring.data.c_rankings">
+                                  <span>{{rankingdata.u_earned}}: {{rankingdata.u_name}}</span>
+                                </li>
+                              </ul>
+                          </div>
+                          <select ng-model="c_ranking.u_name" ng-options="userselect.u_name as userselect.u_name for userselect in users.entities | filter:userIsNotAdmin"></select>
+                          <select ng-model="c_ranking.u_earned">
+                            <option value="1st" selected>1st Place (5 pts)</option>
+                            <option value="2nd">2nd Place (3 pts)</option>
+                            <option value="3rd">3rd Place (2 pts)</option>
+                            <option value="Participation">Participation (1 pts)</option>
+                          </select>
+                          <button class="btn btn-inverse btn-small" ng-click="addrankingtoscoring()">Add</button>
+                        </div>
+                        <div class="controls">
+                          <input type="submit" ng-click="submitscoring()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelscoring()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>
+
+
+                  <div class="modal hide fade" id="ThemeRewards" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelreward()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Theme Rewards</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="t_scoring.data.t_scoreby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Theme Name:</label>
+                        <div class="controls">
+                          <input ng-model="t_scoring.data.t_name"></input>
+                        </div>
+                        <label class="control-label" for="ChalDesc">Rewards</label>
+                        <div class="controls">
+                          <div ui-if="!!t_scoring.data.t_rewards.length">
+                              <ul>
+                                <li ng-repeat="rewarddata in t_scoring.data.t_rewards">
+                                  <span>{{rewarddata.u_earned}}: {{rewarddata.u_name}}</span>
+                                </li>
+                              </ul>
+                          </div>
+                          <select ng-model="t_reward.u_name" ng-options="userselect.u_name as userselect.u_name for userselect in users.entities"></select>
+                          <select ng-model="t_reward.u_earned">
+                            <option value="1st" selected>1st Place (3 pts)</option>
+                            <option value="2nd">2nd Place (2 pts)</option>
+                            <option value="3rd">3rd Place (1 pts)</option>
+                          </select>
+                          <button class="btn btn-inverse btn-small" ng-click="addrewardtotheme()">Add</button>
+                        </div>
+                        <div class="controls">
+                          <input type="submit" ng-click="submitreward()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelreward()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>
+
+                  
+                </div>
+              </div>
+
+              <!-- Manage Achievements Pane-->
+              <div class="tab-pane" id="ManageAchievements">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>
+                  <button class="btn btn-inverse btn-small" data-toggle="modal" href="#AwardAchievement" ng-cloak>Award Achievement</button>                  
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Achievement Name
+                      </th>
+                      <th>
+                        Points Awarded
+                      </th>
+                      <th width="70%">
+                        Awarded To
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!achievements.entities.length">
+                      <tr ng-repeat="achievement in achievements.entities">
+                        <td>
+                          {{achievement.a_name}}
+                        </td>
+                        <td>
+                          {{achievement.a_points}}
+                        </td>
+                        <td>
+                          <span class="badge" ng-repeat="award in achievementawards.entities | filter:{a_id : achievement.id}">
+                          {{award.a_user}}
+                          </span>
+                        </td>
+                        <td>
+                            <form ng-submit="deleteachievement({{achievement.id}})">
+                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                            </form>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  <div class="modal hide fade" id="CreateAchievement" style="display:none">
+                    <div class="modal-header">
+                      <a class="close" ng-click="cancelachievement()" data-dismiss="modal">x</a>
+                      <h3 id="Login">Create Achievement</h3>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" ng-model="achievement.data.a_uploadby">
+                      <div class="control-group">
+                        <label class="control-label" for="ChalName">Achievement Name</label>
+                        <div class="controls">
+                          <input type="text" ng-model="achievement.data.a_name"/>
+                        </div>
+                        <label class="control-label" for="ChalDesc">Achievement Points</label>
+                        <div class="controls">
+                          <select ng-model="achievement.data.a_points">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                          </select>
+                        </div>                        
+                        <div class="controls">
+                          <input type="submit" ng-click="addachievement()" value="Submit" data-dismiss="modal"/>
+                          <input type="submit" ng-click="cancelachievement()" value="Cancel" data-dismiss="modal"/>
+                        </div>
+                      </div>			
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                  </div>
+              
+                  <div class="modal hide fade" id="AwardAchievement" style="display:none">
+                        <div class="modal-header">
+                          <a class="close" ng-click="cancelaward()" data-dismiss="modal">x</a>
+                          <h3 id="Login">Award Achievement</h3>
+                        </div>
+                        <div class="modal-body">
+                          <input type="hidden" ng-model="awardachievement.data.a_uploadby">
+                          <div class="control-group">
+                            <label class="control-label" for="ChalDesc">Achievement</label>
+                            <div class="controls">
+                              <select ng-model="awardachievement.data.a_id" ng-options="achievement.id as achievement.a_name for achievement in achievements.entities"></select>
+                            </div>                        
+                            <label class="control-label" for="ChalDesc">User</label>
+                            <div class="controls">
+                              <select ng-model="awardachievement.data.a_user" ng-options="user.u_name as user.u_name for user in users.entities | filter:userIsNotAdmin"></select>
+                            </div>
+                            <div class="controls">
+                              <input type="submit" ng-click="awardachievement()" value="Submit" data-dismiss="modal"/>
+                              <input type="submit" ng-click="cancelaward()" value="Cancel" data-dismiss="modal"/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                   </div>                  
+                </div>	 	          	
+              </div>
+              
+              <!-- Manage Songs Pane -->
+              <div class="tab-pane" id="ManageSongs">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" onclick="song_upload()" ng-cloak>Add New Song</button> 
+                  <button class="btn btn-inverse btn-small" ng-click="listsongs()" ng-cloak>Refresh</button> 
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Image
+                      </th>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Composer
+                      </th>
+                      <th>
+                        Details
+                      </th>
+                      <th>
+                        Upload Date
+                      </th>
+                      <th>
+                        Upload By
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!songs.entities.length">
+                      <tr ng-repeat="song in songs.entities">
+                        <td>
+                          <img src="/file/serve/{{song.s_blob}}" style="width: 100px">
+                        </td>
+                        <td>
+                          {{song.s_name}}
+                        </td>
+                        <td>
+                          {{song.s_comp}}
+                        </td>
+                        <td>
+                          {{song.s_details}}
+                        </td>
+                        <td>
+                          {{song.s_date}}
+                        </td>
+                        <td>
+                          {{song.s_uploadby}}
+                        </td>
+                        <td>
+                            <form ng-submit="deletesong({{song.id}})">
+                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                            </form>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>	          	
+              </div>
+              
+              <!-- View Submissions Pane -->
+              <div class="tab-pane" id="ViewSubmissions">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" ng-click="listsubmissions()" ng-cloak>Refresh</button> 
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        File
+                      </th>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Purpose
+                      </th>
+                      <th>
+                        Description
+                      </th>
+                      <th>
+                        Owner
+                      </th>
+                      <th>
+                        Upload Date
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!blobfiles.entities.length" >
+                      <tr ng-repeat="file in blobfiles.entities">
+                        <td>
+                          <a href="/file/serve/{{file.f_blob}}" target="_blank">View</a>
+                        </td>
+                        <td>
+                          {{file.f_name}}
+                        </td>
+                        <td>
+                          {{file.f_purpose}}
+                        </td>
+                        <td>
+                          {{file.f_desc}}
+                        </td>
+                        <td>
+                          {{file.f_owner}}
+                        </td>
+                        <td>
+                          {{file.f_date}}
+                        </td>
+                        <td>
+                            <form ng-submit="deletesubmission({{file.id}})">
+                              <input type="submit" class="btn btn-inverse btn-small" name="Delete" value="Delete">
+                            </form>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>	  
+              </div>
+
+                            
+              <!-- View Logs Pane -->
+              <div class="tab-pane" id="ViewLogs">
+                <div class="container-fluid">
+                  <button class="btn btn-inverse btn-small" ng-click="listlogs()" ng-cloak>Refresh</button> 
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Date
+                      </th>
+                      <th>
+                        Activity
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!logs.entities.length">
+                      <tr ng-repeat="log in logs.entities">
+                        <td>
+                          {{log.l_date}}
+                        </td>
+                        <td>
+                          {{log.l_msg}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>	 	        	
+              </div>

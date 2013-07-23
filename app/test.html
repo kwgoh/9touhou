@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>9Touhou - jubeat Saucer Season 3 Tournament Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/additional.css" rel="stylesheet">
+    <link href="css/angular-ui.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/jquery-ui-1.10.2.custom.min.css" rel="stylesheet">
+    <link href="css/spacelab/bootswatch.less" rel="stylesheet/less">
+    <link href="css/spacelab/variables.less" rel="stylesheet/less">
+    
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+    
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="ico/favicon.png">
+    
+    <script type="text/javascript">
+      
+      function song_upload(){
+        sg_upload = window.open("/songform", "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
+        sg_upload.focus();
+      }
+      
+      function submission_upload(purpose){
+        sn_upload = window.open("/blobform/" + purpose, "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
+        sn_upload.focus();
+      }
+      
+      function mission_upload(purpose){
+        sn_upload = window.open("/missionform/" + purpose, "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
+        sn_upload.focus();
+      }
+      
+      function achievement_upload(){
+        sn_upload = window.open("/achievementform", "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
+        sn_upload.focus();
+      }      
+    </script>
+  </head>
+  
+  <body ng-controller="">
+    <div id="wrap">
+      <!--Navbar-->
+      <div id="topbar" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">{{company}}</a>
+            <p class="navbar-text pull-right">
+              Hello, <a href="#" class="navbar-link">{{name}}</a>
+              <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'" ng-cloak>Login</button>
+              <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'" ng-cloak>Register</button>
+              <span ng-show="isadmin==true" ng-cloak> (Admin)</span>
+              <button class="btn btn-inverse btn-small" ng-hide="name=='BAKA'" ng-click="logout()" ng-cloak>Logout</button>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!--Login Modal-->
+      <div class="modal hide fade" id="Login" style="display:none">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">x</a>
+          <h3 id="Login">Login</h3>
+        </div>
+        <div class="modal-body">
+          <div class="control-group">
+            <label class="control-label" for="UserName">Username</label>
+            <div class="controls">
+              <input type="text" ng-model="login.data.u_name" id="username"/>
+            </div>
+            <label class="control-label" for="PassWord">Password</label>
+            <div class="controls">
+              <input type="password" ng-model="login.data.u_pwd" id="password"/>
+            </div>
+            <div class="controls">
+              <input type="submit" ng-click="getlogin()" value="Submit" data-dismiss="modal"/>
+            </div>
+          </div>			
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+      
+      <!--Registration Modal-->
+      <div class="modal hide fade" id="Register" style="display:none">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">x</a>
+          <h3 id="Register">Register</h3>
+        </div>
+        <div class="modal-body">
+          <div class="control-group">
+            <label class="control-label" for="UserName">Username</label>
+            <div class="controls">
+              <input type="text" ng-model="login.data.u_name" id="username"/>
+            </div>
+            <label class="control-label" for="PassWord">Password</label>
+            <div class="controls">
+              <input type="password" ng-model="login.data.u_pwd" id="password"/>
+            </div>
+            <div class="controls">
+              <input type="submit" ng-click="registerlogin()" value="Submit" data-dismiss="modal"/>
+            </div>
+          </div>					
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+      
+      <!-- Main Body -->
+      <div class="container-fluid" id="main">
+        <div class="row-fluid">
+          
+          <!-- Navigation Sidebar (Access separate panes). -->
+          <div class="span3">
+            <!--video controls="" autoplay="" name="media">
+              <source src="http://abab.dip.jp/piano/tohokouma_6boss_p.mp3" type="audio/mpeg">
+            </video-->
+            <div class="well sidebar-nav sidebar-nav-fixed" id="sidenav">
+              <ul class="nav nav-list">
+                <li class="nav-header">Navigation</li>
+                <li class="active"><a id="mp" href="#MainPage">Main Page</a></li>
+                <li><a id="cc" href="#CurrentChallenges">Current Challenges</a></li>
+                <li><a id="cr" href="#CurrentRanking">Current Ranking</a></li>
+                <li><a id="mp" href="#MyProfile" ng-cloak>My Profile</a></li>
+                <li><a id="mm" href="#Missions" >Missions</a></li>
+				
+                <li class="nav-header" ng-show="isadmin==true" ng-cloak>Admin Console</li>
+                <li><a id="an" href="#ManageAnnouncements" ng-show="isadmin==true" ng-cloak>Manage Announcements/News (Under Construction)</a></li>
+                <li><a id="mu" href="#ManageUsers" ng-show="isadmin==true" ng-cloak>Manage Users</a></li>
+                <li><a id="mc" href="#ManageChallenges" ng-show="isadmin==true" ng-cloak>Manage Challenges</a></li>
+                <li><a id="ms" href="#ManageAchievements" ng-show="isadmin==true" ng-cloak>Manage Achievements</a></li>
+                <li><a id="ms" href="#ManageSongs" ng-show="isadmin==true" ng-cloak>Manage Songs</a></li>
+                <li><a id="ab" href="#ViewSubmissions" ng-show="isadmin==true" ng-cloak>View Submissions</a></li>
+                <li><a id="lg" href="#ViewLogs" ng-show="isadmin==true" ng-cloak>View Logs</a></li>
+              </ul>
+            </div><!--/.well -->
+          </div><!--/span-->
+          
+          <!-- Main Body -->
+          <div class="span9">
+
+          </div><!--/span-->	        
+        </div><!--/row-->
+        
+        <br/>
+      </div><!--/.fluid-container-->
+    </div>
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">&copy; {{company}} 2013</p>
+      </div>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular/angular-ui.min.js"></script>
+    <script src="lib/angular/angular-resource.min.js"></script>
+    <script src="lib/angular/localStorageModule.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="../test/lib/angular/angular-mocks.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
