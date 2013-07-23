@@ -1,0 +1,32 @@
+application: 9touhou
+version: maintenance
+runtime: python27
+api_version: 1
+threadsafe: false
+
+handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+  
+- url: /index.html
+  static_files: index.html
+  upload: index.html
+  
+- url: /app
+  static_dir: app
+  expiration: 1m
+
+- url: /test
+  static_dir: test
+  expiration: 1m
+
+- url: /.*
+  script: blob.app
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+  
+- name: webob
+  version: "1.2.3"
