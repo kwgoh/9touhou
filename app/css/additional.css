@@ -10,52 +10,51 @@
       padding-top: 60px;
       padding-bottom: 40px;
       overflow-y: scroll;
-      background-color: rgb(248, 225, 238);
-      /*
-      background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(192, 191, 188)), to(rgb(189, 54, 11)));
-      background-image: -webkit-linear-gradient(top, rgb(192, 191, 188), rgb(185, 119, 99)); 
-      background-image:    -moz-linear-gradient(top, rgb(192, 191, 188), rgb(185, 119, 99));
-      background-image:     -ms-linear-gradient(top, rgb(192, 191, 188), rgb(185, 119, 99));
-      background-image:      -o-linear-gradient(top, rgb(192, 191, 188), rgb(185, 119, 99)); */
+      background-color: rgb(1, 1, 14);
       
       height: 100%;
       margin: 0;
+      color: rgb(240, 240, 240);
       background-repeat: no-repeat;
       background-attachment: fixed;
+      background-image: url(../img/missions-bg/Marisa.jpg);
+      background-size: cover;
+
     }
     
+    h1, h2, h3, h4, h5, h6 {
+      color: #C7C7D1;
+    }
+    
+    footer {
+      width:100%;
+      height:16px;
+      position:absolute;
+      bottom: 0;
+    }
+    
+    #main {
+      min-height:100%;
+      position:relative;
+    } 
+    
     #wrap {
-      min-height: 480px;
+      padding-bottom:16px; 
     }	   	  
     
     .badge {
-      color: rgb(255, 255, 255);
-      background-color: rgb(127, 70, 65);
-     /*      background-image: -moz-linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from(rgb(180, 180, 180)), to(rgb(216, 216, 226)));
-      background-image: -webkit-linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-image: -o-linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-image: linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-repeat: repeat-x;
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff862e5e', endColorstr='#ff772953', GradientType=0);*/
+      color: #C7C7D1;
+      background-color: rgba(59, 35, 122, 0.71);
     }
     
     .btn {
-      color: rgb(255, 255, 255);
-      background-color: rgb(127, 70, 65);
-     /*      background-image: -moz-linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from(rgb(180, 180, 180)), to(rgb(216, 216, 226)));
-      background-image: -webkit-linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-image: -o-linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-image: linear-gradient(1deg, rgb(180, 180, 180), rgb(216, 216, 226));
-      background-repeat: repeat-x;
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff862e5e', endColorstr='#ff772953', GradientType=0); */
+      
     } 
  
    .tab-content {
       overflow: auto;
-      background-color: rgba(161, 105, 110, 0.3);
-      border: 1px solid rgb(248, 225, 238);
+      background-color: rgba(59, 34, 192, 0.3);
+      border: none;
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
@@ -65,7 +64,7 @@
     .tab-pane .well {
       margin-left: 10px;
       margin-right: 10px;
-      background-color: rgba(161, 105, 110, 0.9);
+      background-color: rgba(59, 34, 192, 0.4);
     }
     
     .sidebar-nav {
@@ -75,7 +74,8 @@
       position:fixed;
       top:60px;
       width:21.97%;
-      background-color: rgba(161, 105, 110, 0.1);
+      background-color: rgba(59, 34, 192, 0.4);
+      border: none;
     }	
     #topnav{
       display:none;
@@ -86,7 +86,7 @@
     #baka-page {
       background-color: rgba(161, 105, 110, 0.1);
 
-      border: 1px solid rgb(248, 225, 238);
+      border: none;
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
@@ -95,60 +95,218 @@
     
     a {
       
-      color: rgb(127, 70, 65);
+      color: rgb(236, 194, 26);
     }    
     
     a:hover {
       
-      color: rgb(161, 105, 110);
+      color: rgb(255, 254, 218);
     }    
-        
+    
+    .marisa-normal {
+      content:url('../img/Marisa_Hover.png');
+    }    
+    .marisa-troll {
+      content:url('../img/Marisa_Troll.png');
+    }
+    
+    .marisa-sad {
+      content:url('../img/Marisa_Pwned.png');
+    }    
+    
+    .marisa-angry {
+      content:url('../img/Marisa_Angry.png');
+    }    
+
+    .marisa-enraged {
+      content:url('../img/Marisa_Enraged.png');
+    }
+    
+    .marisa-master-spark {
+      content:url('../img/Marisa_Master_Spark.png');
+    }
+    
+    .spark {
+    
+      opacity:0.6;
+      position: fixed;
+      _position: absolute;
+      z-index: -9999;
+      top: 0;
+      width: 100%;
+      height: 500px;
+      background-size: 100% 100%;
+      _height: expression(document.body.offsetHeight + "px");
+    }
+    
+    .masterspark-show {
+      animation-name: beam;
+      animation-duration: 3s;
+      animation-delay: 0.8s;
+      -moz-animation: beam;
+      -moz-animation-duration: 3s;
+      -moz-animation-delay: 0.8s;
+      -webkit-animation: beam;
+      -webkit-animation-duration: 3s;
+      -webkit-animation-delay: 0.8s;
+    }
+    
+    @keyframes beam {
+        from {         
+          z-index: 99;
+          opacity: 0.6;
+          display: block;
+        }
+        70% {         
+          background-image: url('../img/master_spark.gif'); 
+          display: block;
+          opacity: 0.6;
+          z-index: 99;
+        }
+        80% {
+          background-image: url('../img/master_spark.gif'); 
+          opacity: 0.4;
+        }
+        90% {
+          background-image: url('../img/master_spark.gif'); 
+          opacity: 0.2;
+        }
+        to {
+          padding-left: 0;
+          opacity: 0.0;
+          display: none;
+          z-index: -9999;
+        }
+    }
+    
+    @-moz-keyframes beam {
+        from {         
+          z-index: 99;
+          opacity: 0.6;
+          display: block;
+        }
+        70% {         
+          background-image: url('../img/master_spark.gif'); 
+          display: block;
+          opacity: 0.6;
+          z-index: 99;
+        }
+        80% {
+          background-image: url('../img/master_spark.gif'); 
+          opacity: 0.4;
+        }
+        90% {
+          background-image: url('../img/master_spark.gif'); 
+          opacity: 0.2;
+        }
+        to {
+          padding-left: 0;
+          opacity: 0.0;
+          display: none;
+          z-index: -9999;
+        }
+    }
+    @-webkit-keyframes beam {
+        from {         
+          z-index: 99;
+          opacity: 0.6;
+          display: block;
+        }
+        70% {
+          background-image: url('../img/master_spark.gif'); 
+          display: block;
+          opacity: 0.6;
+          z-index: 99;
+        }
+        80% {
+          background-image: url('../img/master_spark.gif'); 
+          opacity: 0.4;
+        }
+        90% {
+          background-image: url('../img/master_spark.gif'); 
+          opacity: 0.2;
+        }
+        to {
+          padding-left: 0;
+          opacity: 0.0;
+          display: none;
+          z-index: -9999;
+        }
+    }    
+    
+    .nav-header > button {
+      float:right;
+      margin-top:-6px;
+    }
     
     .nav-list > li > a {
       
-      color: rgb(161, 105, 110);
+      color: rgb(240, 240, 240);
     }
+
+    .nav-list  > li > a .ico {
+      position: absolute;
+      margin-top: -20px;
+      display: none;
+    }    
+    
     
     .nav-list  > li > a:hover {
       
-      color: rgb(255, 255, 255);
-      background-color: rgb(127, 70, 65);
-      background-image: -moz-linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from( rgb(127, 70, 65)), to( rgb(161, 105, 110)));
-      background-image: -webkit-linear-gradient(1deg, rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: -o-linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
+      background-color: rgb(236, 194, 26);
+      background-image: -moz-linear-gradient(1deg, rgb(226, 186, 26), rgb(247, 202, 25));
+      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from(rgb(226, 186, 26)), to(rgb(247, 202, 25)));
+      background-image: -webkit-linear-gradient(1deg, rgb(226, 186, 26), rgb(247, 202, 25));
+      background-image: -o-linear-gradient(1deg, rgb(226, 186, 26), rgb(247, 202, 25));
+      background-image: linear-gradient(1deg, rgb(226, 186, 26), rgb(247, 202, 25));
       background-repeat: repeat-x;
       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff862e5e', endColorstr='#ff772953', GradientType=0);
     }    
     
     .nav-list > .active > a {
       
-      background-color: rgb(127, 70, 65);
-      background-image: -moz-linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from( rgb(127, 70, 65)), to( rgb(161, 105, 110)));
-      background-image: -webkit-linear-gradient(1deg, rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: -o-linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
+      background-color: rgb(207, 173, 24);
+      background-image: -moz-linear-gradient(1deg, rgb(187, 160, 21), rgb(226, 186, 26));
+      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from(rgb(187, 160, 21)), to(rgb(226, 186, 26)));
+      background-image: -webkit-linear-gradient(1deg, rgb(187, 160, 21), rgb(226, 186, 26));
+      background-image: -o-linear-gradient(1deg, rgb(187, 160, 21), rgb(226, 186, 26));
+      background-image: linear-gradient(1deg, rgb(187, 160, 21), rgb(226, 186, 26));
       background-repeat: repeat-x;
       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff862e5e', endColorstr='#ff772953', GradientType=0);
     }
     
-    .nav-list > .active > a:hover {
-      
-      background-color: rgb(173, 173, 173);
+    
+    .nav-list  > .active > a span {
+      margin-left: 8px;
+    }    
+    
+    .nav-list  > .active > a .ico {
+      display: block;
+     
+      margin-left: -40px;
+      width: 48px;
+    }        
+        
+    .navbar .navbar-text {
+      padding: 0px 0px 0px;
+      line-height: 50px;
+      color: #C7C7D1;
     }
     
-    div.navbar-inverse .navbar-inner {
-      background-color: rgb(127, 70, 65);
-      background-image: -moz-linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: -webkit-gradient(1deg, 0 0, 0 100%, from( rgb(127, 70, 65)), to( rgb(161, 105, 110)));
-      background-image: -webkit-linear-gradient(1deg, rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: -o-linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
-      background-image: linear-gradient(1deg,  rgb(127, 70, 65), rgb(161, 105, 110));
+    .navbar .btn {
+      margin-top: 0px;
+    }
+    
+    .navbar-inverse .navbar-inner{
+      background-color: rgba(28, 25, 97, 1);
+      background-image: -moz-linear-gradient(top, rgba(40, 37, 134, 1), rgba(15, 13, 60, 1));
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(40, 37, 134, 1)), to(rgba(15, 13, 60, 1)));
+      background-image: -webkit-linear-gradient(top, rgba(40, 37, 134, 1), rgba(15, 13, 60, 1));
+      background-image: -o-linear-gradient(top, rgba(40, 37, 134, 1), rgba(15, 13, 60, 1));
+      background-image: linear-gradient(to bottom, rgba(40, 37, 134, 1), rgba(15, 13, 60, 1));
       background-repeat: repeat-x;
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff862e5e', endColorstr='#ff772953', GradientType=0);
-      border-color: rgb(127, 70, 65);   
+      border-color: rgba(14, 13, 43, 1);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff04498c', endColorstr='#ff033c73', GradientType=0);
     }
     
     div.mission {
@@ -159,10 +317,10 @@
       /*stuff here*/
       min-height: 20px;
       padding: 19px;
-      background-color: rgba(161, 105, 110, 0.6);
+      background-color: rgba(59, 34, 192, 0.4);
       margin-bottom: 20px;
 
-      border: 1px solid rgb(248, 225, 238);
+      border: none;
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
@@ -172,20 +330,12 @@
     }    
     
     figure.fluidratio {
-      padding-top: 5%;  /* slope */
       height: auto;  /* start height */
       
-      background-image: url(../img/missions-bg/Mystia.jpg);
-      background-size: cover;
-      background-position: right;
-      background-position-x: 80%;
-      -moz-background-size: cover;  /* Firefox 3.6 */
-
-      border: 1px solid rgb(248, 225, 238);
-      -webkit-border-radius: 4px;
+      /* -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
-      box-shadow: inset 0px 0px 2px 2px #aaa, 3px 3px 5px 0px #eee;*/
+      box-shadow: inset 0px 0px 2px 2px #aaa, 3px 3px 5px 0px #eee;*/ */
     }
    
     .mission-pic {
@@ -193,24 +343,41 @@
     }
     
     figure h1 {
-      color: rgb(246, 232, 247); 
+      color: rgb(240, 240, 240);
       padding: 0px; 
     }
     
     figure h3 {
-      color: rgb(246, 232, 247); 
-      padding: 0px; 
+      color: rgb(240, 240, 240);
+      padding: 0px;
+      font-weight:bold;
     }
     
     figure p {
-      color: rgb(246, 232, 247);  
+      color: rgb(240, 240, 240);
       padding: 0px; 
+      font-weight:bold;
     }
     
     
     figure li {
-      color: rgb(246, 232, 247); 
+      color: rgb(240, 240, 240);
       padding: 0px; 
+      font-weight:bold;
+    }
+    
+    #mission-table { 
+      background-color: rgba(29, 28, 37, 0.33);
+      border: none;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      color: rgb(240, 240, 240);
+    }
+    
+    #mission-song {
+      height: 53px;
+      width: 53px;
     }
     
     /* 
@@ -224,16 +391,16 @@
     
     /*LoadingDiv*/
     #LoadingDiv{
-        position: fixed;
-        _position: absolute;
-        z-index: 99;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        _height: expression(document.body.offsetHeight + "px");
-        background-color: rgba(216, 216, 216, 0.5);
-      }
+      position: fixed;
+      _position: absolute;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      _height: expression(document.body.offsetHeight + "px");
+      background-color: rgba(216, 216, 216, 0.5);
+    }
       
     #Loading {
       top: 50%;
@@ -244,16 +411,24 @@
     }
     /*IE will need an 'adjustment'*/
     * html #LoadingDiv{
-         position: absolute;
-         height: expression(document.body.scrollHeight &gt; document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+      position: absolute;
+      height: expression(document.body.scrollHeight &gt; document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
     }
     
+    .table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
+      background-color: rgba(1, 1, 14, 0.69);
+    }
+    
+    .table > th, .table > td {
+      border-top: 1px solid rgba(246, 255, 23, 0.94);
+    }
+
     /* Carousel base class */
     .carousel {
       margin-top: 20px;
-      background-color: rgba(161, 105, 110, 0.1);
+      background-color: rgba(59, 34, 192, 0.3);
 
-      border: 1px solid rgb(248, 225, 238);
+      border: none;
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
@@ -290,7 +465,7 @@
       max-width: 550px;
       padding: 0 20px;
       margin-top: 100px;
-      color: #333;
+      color: rgb(240, 240, 240);
       background-color: transparent;
     }
 	
@@ -299,10 +474,11 @@
       margin: 0;
       line-height: 1.25;
       text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      color: rgb(240, 240, 240);
     }
 	
     .carousel-caption p{      
-      color: #333;
+      color: rgb(240, 240, 240);
       line-height: 20px;
     }
 	
@@ -313,21 +489,31 @@
     hr{
       margin: 10px 0;
       border: 0;
-      border-top: 1px solid rgba(60, 58, 44, 0.5);
-      border-bottom: 1px solid rgba(60, 58, 44, 0.5);
+      border-top: 1px solid rgba(246, 255, 23, 0.94);
+      border-bottom: 1px solid rgba(246, 255, 23, 0.94);
     }
     .muted {
-      color: rgb(60, 58, 44);
+      color: #C7C7D1;;
       font-weight:bold;
     }
 
     .modal-header {
-      background-color: rgb(127, 70, 65);
+      background-color: rgba(15, 13, 60, 1);
+      border-bottom: 1px solid rgba(246, 255, 23, 0.94);
     }
     
     .modal-footer {
-      background-color: rgb(241, 236, 238);
+      background-color: rgba(1, 1, 14, 0.94);
+      border-top: 1px solid rgba(246, 255, 23, 0.94);
     }    
+    
+    .modal-body {
+      background-color: rgba(1, 1, 14, 0.94);
+    }
+    
+    .control-group {
+      
+    }
 
     /* MARKETING CONTENT
     -------------------------------------------------- */
@@ -335,19 +521,21 @@
     /* Center align the text within the three columns below the carousel */
     .marketing {
 
-      border: 1px solid rgb(248, 225, 238);
+      border: none;
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
       padding: 20px 0px 20px 0px;
       margin-bottom: 10px;
+      color: rgb(240, 240, 240);
     }
     
     .marketing .span4 {
       text-align: center;
     }
     .marketing h2 {
-    
+      
+      color: rgb(240, 240, 240);
     }
     .marketing .span4 p {
       margin-left: 10px;
@@ -392,8 +580,10 @@
 
     @media (max-width: 979px) {
       .sidebar-nav-fixed {
-        margin-top: 70px;
         top:70px;
+      }    
+      .nav-header > button > span{
+        display: none;
       }	  
       .container.navbar-wrapper {
         margin-bottom: 0;
@@ -404,27 +594,28 @@
       }
       .carousel img {
         height: 300px;
+        width: 100%;	  
       }
       .carousel-caption {
         background-color: rgba(49,49,49,0.3);
 
-      border: 1px solid rgb(248, 225, 238);
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px;
+        border: none;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
         position: absolute;
-        color: rgb(224, 224, 224);
+        color: #C7C7D1;
       }
       .carousel-caption h1,
       .carousel-caption .lead {
         margin: 0;
-        color: rgb(224, 224, 224);
+        color: #C7C7D1;
         line-height: 1.25;
         text-shadow: 0 1px 1px rgba(0,0,0,.4);
       }
     
       .carousel-caption p{      
-        color: rgb(224, 224, 224);
+        color: #C7C7D1;
         line-height: 20px;
       }
       .featurette {
@@ -440,18 +631,13 @@
       }
       
       #topbar {
-        padding-left: 20px;
-        padding-right: 20px;	      
         position:fixed;
         width:auto;
         background-color: rgb(143, 144, 144);
       }
       #main {
-      margin-top: 20px !important;
-      }	   	 
-      #wrap {
-        min-height: 360px;
-      }	   	        
+        margin-top: 35px !important;
+      }   	        
     }
 
 
@@ -473,6 +659,7 @@
       }
       .carousel img {
         height: 300px;
+        width: 100%;	 
       }
       .carousel-caption {
         position: absolute;	  
@@ -481,29 +668,28 @@
         margin-top: 100px;
         background-color: rgba(49,49,49,0.3);
 
-      border: 1px solid rgb(248, 225, 238);
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px;
-        color: rgb(224, 224, 224);
+        border: none;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        color: #C7C7D1;
       }
       .carousel-caption h1 {
         font-size: 30px;
-        color: rgb(224, 224, 224);
+        color: #C7C7D1;
       }
       .carousel-caption .lead,
       .carousel-caption .btn {
         font-size: 18px;
-        color: rgb(224, 224, 224);
+        color: #C7C7D1;
       }
       
       .marketing {
-        background-color: rgba(161, 105, 110, 0.3);
 
-      border: 1px solid rgb(248, 225, 238);
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px;
+        border: none;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
         padding: 20px 0px 20px 0px;
         margin-bottom: 10px;
       }
@@ -526,5 +712,11 @@
       }
       #main {
         margin-top: 20px !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .span7 .carousel-caption {
+        position:absolute;
       }
     }

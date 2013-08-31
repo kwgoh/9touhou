@@ -2,6 +2,8 @@
 
 /* Controllers */
 
+/* Form Controller */
+
 function FormController($scope) {
   $scope.name = "BAKA";
 	$scope.isadmin = "";
@@ -32,6 +34,8 @@ function FormController($scope) {
 	$scope.retrievesession();
 }
 
+/* Main Controller */
+
 function FirstController($scope,$resource) {
 	$scope.name = "BAKA";
 	$scope.isadmin = "";
@@ -40,8 +44,111 @@ function FirstController($scope,$resource) {
 	
   $scope.showdetails = false;
   $scope.apikey = "DESU";
-	
-  //$scope.remote_url = "9.9touhou.appspot.com";
+  
+  /* Marisa Special */
+  
+  $scope.marisa = {"mp":true,
+                  "cc": true,
+                  "cr": true,
+                  "mr": true,
+                  "mim": true,
+                  "mic": true,
+                  "mn": true,
+                  "mm": true,
+                  "mu": true,
+                  "mc": true,
+                  "ma": true,
+                  "ms": true,
+                  "vs": true,
+                  "vl": true};
+                  
+  $scope.possible_status = ['marisa-normal',
+                            'marisa-troll',
+                            'marisa-sad',
+                            'marisa-angry',
+                            'marisa-enraged',
+                            'marisa-master-spark'];
+                            
+  $scope.possible_progress = ['progress-danger',
+                              'progress-warning',
+                              'progress-success',
+                              'progress-info']
+  
+  $scope.reset = false;
+  $scope.pwned = 0;
+  $scope.charge = 0;
+  $scope.marisa_status = $scope.possible_status[0];
+  $scope.progress = $scope.possible_progress[0];
+  $scope.beam_height = 0;
+  
+  $scope.do_troll = function(id, element) {
+    $scope.beam_height = element.pageY - 250;
+    var chance = Math.random();
+    if (chance <= 0.25) {
+      if ($scope.charge < 100) {
+        var sfx = document.getElementById("yoink");
+        sfx.play();
+        $scope.marisa[id] = false;
+        $scope.reset = true;
+        
+        if ($scope.charge === 0) {
+          $scope.marisa_status = $scope.possible_status[1];
+        }
+      }
+    }
+  }
+  
+  $scope.reset_troll = function() {
+    $scope.spark = false;
+    var sfx = document.getElementById("splode");
+    sfx.play();
+    $scope.marisa = {"mp":true,
+                    "cc": true,
+                    "cr": true,
+                    "mr": true,
+                    "mim": true,
+                    "mic": true,
+                    "mn": true,
+                    "mm": true,
+                    "mu": true,
+                    "mc": true,
+                    "ma": true,
+                    "ms": true,
+                    "vs": true,
+                    "vl": true};
+      
+    $scope.reset = false;
+    $scope.pwned = $scope.pwned + 1;
+    $scope.charge = $scope.charge + Math.floor(Math.random() * 11) + 5;
+    
+    if ($scope.charge <= 33) {
+      $scope.marisa_status = $scope.possible_status[2];
+    } else if ($scope.charge <= 66){
+      $scope.marisa_status = $scope.possible_status[3];
+      $scope.progress = $scope.possible_progress[1];
+    } else if ($scope.charge <= 99){
+      $scope.marisa_status = $scope.possible_status[4];
+      $scope.progress = $scope.possible_progress[2];
+    } else{
+      var sfx = document.getElementById("charged");
+      sfx.play();
+      $scope.charge = 100;
+      $scope.marisa_status = $scope.possible_status[5];
+      $scope.progress = $scope.possible_progress[3];
+    }
+  }
+  
+  $scope.spark = false;
+  
+  $scope.toggle = function() {
+    $scope.spark = true;
+    var sfx = document.getElementById("spark");
+    sfx.play();
+    $scope.charge = 0;
+    $scope.marisa_status = $scope.possible_status[0];
+    $scope.progress = $scope.possible_progress[0];
+  }
+  
 	$scope.remote_url = "9touhou.appspot.com";
   $scope.waiting = "Ready";
 
@@ -78,6 +185,7 @@ function FirstController($scope,$resource) {
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
+            $scope.listsongssummary();
             $scope.listlogs();
           }
 			  } else {
@@ -89,7 +197,6 @@ function FirstController($scope,$resource) {
           $scope.points = 0;
 			  }
       });
-      $scope.waiting = "Ready";
 		}
 	}
 	
@@ -123,6 +230,7 @@ function FirstController($scope,$resource) {
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
+            $scope.listsongssummary();
             $scope.listlogs();
           }
 			  } else {
@@ -153,6 +261,7 @@ function FirstController($scope,$resource) {
           if ($scope.isadmin === true) {
             $scope.listsubmissions();
             $scope.listsongs();
+            $scope.listsongssummary();
             $scope.listlogs();
           }
 			  } else {
@@ -204,6 +313,24 @@ function FirstController($scope,$resource) {
     return (new Date(chal.c_date) > new Date());
   }
   
+  $scope.half_time = function(file) {
+    return (new Date(file.f_date) <= new Date('31 July 2013 23:59:59')); 
+  }
+  
+  $scope.no_filter = function(file) {          
+    return file;
+  }
+  
+  $scope.filter = $scope.half_time;
+  
+  $scope.button = "Off";
+  
+  $scope.changeFilter = function() {
+    
+    $scope.filter = $scope.filter == $scope.half_time ? $scope.no_filter : $scope.half_time;
+    $scope.button = $scope.button == "Off" ? "On" : "Off";
+  }  
+  
   /* Countdown */
   
   /* Notifications */
@@ -219,7 +346,23 @@ function FirstController($scope,$resource) {
 			  $scope.waiting = "Ready";
 			});  
 	};
-	 
+  
+  /* Announcements (Admins) */
+  
+  /* Missions (Admins) */
+  
+  $scope.mission = [{"difficulty": "Easy", "title": "Hand Easy", "points": 4},
+                    {"difficulty": "Norrmal", "title": "Hand Normal", "points": 7},
+                    {"difficulty": "Hard", "title": "Hand Hard", "points": 10},
+                    {"difficulty": "Lunatic", "title": "Hand Lunatic", "points": 12}];
+                    
+  $scope.previous = [{"difficulty": "Easy", "title": "Menu Easy", "points": 4},
+                    {"difficulty": "Norrmal", "title": "Menu Normal", "points": 7},
+                    {"difficulty": "Hard", "title": "Menu Hard", "points": 10},
+                    {"difficulty": "Lunatic", "title": "Menu Lunatic", "points": 12}];
+	
+  $scope.selected_mission = "";
+  
   /* Achievement (Admins) */
   
   $scope.achievement = {};
@@ -261,16 +404,19 @@ function FirstController($scope,$resource) {
   
   
 	$scope.deleteachievement = function(model_id){
-	  $scope.DeleteAchievement = $resource('http://:remote_url/achievement/remove/:id', 
-					{"remote_url":$scope.remote_url, "id":model_id},
-					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
-					
-	  $scope.waiting = "Updating";       
-	  $scope.DeleteAchievement.get(function(response) { 
-			  $scope.waiting = "Ready";
-			}); 
-	  $scope.listachievementsusers();
-    $scope.listlogs(); 
+    var confirm_delete = confirm('Are you sure you want to delete this achievement?');
+    if (confirm_delete == true){  
+      $scope.DeleteAchievement = $resource('http://:remote_url/achievement/remove/:id', 
+            {"remote_url":$scope.remote_url, "id":model_id},
+            {'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+            
+      $scope.waiting = "Updating";       
+      $scope.DeleteAchievement.get(function(response) { 
+          $scope.waiting = "Ready";
+        }); 
+      $scope.listachievementsusers();
+      $scope.listlogs();
+    }
 	};
   
 	$scope.listachievements = function(){
@@ -394,16 +540,19 @@ function FirstController($scope,$resource) {
 	};	  
   
 	$scope.deletechallenge = function(model_id){
-	  $scope.DeleteChallenge = $resource('http://:remote_url/challenge/remove/:id', 
-					{"remote_url":$scope.remote_url, "id":model_id},
-					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
-					
-	  $scope.waiting = "Updating";       
-	  $scope.DeleteChallenge.get(function(response) { 
-			  $scope.waiting = "Ready";
-			}); 
-	  $scope.listchallenge();
-    $scope.listlogs(); 
+    var confirm_delete = confirm('Are you sure you want to delete this challenge?');
+    if (confirm_delete == true){  
+      $scope.DeleteChallenge = $resource('http://:remote_url/challenge/remove/:id', 
+            {"remote_url":$scope.remote_url, "id":model_id},
+            {'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+            
+      $scope.waiting = "Updating";       
+      $scope.DeleteChallenge.get(function(response) { 
+          $scope.waiting = "Ready";
+        }); 
+      $scope.listchallenge();
+      $scope.listlogs(); 
+    }
 	};
 	
   /* Theme (Admins) */
@@ -447,30 +596,68 @@ function FirstController($scope,$resource) {
 	$scope.song = {};
 	$scope.song.data = {"s_name":"","s_comp":"","s_details":"","s_uploadby":""};
 	
- 
+  $scope.song_pagination = {"s_offset":0,"s_limit":10, "s_page_count": 0, "s_pages":[]};
+  
+  $scope.song_paginate = function(offset) {
+    $scope.song_pagination.s_offset = offset;
+    $scope.listsongs();
+  };
+  
+  $scope.song_paginate_disable = function(offset) {
+    return (offset === $scope.song_pagination.s_offset);
+  }
+  
 	$scope.listsongs = function(){
-	  $scope.LoadAllSongs = $resource('http://:remote_url/songdata/list', 
+    $scope.song_pagination.s_pages = [];
+	  $scope.LoadAllSongs = $resource('http://:remote_url/songdata/list/:offset/:limit', 
+					{"remote_url":$scope.remote_url,
+          "offset":$scope.song_pagination.s_offset,
+          "limit":$scope.song_pagination.s_limit},
+					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+					
+	  $scope.waiting = "Updating";       
+	  $scope.LoadAllSongs.get(function(response) {
+			  $scope.songs = response;
+        $scope.song_pagination.s_page_count = Math.ceil($scope.songs.count
+                                            / $scope.song_pagination.s_limit);
+        for (var p = 0; p < $scope.song_pagination.s_page_count; p++) {
+          var page_no = p + 1;
+          var page_off = p * $scope.song_pagination.s_limit;
+          $scope.s_page = {"no": page_no,
+                      "offset": page_off};
+          $scope.song_pagination.s_pages.push($scope.s_page);
+        }
+			  $scope.waiting = "Ready";
+			});  
+	};
+  
+  $scope.listsongssummary = function() {
+	  $scope.LoadSongsSummary = $resource('http://:remote_url/songdata/summarize', 
 					{"remote_url":$scope.remote_url},
 					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
 					
 	  $scope.waiting = "Updating";       
-	  $scope.LoadAllSongs.get(function(response) { 
-			  $scope.songs = response;
+	  $scope.LoadSongsSummary.get(function(response) {
+			  $scope.songs_summary = response;
 			  $scope.waiting = "Ready";
 			});  
-	};
+  }
 	
 	$scope.deletesong = function(model_id){
-	  $scope.DeleteSong = $resource('http://:remote_url/songdata/remove/:id', 
-					{"remote_url":$scope.remote_url, "id":model_id},
-					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
-					
-	  $scope.waiting = "Updating";       
-	  $scope.DeleteSong.get(function(response) { 
-			  $scope.waiting = "Ready";
-			});
-	  $scope.listsongs();
-    $scope.listlogs();  
+    var confirm_delete = confirm('Are you sure you want to delete this song?');
+    if (confirm_delete == true){  
+      $scope.DeleteSong = $resource('http://:remote_url/songdata/remove/:id', 
+            {"remote_url":$scope.remote_url, "id":model_id},
+            {'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+            
+      $scope.waiting = "Updating";       
+      $scope.DeleteSong.get(function(response) { 
+          $scope.waiting = "Ready";
+        });
+      $scope.listsongs();
+      $scope.listsongssummary();
+      $scope.listlogs(); 
+    }
 	};
     
   /* File Submissions (Admins) */
@@ -488,17 +675,20 @@ function FirstController($scope,$resource) {
 	};
 	 
 	$scope.deletesubmission = function(model_id){
-	  $scope.DeleteFile = $resource('http://:remote_url/file/remove/:id', 
-					{"remote_url":$scope.remote_url, "id":model_id},
-					{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
-					
-	  $scope.waiting = "Updating";       
-	  $scope.DeleteFile.get(function(response) { 
-			  $scope.waiting = "Ready";
-			}); 
-    $scope.listnotifications();
-	  $scope.listsubmissions();
-    $scope.listlogs();
+    var confirm_delete = confirm('Are you sure you want to delete this submission?');
+    if (confirm_delete == true){
+      $scope.DeleteFile = $resource('http://:remote_url/file/remove/:id', 
+            {"remote_url":$scope.remote_url, "id":model_id},
+            {'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+            
+      $scope.waiting = "Updating";       
+      $scope.DeleteFile.get(function(response) { 
+          $scope.waiting = "Ready";
+        }); 
+      $scope.listnotifications();
+      $scope.listsubmissions();
+      $scope.listlogs();
+    }
 	};
     
   /* Logs (Admins) */
@@ -516,10 +706,7 @@ function FirstController($scope,$resource) {
 			});  
 	}; 
     
-	//$scope.listsubmissions();
 	$scope.retrievesession();
 	$scope.listchallenge();
-	//$scope.listsongs();
   $scope.listusers();
-  //$scope.listlogs();
 }

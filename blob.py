@@ -67,6 +67,36 @@ class SGT(datetime.tzinfo):
   def tzname(self, dt):
     return "SGT"
     
+class ModelCount(db.Model):
+  model_type = db.StringProperty(required=True)
+  count = db.IntegerProperty(required=True, default=0)
+  
+  def to_dict(self):
+       d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       d["id"] = self.key().id()
+       return d
+  
+  @staticmethod
+  def get_counter(model):
+    return ModelCount.all().filter('model_type',model).get()
+  
+  @staticmethod
+  def increment_counter(model):
+    modelCount = ModelCount.all().filter('model_type',model).get()
+    if modelCount:
+      modelCount.count += 1
+      modelCount.put()
+    else:
+      modelCount = ModelCount(model_type=model, count=1)
+      modelCount.put()
+
+  @staticmethod
+  def decrement_counter(model):
+    modelCount = ModelCount.all().filter('model_type',model).get()
+    if modelCount:
+      modelCount.count -= 1
+      modelCount.put()
+    
 class BlobData(db.Model):
   file_name = db.StringProperty(required=True)
   file_purpose = db.StringProperty()
@@ -102,7 +132,8 @@ class BlobData(db.Model):
               'f_blob': object.file_blob_key}
       entities.append(entity)
     result = {'method':'get_entities',
-              'en_type': 'Blob',
+              'en_type': 'BlobData',
+              'count': ModelCount.get_counter('BlobData').count,
               'entities': entities}       
     return result  
     
@@ -119,10 +150,13 @@ class BlobData(db.Model):
         b_owner = entity.file_owner
         entity.delete()
         
+        
         if delete_blob_key:
             delete_key = blobstore.BlobKey(delete_blob_key)
             delete_blob = blobstore.BlobInfo(delete_key)
             delete_blob.delete()
+            
+        ModelCount.decrement_counter('BlobData')
         
         # Logging
         l_msg = "The submission '" + b_name + "' for '" + b_purpose + "' was deleted."
@@ -154,14 +188,13 @@ class SongData(db.Model):
        d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
        d["id"] = self.key().id()
        return d
-
-            
+    
   @staticmethod
-  def get_entities():
+  def get_entities(offset=0, limit=20):
     #update ModelCount when adding
     theQuery = SongData.all()
 
-    objects = theQuery.run()
+    objects = theQuery.fetch(limit=limit, offset=offset)
     utc = UTC()
     sgt = SGT()
     entities = []
@@ -177,7 +210,27 @@ class SongData(db.Model):
               's_blob': object.song_blob_key}
       entities.append(entity)
     result = {'method':'get_entities',
-              'en_type': 'Song',
+              'en_type': 'SongData',
+              'count': ModelCount.get_counter('SongData').count,
+              'offset': offset,
+              'limit': limit,
+              'entities': entities}       
+    return result
+
+  @staticmethod
+  def get_song_list():
+    #update ModelCount when adding
+    theQuery = SongData.all()
+
+    objects = theQuery.run()
+    entities = []
+    for object in objects:
+      entity = {'s_name': object.song_name,
+              'id': object.key().id()}
+      entities.append(entity)
+    result = {'method':'get_song_list',
+              'en_type': 'SongData',
+              'count': ModelCount.get_counter('SongData').count,
               'entities': entities}       
     return result
     
@@ -196,7 +249,8 @@ class SongData(db.Model):
             delete_key = blobstore.BlobKey(delete_blob_key)
             delete_blob = blobstore.BlobInfo(delete_key)
             delete_blob.delete()
-            
+           
+        ModelCount.decrement_counter('SongData')
         # Logging
         l_msg = s_name + " was deleted."
         new_log = Log(log_message=l_msg)
@@ -233,6 +287,8 @@ class User(db.Model):
     
     entity.put()
     
+    ModelCount.increment_counter('User')
+    
     # Logging
     l_msg = entity.user_name + " has registered."
     new_log = Log(log_message=l_msg)
@@ -259,6 +315,7 @@ class User(db.Model):
       entities.append(entity)
     result = {'method':'get_entities',
               'en_type': 'User',
+              'count': ModelCount.get_counter('User').count,
               'entities': entities}      
     return result
     
@@ -270,33 +327,6 @@ class User(db.Model):
               'id': theobject.key().id(),
               'u_admin': str(theobject.user_isadmin),
               'u_points': theobject.user_points}
-    return result
-    
-  @staticmethod
-  def clear():
-    count = 0
-    for object in User.all():
-      count += 1
-      object.delete()
-    
-    result = {'items_deleted': count}
-    return result
-  
-  #You can't name it delete since db.Model already has a delete method
-  @staticmethod
-  def remove(model_id):
-    #update model count when deleting
-    entity = User.get_by_id(int(model_id))
-    
-    if entity:
-        entity.delete()
-    
-        result = {'method':'delete_model_success',
-                  'id': model_id
-                  }
-    else:
-        result = {'method':'delete_model_not_found'}
-    
     return result
     
   #data is a dictionary that must be merged with current json data and stored. 
@@ -358,6 +388,7 @@ class Challenge(db.Model):
     
     entity.put()
     
+    ModelCount.increment_counter('Challenge')
     # Logging
     l_msg = entity.challenge_upload_by + " has posted '" + entity.challenge_name + "'."
     new_log = Log(log_message=l_msg)
@@ -425,6 +456,7 @@ class Challenge(db.Model):
       
     result = {'method':'get_entities',
               'en_type': 'Challenge',
+              'count': ModelCount.get_counter('Challenge').count,
               'entities': entities}       
     return result
     
@@ -506,6 +538,7 @@ class Challenge(db.Model):
           for c_s in c_songs_query:
             c_s.delete()
             
+        ModelCount.decrement_counter('Challenge')
         result = {'method':'delete_model_success',
                   'id': model_id
                   }
@@ -575,7 +608,8 @@ class Achievement_User(db.Model):
           entity.put()
           
           user.put()
-        
+          
+          ModelCount.increment_counter('Achievement_User')
           # Logging
           l_msg = entity.achievement_user + " has been awarded the achievement: '" + achievement['a_name'] + "'."
           new_log = Log(log_message=l_msg)
@@ -605,6 +639,7 @@ class Achievement_User(db.Model):
       entities.append(entity)
     result = {'method':'get_entities',
               'en_type': 'Achievement_User',
+              'count': ModelCount.get_counter('Achievement_User').count,
               'entities': entities}      
     return result 
     
@@ -629,6 +664,7 @@ class Achievement(db.Model):
     
     entity.put()
     
+    ModelCount.increment_counter('Achievement')
     # Logging
     l_msg = entity.achievement_upload_by + " has created the achievement: '" + entity.achievement_name + "'."
     new_log = Log(log_message=l_msg)
@@ -665,6 +701,7 @@ class Achievement(db.Model):
       entities.append(entity)
     result = {'method':'get_entities',
               'en_type': 'Achievement',
+              'count': ModelCount.get_counter('Achievement').count,
               'entities': entities}      
     return result 
     
@@ -677,7 +714,8 @@ class Achievement(db.Model):
     if entity:
         a_name = entity.achievement_name        
         entity.delete()
-            
+        
+        ModelCount.decrement_counter('Achievement')
         result = {'method':'delete_model_success',
                   'id': model_id
                   }
@@ -881,7 +919,7 @@ class SongFormHandler(webapp2.RequestHandler):
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
   def post(self):
     upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
-    f_name = self.request.POST.get('filename') + "***"
+    f_name = self.request.POST.get('filename')
     #f_name = blob_decode(base64.b64decode(f_name))
     f_desc = self.request.POST.get('filedescription')
     #f_desc = blob_decode(base64.b64decode(f_desc))
@@ -900,7 +938,8 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
              file_purpose=f_purpose,
              file_blob_key=str(blob_info.key()))
         b.put()
-                    
+        
+        ModelCount.increment_counter('BlobData')            
         # Logging
         l_msg = f_owner + " has submitted '" + f_name + "' for '" + f_purpose + "'."
         new_log = Log(log_message=l_msg)
@@ -935,6 +974,8 @@ class SongUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
              song_blob_key=str(blob_info.key()))
         s.put()
 
+        ModelCount.increment_counter('SongData')
+        
         # Logging
         l_msg = s_uploadby + " has added the song '" + s_name + "'."
         new_log = Log(log_message=l_msg)
@@ -1112,9 +1153,16 @@ class ActionHandler(webapp2.RequestHandler):
     result = Challenge.remove(model_id)
     
     return self.respond(result)
-
-  def list_songs(self):
-    result = SongData.get_entities()
+    
+  def list_songs(self, offset, limit):
+    try:
+      result = SongData.get_entities(int(offset), int(limit))
+    except ValueError:
+      result = SongData.get_entities(0, 20)
+    return self.respond(result)
+    
+  def list_songs_summary(self):
+    result = SongData.get_song_list()
     
     return self.respond(result)
     
@@ -1218,7 +1266,8 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/challenge/list', handler=ActionHandler, handler_method='list_challenge'),
     webapp2.Route('/challenge/remove/<model_id>', handler=ActionHandler, handler_method='delete_challenge'),
     webapp2.Route('/challenge/score', handler=ActionHandler, handler_method='score_challenge'),
-    webapp2.Route('/songdata/list', handler=ActionHandler, handler_method='list_songs'),
+    webapp2.Route('/songdata/list/<offset>/<limit>', handler=ActionHandler, handler_method='list_songs'),
+    webapp2.Route('/songdata/summarize', handler=ActionHandler, handler_method='list_songs_summary'),
     webapp2.Route('/songdata/remove/<model_id>', handler=ActionHandler, handler_method='delete_songs'),
     webapp2.Route('/log/list', handler=ActionHandler, handler_method='list_logs'),
     webapp2.Route('/notification/list/<u_name>', handler=ActionHandler, handler_method='list_notifications'),

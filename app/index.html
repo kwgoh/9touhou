@@ -49,6 +49,32 @@
         sn_upload = window.open("/achievementform", "_blank", "location=no,menubar=no,resizable=no,width=480,height=300"); 
         sn_upload.focus();
       }      
+      
+      var hasPlayed = false;
+      
+      function troll(id) {
+        var chance = Math.random();
+        if (chance <= 0.25) {
+          scope = angular.element(document.getElementById(id)).scope();
+          scope.$apply(function(){
+            scope.do_troll(id);
+          })
+        }
+      }
+      
+      function untroll() {
+        scope = angular.element(document.getElementById('main')).scope();
+        scope.$apply(function(){
+          scope.reset_troll();
+        })
+      }
+            
+      function spark() {
+        scope = angular.element(document.getElementById('main')).scope();
+        scope.$apply(function(){
+          scope.toggle();
+        })
+      }
     </script>
   </head>
   
@@ -62,10 +88,10 @@
           
           <p class="navbar-text pull-right">
             Hello, <a href="#" class="navbar-link" ng-cloak>{{name}}</a>
-            <button class="btn btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'" ng-cloak>Login</button>
-            <button class="btn btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'" ng-cloak>Register</button>
+            <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'" ng-cloak>Login</button>
+            <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'" ng-cloak>Register</button>
             <span ng-show="isadmin==true" ng-cloak> (Admin)</span>
-            <button class="btn btn-small" ng-hide="name=='BAKA'" ng-click="logout()" ng-cloak>Logout</button>
+            <button class="btn btn-inverse btn-small" ng-hide="name=='BAKA'" ng-click="logout()" ng-cloak>Logout</button>
           </p>
         </div>
       </div>
@@ -127,30 +153,132 @@
           <span>Loading........</span>
         </div>
       </div>      
+      <div class="spark" ng-show="spark" ng-cloak ng-animate="{show: 'masterspark-show'}" style="top: {{beam_height}}px"></div>
       <div class="row-fluid" id="wrap">
-        
         <!-- Navigation Sidebar (Access separate panes). -->
         <div class="span3">
-          <!--video controls="" autoplay="" name="media">
-            <source src="http://abab.dip.jp/piano/tohokouma_6boss_p.mp3" type="audio/mpeg">
-          </video-->
+          <audio id="yoink">
+            <source src="./sfx/sounds/yoink-Public_D-362_hifi.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/yoink-Public_D-362_hifi.wav" type="audio/wav"></source>
+          </audio>
+          <audio id="splode">
+            <source src="./sfx/sounds/Explosio-Diode111-8778_hifi.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/Explosio-Diode111-8778_hifi.wav" type="audio/wav"></source>
+          </audio>
+          <audio id="charged">
+            <source src="./sfx/sounds/078.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/078.wav" type="audio/wav"></source>
+          </audio>
+          <audio id="spark">
+            <source src="./sfx/sounds/spark.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/spark.wav" type="audio/wav"></source>
+          </audio>
           <div class="well sidebar-nav sidebar-nav-fixed" id="sidenav">
             <ul class="nav nav-list">
-              <li class="nav-header">Navigation</li>
-              <li class="active"><a id="mp" href="#MainPage" data-toggle="tab">Main Page</a></li>
-              <li><a id="cc" href="#CurrentChallenges" data-toggle="tab">Current Challenges</a></li>
-              <li><a id="cr" href="#CurrentRanking" data-toggle="tab">Current Ranking</a></li>
-              <li><a id="mp" href="#MyProfile" data-toggle="tab" ng-cloak>My Profile</a></li>
-              <li><a id="mm" href="#Missions" data-toggle="tab" >Missions</a></li>
-      
+              <li class="nav-header">
+                <button class="btn btn-inverse btn-small" title="Give Me Back My Sidebar!" onClick="untroll()" ng-cloak ng-show="reset">
+                  <span>Dammit, </span>Marisa...
+                </button>
+                <button class="btn btn-success btn-small" title="DO IT" ng-click="toggle()" ng-cloak ng-show="charge == 100">
+                  MASTER SPARK
+                </button>
+                <span>Navigation</span>
+              </li>
+              <li class="nav-header" ng-cloak>
+                  <span class="label">Marisa Pwned: {{pwned}}</span>
+                  <br/>
+                  <div  class="progress progress-striped active" ng-class="progress">
+                    <div class="bar" style="width: {{charge}}%"></div>
+                  </div>
+                  {{bork}}
+              </li>
+              <li class="active">
+                <a id="mp" href="#MainPage" data-toggle="tab" ng-click="do_troll('mp', $event)" ng-show="marisa['mp']">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Main Page</span>
+                </a>
+              </li>
+              <li>
+                <a id="cc" href="#CurrentChallenges" data-toggle="tab" ng-click="do_troll('cc', $event)"ng-show="marisa['cc']">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Current Challenges</span>
+                </a>
+              </li>
+              <li>
+                <a id="cr" href="#CurrentRanking" data-toggle="tab" ng-click="do_troll('cr', $event)"ng-show="marisa['cr']">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Current Ranking</span>
+                </a>
+              </li>
+              <li>
+                <a id="mr" href="#MyProfile" ng-hide="(name=='BAKA' || marisa['mr']==false)" data-toggle="tab" ng-cloak ng-click="do_troll('mr', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>My Profile</span>
+                </a>
+              </li>
+              <li class="nav-header">Missions</li>
+              <li>
+              <li>
+                <a id="mim" href="#MissionMarisa" data-toggle="tab" ng-click="do_troll('mim', $event)"ng-show="marisa['mim']">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Marisa's Mission</span>
+                </a>
+              </li>
+              <li>
+                <a id="mic" href="#MissionCirno" data-toggle="tab" ng-click="do_troll('mic', $event)"ng-show="marisa['mic']">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Cirno's Mission (Under Construction)</span>
+                </a>
+              </li>
               <li class="nav-header" ng-show="isadmin==true" ng-cloak>Admin Console</li>
-              <li><a id="an" href="#ManageAnnouncements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Announcements/News (Under Construction)</a></li>
-              <li><a id="mu" href="#ManageUsers" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Users</a></li>
-              <li><a id="mc" href="#ManageChallenges" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Challenges</a></li>
-              <li><a id="ms" href="#ManageAchievements" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Achievements</a></li>
-              <li><a id="ms" href="#ManageSongs" data-toggle="tab" ng-show="isadmin==true" ng-cloak>Manage Songs</a></li>
-              <li><a id="ab" href="#ViewSubmissions" data-toggle="tab" ng-show="isadmin==true" ng-cloak>View Submissions</a></li>
-              <li><a id="lg" href="#ViewLogs" data-toggle="tab" ng-show="isadmin==true" ng-cloak>View Logs</a></li>
+              <li>
+                <a id="mn" href="#ManageAnnouncements" ng-show="(isadmin==true && marisa['mn'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mn', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Manage Announcements/News (Under Construction)</span>
+                </a>
+              </li>
+              <li>
+                <a id="mm" href="#ManageMissions" ng-show="(isadmin==true && marisa['mm'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mm', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Manage Missions (Under Construction)</span>
+                </a>
+              </li>
+              <li>
+                <a id="mu" href="#ManageUsers" ng-show="(isadmin==true && marisa['mu'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mu', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Manage Users</span>
+                </a>
+              </li>
+              <li>
+                <a id="mc" href="#ManageChallenges" ng-show="(isadmin==true && marisa['mc'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mc', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Manage Challenges</span>
+                </a>
+              </li>
+              <li>
+                <a id="ma" href="#ManageAchievements" ng-show="(isadmin==true && marisa['ma'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('ma', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Manage Achievements</span>
+                </a>
+              </li>
+              <li>
+                <a id="ms" href="#ManageSongs" ng-show="(isadmin==true && marisa['ms'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('ms', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>Manage Songs</span>
+                </a>
+              </li>
+              <li>
+                <a id="vs" href="#ViewSubmissions" ng-show="(isadmin==true && marisa['vs'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('vs', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>View Submissions</span>
+                </a>
+              </li>
+              <li>
+                <a id="vl" href="#ViewLogs" ng-show="(isadmin==true && marisa['vl'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('vl', $event)">
+                  <div class="ico" ng-class="marisa_status"></div> 
+                  <span>View Logs</span>
+                </a>
+              </li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -159,11 +287,10 @@
         <div class="span9">
           
           <!-- Panes -->
-          <div class="tab-content" id="main">
+          <div class="tab-content">
             
             <!-- Main Page Pane -->
             <div class="tab-pane active" id="MainPage">
-              <div id="baka-page">
                 <div class="container-fluid">
                   <div id="myCarousel" class="carousel slide">
                     <div class="carousel-inner">
@@ -187,65 +314,62 @@
                       </div>
                       <!-- Announcements will go here -->
                       <div class="item">
-                        <div class="container-fluid">
+                        <div class="container-fluid" ng-cloak>
                           <div class="row-fluid">
                             <div class="span5">
                               <div class="well">
-                                <img src="./img/Mystia_Shop_Queue2.jpg" alt="">
+                                <img id="food" src="./img/Game_On.jpg" alt="">
                               </div>
                             </div>
                             <div class="span7">
                               <div class="carousel-caption">
-                                <h1>Calling all Foodies!</h1>
-                                <p class="lead">Massive Queues At The Bamboo Forest!</p>
+                                <h1>Four People, One Table...</h1>
+                                <p class="lead">Let's Play <em>Mahjong</em>!</p>
                                 <br/>
                                 <p>
-                                <span style="font-style:italic">"...this store, a fine example of authentic (and non-avian) Gensokyo cuisine, has seen a massive increase in customers over the past month. A definite must-try to kick off this summer season!</span>
+                                  <span style="font-style:italic">
+                                  </span>
                                 </p>
-                                <p>
-                                <span style="font-style:italic">
-                                 - Aya Shameimaru, Bunbunmaru Newspaper"</span>
-                                 </p>
                               </div>
                             </div>  
                           </div>
                         </div>
-                      </div>                    
+                      </div>               
                       <!--div ui-if="!!challenges.entities.length"-->
-                          <div class="item" ng-repeat="chal in challenges.entities | filter:activeChallenge" ng-cloak>
-                            <div class="container-fluid">
-                              <div class="row-fluid">
-                                <div class="span5">
-                                  <div class="well">                               
-                                    <img ui-if="!!chal.c_songs.length" src="/file/serve/{{chal.c_songs[0].s_blob}}" alt="./img/jubeat-saucer.jpg">
-                                    <img ui-if="!chal.c_songs.length" src="./img/jubeat-saucer.jpg">
-                                  </div>
+                      <div class="item" ng-repeat="chal in challenges.entities | filter:activeChallenge" ng-cloak>
+                        <div class="container-fluid">
+                          <div class="row-fluid">
+                            <div class="span5">
+                              <div class="well">                               
+                                <img ui-if="!!chal.c_songs.length" src="/file/serve/{{chal.c_songs[0].s_blob}}" alt="./img/jubeat-saucer.jpg">
+                                <img ui-if="!chal.c_songs.length" src="./img/jubeat-saucer.jpg">
+                              </div>
+                            </div>
+                            <div class="span7">
+                              <div class="carousel-caption">
+                                <h1>{{chal.c_name}}</h1>
+                                <p>{{chal.c_desc}}</p>
+                                <div ui-if="!!chal.c_songs.length">
+                                    <ul>
+                                      <li ng-repeat="cs in chal.c_songs">
+                                      <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
+                                      </li>
+                                    </ul>
                                 </div>
-                                <div class="span7">
-                                  <div class="carousel-caption">
-                                    <h1>{{chal.c_name}}</h1>
-                                    <p>{{chal.c_desc}}</p>
-                                    <div ui-if="!!chal.c_songs.length">
-                                        <ul>
-                                          <li ng-repeat="cs in chal.c_songs">
-                                          <span>{{cs.s_name}} ({{cs.s_difficulty}})</span>
-                                          </li>
-                                        </ul>
-                                    </div>
-                                    <div ng-hide="expireChallenge(chal)">
-                                      <p id="c{{chal.id}}" class="lead">
-                                        Expires: {{chal.c_date}}
-                                      </p>
-                                      <button class="btn btn-inverse"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
-                                    </div>
-                                    <div ng-show="expireChallenge(chal)">
-                                      Expired
-                                    </div>
-                                  </div>
+                                <div ng-hide="expireChallenge(chal)">
+                                  <p id="c{{chal.id}}" class="lead">
+                                    Expires: {{chal.c_date}}
+                                  </p>
+                                  <button class="btn btn-inverse"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                                </div>
+                                <div ng-show="expireChallenge(chal)">
+                                  Expired
                                 </div>
                               </div>
                             </div>
                           </div>
+                        </div>
+                      </div>
                       <!--/div-->    
                     </div>
                     <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
@@ -256,7 +380,7 @@
                   <div class="span4">
                     <h2>About 9Touhou</h2>
                     <p>Coming soon........</p>
-                    <p><a class="btn btn-small" href="#">View more &raquo;</a></p>
+                    <p><a class="btn btn-inverse btn-small" href="#">View more &raquo;</a></p>
                   </div><!--/span-->
                   <div class="span4">
                     <h2>Top Scorers</h2>
@@ -275,7 +399,6 @@
                     </ul>
                   </div><!--/span-->
                 </div><!--/row-->
-              </div>
             </div>
             
             <!-- Current Challenges Pane -->
@@ -321,7 +444,7 @@
                             {{chal.c_date}}
                           </td>
                           <td ng-hide="expireChallenge(chal)">
-                            <button class="btn btn-small"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                            <button class="btn btn-inverse btn-small"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
                           </td>
                           <td ng-show="expireChallenge(chal)" ng-cloak>
                             Expired
@@ -347,8 +470,8 @@
                 <div class="row-fluid">
                   <div class="span6">
                     <h3>Achievements Unlocked:</h3>
-                    <button class="btn btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button>
-                    <button class="btn btn-small"  onclick="achievement_upload()"  ng-hide="name=='BAKA'" ng-cloak>Submit Files For Achievements</button>
+                    <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button>
+                    <button class="btn btn-inverse btn-small"  onclick="achievement_upload()"  ng-hide="name=='BAKA'" ng-cloak>Submit Files For Achievements</button>
                     <table class="table table-striped">
                       <thead>
                         <th>
@@ -380,7 +503,7 @@
                   </div>
                   <div class="span6">
                     <h3>Notifications</h3>
-                    <button class="btn btn-small" ng-click="listnotifications()" ng-cloak>Refresh</button> 
+                    <button class="btn btn-inverse btn-small" ng-click="listnotifications()" ng-cloak>Refresh</button> 
                     <table class="table table-striped">
                       <thead>
                         <th>
@@ -433,37 +556,44 @@
               </div>	 	        	
             </div>
             
-            <!-- Missions Pane-->
-            <div class="tab-pane" id="Missions">
+            <!-- Missions Pane (Marisa) -->
+            <div class="tab-pane" id="MissionMarisa">
               <div>
                 <figure class="fluidratio">
                   <div class="mission">
                     <div class="mission-row">
-                      <h1><span>Mystia's Mission: <span style="font-style:italic">Diner Dash</span>!</span></h1>
-                      <p><span style="font-weight:bold">Mystia's little stand in the middle of the bamboo forest was recently advertised on Bunbunmaru newspaper as THE place to go to for authentic Gensokyo cuisine. As a result, she has had a large influx of customers. Being one little night-sparrow, the number of orders has reached the point where she cannot cope any further.</span></p>
-                      <p><span style="font-weight:bold">Mystia has enlisted you to assist her in creating culinary concoctions which will delight every customer. All for the sake of the continual promotion of her stand so that one day she can purchase enough wards to block Yuyuko's incessant raids to take her wings (though Yuyuko is still acceptable as a customer).</span></p>
-                      <p><span style="font-weight:bold">Delighting customers means that the menu that is cooked up must appeal to every aspect of their tastes. Force-feeding the same hamburger steak to anyone 20 times will NOT generate good reviews. If you feed the customers till they are satisfied, they will write good reviews (hopefully) which will generate more interest and thus more customers so you can be ensla- I mean, <span style="font-style:italic">enlisted</span> to help again (what a privilege indeed).</span></p>
-                      <p><span style="font-weight:bold">All in all, fail Mystia, and be doomed to night-blindness and deafness to all but the song.</span></p>
+                      <h1><span>Marisa's Mission: <a href="http://youtu.be/TSItKJXZdBQ" target="_blank">Tanking The Incredible Hand!</a></span></h1>
+                      <p><span>Many things have trickled in from the Outside World, and the game of <em>mahjong</em> is no exception. Said game has enjoyed explosive popularity since its introduction to Gensokyo, with humans and <em>youkai</em> alike spending the warm summer nights on this exciting new pasttime.</span></p>
+                      <p><span>Unfortunately, there is one person that is ruining everyone's fun - Marisa Kirisame, ordinary magician.</span></p>
+                      <p><span>Marisa enjoys the game, the excitement, and the gambled treasures. <em>And she will stop at nothing to ensure victory.</em></span></p>
+                      <p><span>Can anyone break Marisa's <span style="text-decoration:line-through">winning</span> cheating streak? Or will she steal <em>all</em> of the precious things?</span></p>
                     </div>
                     
                     <div class="mission-row">
                       <h3><span>Instructions</span></h3>
-                      <p><span style="font-weight:bold">For this mission, you will need to use Bistro Saucer to create a dish. The dish is ultimately up to you, although customers will have food they like and food they hate (and some customers are *much* pickier than others).</span></p>
-                      <p><span style="font-weight:bold">Each dish created generates points based on the size of the dish:</span></p>
-                      <div style="background-color: rgba(161, 105, 110, 0.8)">
-                        <table class="table table-striped">
+                      <p><span>For this mission, you will have to create a <em>mahjong</em> hand to challenge one of the hands shown below. The score of your hand must <em>exceed that of Marisa's</em> in order for the mission to be considered cleared.</span></p>
+                      <p><span>To create your hand, you have to "purchase" tiles by clearing certain songs - you wiil need to submit screenshots of the cleared songs as evidence to ensure that your tiles are legit.</span></p>
+                      
+                      <p><span>A list of the eligible songs (and the tiles they correspond to) can be found <a href="mahjong.html" target="_blank">here</a>.</span></p>
+                      
+                      <p><span>The number of tiles you can "purchase" depends on song difficulty and score ranking:</span></p>
+                      
+                      <div id="mission-table">
+                        <table class="table">
                           <thead>
-                            <th>
-                              Dish Type
-                            </th>
-                            <th>
-                              Points Awarded
-                            </th>
+                            <tr>
+                              <th>
+                                Score Ranking/Modifier
+                              </th>
+                              <th>
+                                No. of Tiles
+                              </th>
+                            </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td>
-                                Small Dish
+                                S-Rank
                               </td>
                               <td>
                                 1
@@ -471,7 +601,7 @@
                             </tr>
                             <tr>
                               <td>
-                                Medium Dish
+                                SS-Rank
                               </td>
                               <td>
                                 2
@@ -479,7 +609,7 @@
                             </tr>
                             <tr>
                               <td>
-                                Large Dish
+                                SSS-Rank
                               </td>
                               <td>
                                 3
@@ -487,45 +617,78 @@
                             </tr>
                             <tr>
                               <td>
-                                Special Dish
+                                Full Combo
                               </td>
                               <td>
-                                5
+                                +1
                               </td>
                             </tr>
                             <tr>
                               <td>
-                                Bonus Points for Favorite Dish
+                                Playing at ADV
                               </td>
                               <td>
-                                2
+                                -1
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                Playing at BSC
+                              </td>
+                              <td>
+                                No tiles awarded
                               </td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
-                      <p><span style="font-weight:bold">No points are awarded if players serve a dish which the customers hate, no matter the size. If any player (somehow) creates Cha-han or mystery stew, the dish is considered a Special Dish, no matter the size.</span></p>
                       <p>
-                      <p><span style="font-weight:bold;color:red">This mission will end on Wednesday, 31st July 2013 at 2300 hrs (UTC +0800).</span></p>
+                        <ul>
+                          <li>
+                            Scoring is based off Japanese <em>mahjong</em> rules (found <a href="http://en.wikipedia.org/wiki/Japanese_Mahjong_scoring_rules" target="_blank">here</a> and <a href="http://en.wikipedia.org/wiki/Japanese_Mahjong_yaku" target="_blank">here</a>).
+                          </li>
+                          <li>
+                            Songs may be exchanged for any tile(s) in the set they belong to (e.g. an SS-rank on FLOWER EXT can be exchanged for any 2 bamboo tiles).
+                          </li>
+                          <li>
+                            "Leftover" tiles may not be carried over to another hand (nice try).
+                          </li>
+                          <li>
+                            Your hand may only have up to 4 of a particular tile (again, nice try).
+                          </li>
+                          <li>
+                            For scoring purposes, assume that your hand is concealed (no discards used), won by a self-drawn tile, without declaring ready (i.e. <em>menzen tsumo</em>, no <em>riichi</em>). Assume that your hand is not waiting on any particular tile.
+                          </li>
+                        </ul>
+                      </p>
+                      <p><span style="color:red">This mission has been extended to Sunday, 15th September 2013 at 2300 hrs (UTC +0800).</span></p>
                     </div>
                     
                     <div class="mission-row">
                       <div class="row-fluid">
                         <div>
-                          <h3><span>Menu Easy - <span style="font-style:italic">Palanquin Ship Seafood Grill</span></span></h3>
-                          <p>Murasa has decided to take a trip around Gensokyo on land since she has visited almost all of the watery landmarks. She has decided to take a break at Mystia's Stand. As she is feeling nostalgic (which isn't lost) for her favourite food, please make some seafood for her.</p>
-                          <div style="background-color: rgba(249, 249, 249, 0.7)">
-                            <span style="font-weight:bold; color:green">
-                            Favourite Food = Sushi, Paella
-                            </span><br/>
-                            <span style="font-weight:bold; color:red">
-                            Disliked Food = Chicken Karaage, Spare Ribs
-                            </span><br/>
-                            <span style="font-weight:bold">
-                            Points Required: 3
-                            </span>
-                            <p><button class="btn btn-small"  onclick="mission_upload('Menu Easy')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
-                          </div>
+                          <h3><span>{{mission[0].title}}</span></h3>
+                          <p>
+                            <div class="well well-small">
+                              <img src="./img/mahjong-tiles/MJt1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw4.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs5.png" alt="">
+                              <span style="padding-left: 1em;">&nbsp;</span>
+                              <img src="./img/mahjong-tiles/MJs5.png" alt="">
+                            </div>
+                          </p>
+                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[0].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
@@ -533,20 +696,26 @@
                     <div class="mission-row">
                       <div class="row-fluid">
                         <div>
-                          <h3><span>Menu Normal - <span style="font-style:italic">Outside World Reality Cafe</span></span></h3>
-                          <p>Yukari is bored of standard Gensokyo cuisine, and she is too lazy to "gap" herself to Japan. Thus she has requested for Mystia to cook up some modern food.</p>
-                          <div style="background-color: rgba(249, 249, 249, 0.7)">
-                            <span style="font-weight:bold; color:green">
-                            Favourite Food = Pizza, Omurice
-                            </span><br/>
-                            <span style="font-weight:bold; color:red">
-                            Disliked Food = Roast Pig, Mushroom Soup
-                            </span><br/>
-                            <span style="font-weight:bold">
-                            Points Required: 5
-                            </span>
-                            <p><button class="btn btn-small"  onclick="mission_upload('Menu Normal')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
-                          </div>
+                          <h3><span>{{mission[1].title}}</span></h3>
+                          <p>
+                            <div class="well well-small">
+                              <img src="./img/mahjong-tiles/MJw1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf4.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf4.png" alt="">
+                            </div>
+                          </p>
+                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[1].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
@@ -554,41 +723,55 @@
                     <div class="mission-row">
                       <div class="row-fluid">
                         <div>
-                          <h3><span>Menu Hard - <span style="font-style:italic">Earth Spirit Palace Delivery</span></span></h3>
-                          <p>Okuu was asked to buy groceries for Orin. However, since she is a bird-brain, she seems to have forgotten what she needed to buy. So she decided to get Mystia to whip up a special delivery...</p>
-                          <div style="background-color: rgba(249, 249, 249, 0.7)">
-                            <span style="font-weight:bold; color:green">
-                            Favourite Food = Any kind of Pasta
-                            </span><br/>
-                            <span style="font-weight:bold; color:red">
-                            Disliked Food = Any dish containing only vegetables
-                            </span><br/>
-                            <span style="font-weight:bold">
-                            Points Required: 8
-                            </span>
-                            <p><button class="btn btn-small"  onclick="mission_upload('Menu Hard')" ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
-                          </div>
+                          <h3><span>{{mission[2].title}}</span></h3>
+                          <p>
+                            <div class="well well-small">
+                              <img src="./img/mahjong-tiles/MJs2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs4.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs4.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs8.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs8.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs8.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs6.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs6.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd3.png" alt="">
+                            </div>
+                          </p>
+                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[2].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
                     
-                    <div class="mission-row">                      
+                    <div class="mission-row">
                       <div class="row-fluid">
                         <div>
-                          <h3><span>Menu Lunatic - <span style="font-style:italic">All-You-Can-Eat Netherworld Buffet</span></span></h3>
-                          <p>OH NO. <a href="http://youtu.be/ObpEO4objqw">Yuyuko is very hungry</a>! And to make matters worse, there is no more food in Youmu's kitchen. Thus, Youmu has blackmailed Mystia to cook a feast for Yuyuko (unless she prefers to have her wings eaten).</p>
-                          <div style="background-color: rgba(249, 249, 249, 0.7)">
-                            <span style="font-weight:bold; color:green">
-                            Favourite Food = Meat-on-bone
-                            </span><br/>
-                            <span style="font-weight:bold; color:red">
-                            Disliked Food = Sushi, Mushroom Soup, Pizza
-                            </span><br/>
-                            <span style="font-weight:bold">
-                            Points Required: 12
-                            </span>
-                            <p><button class="btn btn-small"  onclick="mission_upload('Menu Lunatic')" ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
-                          </div>
+                          <h3><span>{{mission[3].title}}</span></h3>
+                          <p>
+                            <div class="well well-small">
+                              <img src="./img/mahjong-tiles/MJw1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJw9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJt9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJs9.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf3.png" alt="">
+                              <img src="./img/mahjong-tiles/MJf4.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd1.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd2.png" alt="">
+                              <img src="./img/mahjong-tiles/MJd3.png" alt="">
+                              <span style="padding-left: 1em;">&nbsp;</span>
+                              <img src="./img/mahjong-tiles/MJt1.png" alt="">
+                            </div>
+                          </p>
+                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[3].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
@@ -600,18 +783,125 @@
               </div>
             </div>
 
+            <!-- Missions Pane (Cirno) -->
+            <div class="tab-pane" id="MissionCirno">
+              <div>
+                <figure class="fluidratio">
+                  <div class="mission">
+                    <div class="mission-row">
+                      <h1><span>Cirno's Mission: <a href="http://youtu.be/5wFDWP5JwSM" target="_blank">The PERFECT Math Class!</a></span></h1>
+                      <p>Under Construction</p>
+                    </div>
+                    
+                    <div class="mission-row">
+                      <h3><span>Instructions</span></h3>
+                      <p>Under Construction</p>
+                      <p><span style="color:red">This mission will end on to Monday, 30th September 2013 at 2300 hrs (UTC +0800).</span></p>
+                    </div>
+                    
+                    <div class="mission-row">
+                      <div class="row-fluid">
+                      </div>
+                    </div>
+                    
+
+                    <br/>
+                    <br/>
+                  </div>
+                </figure>
+              </div>
+            </div>
+
+            
             <!-- Manage Announcements/News Pane-->
-            <div class="tab-pane" id="ManageAnnouncements">
+            <div class="tab-pane" id="ManageAnnouncements" ui-if="isadmin">
               <div class="well">
                 <h1>Manage Announcements/News</h1>
                 <p class="lead">Hmmm, Announcements/News........</p>
               </div>
             </div>
             
+            <!-- Manage Missions Pane-->
+            <div class="tab-pane" id="ManageMissions" ui-if="isadmin">
+              <div class="well">
+                <h1>Current Mission (Marisa)</h1>
+                <br/>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <h3>{{mission[0].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[0]" ng-cloak>Score "{{mission[0].title}}"</button>
+                  </div>
+                  <div class="span6">
+                    <h3>{{mission[1].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[1]" ng-cloak>Score "{{mission[1].title}}"</button>
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <h3>{{mission[2].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[2]" ng-cloak>Score "{{mission[2].title}}"</button>
+                  </div>
+                  <div class="span6">
+                    <h3>{{mission[3].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[3]" ng-cloak>Score "{{mission[3].title}}"</button>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div class="well">
+                <h1>Past Mission (Mystia)</h1>
+                <br/>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <h3>{{previous[0].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[0]" ng-cloak>Score "{{previous[0].title}}"</button>
+                  </div>
+                  <div class="span6">
+                    <h3>{{previous[1].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[1]" ng-cloak>Score "{{previous[1].title}}"</button>
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <h3>{{previous[2].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[2]" ng-cloak>Score "{{previous[2].title}}"</button>
+                  </div>
+                  <div class="span6">
+                    <h3>{{previous[3].title}}</h3>
+                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[3]" ng-cloak>Score "{{previous[3].title}}"</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="modal hide fade" id="ScoreMission" style="display:none">
+                <div class="modal-header">
+                  <input type="submit" class="close" value="x" data-dismiss="modal"/>
+                  <h3 id="Login">Score Mission</h3>
+                </div>
+                <div class="modal-body">
+                  <!-- <input type="hidden" ng-model="c_scoring.data.c_uploadby"> -->
+                  <div class="control-group">
+                    <label class="control-label" for="ChalName">Mission Name:</label>
+                    <div class="controls">
+                      {{selected_mission.title}}
+                    </div>
+                    <label class="control-label" for="ChalName">Points Awarded:</label>
+                    <div class="controls">
+                      {{selected_mission.points}}
+                    </div>
+                  </div>			
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+
+              
+            </div>
+            
             <!-- Manage Users Pane-->
-            <div class="tab-pane" id="ManageUsers">
+            <div class="tab-pane" id="ManageUsers" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
+                <button class="btn btn-inverse btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -649,12 +939,12 @@
             </div>
             
             <!-- Manage Challenge Pane -->
-            <div class="tab-pane" id="ManageChallenges">
+            <div class="tab-pane" id="ManageChallenges" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-small" data-toggle="modal" href="#CreateChallenge" ng-cloak>Add New Challenge</button>
-                <button class="btn btn-small" data-toggle="modal" href="#ScoreChallenge"  ng-cloak>Score Challenge</button>                 
-                <button class="btn btn-small" data-toggle="modal" href="#ThemeRewards"  ng-cloak>Theme Rewards</button>                 
-                <button class="btn btn-small" ng-click="listchallenge()" ng-cloak>Refresh</button>                 
+                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateChallenge" ng-cloak>Add New Challenge</button>
+                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreChallenge"  ng-cloak>Score Challenge</button>                 
+                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ThemeRewards"  ng-cloak>Theme Rewards</button>                 
+                <button class="btn btn-inverse btn-small" ng-click="listchallenge()" ng-cloak>Refresh</button>                 
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -711,7 +1001,7 @@
                       </td>
                       <td>
                         <form ng-submit="deletechallenge({{chal.id}})">
-                          <input class="btn btn-small" type="submit" name="Delete" value="Delete">
+                          <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
                         </form>
                       </td>
                     </tr>
@@ -746,13 +1036,13 @@
                               </li>
                             </ul>
                         </div>
-                        <select ng-model="c_song.s_name" ng-options="songselect.s_name as songselect.s_name for songselect in songs.entities"></select>
+                        <select ng-model="c_song.s_name" ng-options="songselect.s_name as songselect.s_name for songselect in songs_summary.entities"></select>
                         <select ng-model="c_song.s_difficulty">
                           <option value="BSC" selected>BSC (Basic)</option>
                           <option value="ADV">ADV (Advanced)</option>
                           <option value="EXT">EXT (Extreme)</option>
                         </select>
-                        <button class="btn btn-small" ng-click="addsongtochallenge()">Add</button> 
+                        <button class="btn btn-inverse btn-small" ng-click="addsongtochallenge()">Add</button> 
                       </div>
                       <label class="control-label" for="ChalExpires">Expires</label>
                       <div class="controls">
@@ -797,7 +1087,7 @@
                           <option value="3rd">3rd Place (2 pts)</option>
                           <option value="Participation">Participation (1 pts)</option>
                         </select>
-                        <button class="btn btn-small" ng-click="addrankingtoscoring()">Add</button>
+                        <button class="btn btn-inverse btn-small" ng-click="addrankingtoscoring()">Add</button>
                       </div>
                       <div class="controls">
                         <input type="submit" ng-click="submitscoring()" value="Submit" data-dismiss="modal"/>
@@ -837,7 +1127,7 @@
                           <option value="2nd">2nd Place (2 pts)</option>
                           <option value="3rd">3rd Place (1 pts)</option>
                         </select>
-                        <button class="btn btn-small" ng-click="addrewardtotheme()">Add</button>
+                        <button class="btn btn-inverse btn-small" ng-click="addrewardtotheme()">Add</button>
                       </div>
                       <div class="controls">
                         <input type="submit" ng-click="submitreward()" value="Submit" data-dismiss="modal"/>
@@ -854,11 +1144,11 @@
             </div>
 
             <!-- Manage Achievements Pane-->
-            <div class="tab-pane" id="ManageAchievements">
+            <div class="tab-pane" id="ManageAchievements" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
-                <button class="btn btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>
-                <button class="btn btn-small" data-toggle="modal" href="#AwardAchievement" ng-cloak>Award Achievement</button>                  
+                <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
+                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>
+                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#AwardAchievement" ng-cloak>Award Achievement</button>                  
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -889,7 +1179,7 @@
                       </td>
                       <td>
                           <form ng-submit="deleteachievement({{achievement.id}})">
-                            <input class="btn btn-small" type="submit" name="Delete" value="Delete">
+                            <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
                           </form>
                       </td>
                     </tr>
@@ -959,69 +1249,108 @@
             </div>
             
             <!-- Manage Songs Pane -->
-            <div class="tab-pane" id="ManageSongs">
+            <div class="tab-pane" id="ManageSongs" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-small" onclick="song_upload()" ng-cloak>Add New Song</button> 
-                <button class="btn btn-small" ng-click="listsongs()" ng-cloak>Refresh</button> 
-                <table class="table table-striped">
-                  <thead>
-                    <th>
-                      Image
-                    </th>
-                    <th>
-                      Name
-                    </th>
-                    <th>
-                      Composer
-                    </th>
-                    <th>
-                      Details
-                    </th>
-                    <th>
-                      Upload Date
-                    </th>
-                    <th>
-                      Upload By
-                    </th>
-                    <th>
-                      Action
-                    </th>
-                  </thead>
-                  <tbody ui-if="!!songs.entities.length">
-                    <tr ng-repeat="song in songs.entities">
-                      <td>
-                        <img src="/file/serve/{{song.s_blob}}" style="width: 100px">
-                      </td>
-                      <td>
-                        {{song.s_name}}
-                      </td>
-                      <td>
-                        {{song.s_comp}}
-                      </td>
-                      <td>
-                        {{song.s_details}}
-                      </td>
-                      <td>
-                        {{song.s_date}}
-                      </td>
-                      <td>
-                        {{song.s_uploadby}}
-                      </td>
-                      <td>
-                          <form ng-submit="deletesong({{song.id}})">
-                            <input class="btn btn-small" type="submit" name="Delete" value="Delete">
-                          </form>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="row-fluid">
+                  <button class="btn btn-inverse btn-small" onclick="song_upload()" ng-cloak>Add New Song</button> 
+                  <button class="btn btn-inverse btn-small" ng-click="listsongs()" ng-cloak>Refresh</button>
+                  <span class="label" ui-if="(song_pagination.s_offset + song_pagination.s_limit <= songs.count)" ng-cloak>
+                    (Song(s) {{song_pagination.s_offset + 1}} to {{song_pagination.s_offset + song_pagination.s_limit}} of {{songs.count}})
+                  </span>
+                  <span class="label"  ui-if="(song_pagination.s_offset + song_pagination.s_limit > songs.count)" ng-cloak>
+                    (Song(s) {{song_pagination.s_offset + 1}} to {{songs.count}} of {{songs.count}})
+                  </span>
+                </div>
+                <div class="row-fluid">
+                  <div class="pagination">
+                    <ul>
+                      <li ng-repeat="page in song_pagination.s_pages" ng-cloak>
+                        <a href="#" class="btn btn-inverse btn-small" ng-click="song_paginate(page.offset)" ui-if="!song_paginate_disable(page.offset)">
+                          {{page.no}}
+                        </a>
+                        <a href="#" class="btn btn-inverse btn-small" disabled ui-if="song_paginate_disable(page.offset)">
+                          {{page.no}}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <table class="table table-striped">
+                    <thead>
+                      <th>
+                        Image
+                      </th>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Composer
+                      </th>
+                      <th>
+                        Details
+                      </th>
+                      <th>
+                        Upload Date
+                      </th>
+                      <th>
+                        Upload By
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </thead>
+                    <tbody ui-if="!!songs.entities.length">
+                      <tr ng-repeat="song in songs.entities">
+                        <td>
+                          <img src="/file/serve/{{song.s_blob}}" style="width: 100px">
+                        </td>
+                        <td>
+                          {{song.s_name}}
+                        </td>
+                        <td>
+                          {{song.s_comp}}
+                        </td>
+                        <td>
+                          {{song.s_details}}
+                        </td>
+                        <td>
+                          {{song.s_date}}
+                        </td>
+                        <td>
+                          {{song.s_uploadby}}
+                        </td>
+                        <td>
+                            <form ng-submit="deletesong({{song.id}})">
+                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                            </form>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row-fluid">
+                  <div class="pagination">
+                    <ul>
+                      <li ng-repeat="page in song_pagination.s_pages" ng-cloak>
+                        <a href="#" class="btn btn-inverse btn-small" ng-click="song_paginate(page.offset)" ui-if="!song_paginate_disable(page.offset)">
+                          {{page.no}}
+                        </a>
+                        <a href="#" class="btn btn-inverse btn-small" disabled ui-if="song_paginate_disable(page.offset)">
+                          {{page.no}}
+                        </a>
+                      </li>
+                    </ul>
+                  </div> 
+                </div>
               </div>	          	
             </div>
             
             <!-- View Submissions Pane -->
-            <div class="tab-pane" id="ViewSubmissions">
+            <div class="tab-pane" id="ViewSubmissions" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-small" ng-click="listsubmissions()" ng-cloak>Refresh</button> 
+                <button class="btn btn-inverse btn-small" ng-click="listsubmissions()" ng-cloak>Refresh</button>
+                <button class="btn btn-inverse btn-small" ng-click="changeFilter()">Turn {{button}} Half-Time Filter</button>
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -1047,7 +1376,7 @@
                     </th>
                   </thead>
                   <tbody ui-if="!!blobfiles.entities.length" >
-                    <tr ng-repeat="file in blobfiles.entities | orderBy:predicate_submissions:reverse">
+                    <tr ng-repeat="file in blobfiles.entities | orderBy:predicate_submissions:reverse | filter:filter">
                       <td>
                         <a href="/file/serve/{{file.f_blob}}" target="_blank">View</a>
                       </td>
@@ -1068,7 +1397,7 @@
                       </td>
                       <td>
                           <form ng-submit="deletesubmission({{file.id}})">
-                            <input type="submit" class="btn btn-small" name="Delete" value="Delete">
+                            <input type="submit" class="btn btn-inverse btn-small" name="Delete" value="Delete">
                           </form>
                       </td>
                     </tr>
@@ -1079,9 +1408,9 @@
 
                           
             <!-- View Logs Pane -->
-            <div class="tab-pane" id="ViewLogs">
+            <div class="tab-pane" id="ViewLogs" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-small" ng-click="listlogs()" ng-cloak>Refresh</button> 
+                <button class="btn btn-inverse btn-small" ng-click="listlogs()" ng-cloak>Refresh</button> 
                 <table class="table table-striped">
                   <thead>
                     <th>

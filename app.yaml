@@ -1,10 +1,15 @@
 application: 9touhou
-version: 6ball
+version: 12ball
 runtime: python27
 api_version: 1
 threadsafe: false
 
 handlers:
+
+- url: /robots.txt
+  static_files: robots.txt
+  upload: robots.txt
+  
 - url: /
   static_files: index.html
   upload: index.html
