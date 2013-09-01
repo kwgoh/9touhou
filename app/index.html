@@ -52,29 +52,6 @@
       
       var hasPlayed = false;
       
-      function troll(id) {
-        var chance = Math.random();
-        if (chance <= 0.25) {
-          scope = angular.element(document.getElementById(id)).scope();
-          scope.$apply(function(){
-            scope.do_troll(id);
-          })
-        }
-      }
-      
-      function untroll() {
-        scope = angular.element(document.getElementById('main')).scope();
-        scope.$apply(function(){
-          scope.reset_troll();
-        })
-      }
-            
-      function spark() {
-        scope = angular.element(document.getElementById('main')).scope();
-        scope.$apply(function(){
-          scope.toggle();
-        })
-      }
     </script>
   </head>
   
@@ -88,10 +65,10 @@
           
           <p class="navbar-text pull-right">
             Hello, <a href="#" class="navbar-link" ng-cloak>{{name}}</a>
-            <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'" ng-cloak>Login</button>
-            <button class="btn btn-inverse btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'" ng-cloak>Register</button>
+            <button class="btn btn-primary btn-small" data-toggle="modal" href="#Login" ng-show="name=='BAKA'" ng-cloak>Login</button>
+            <button class="btn btn-primary btn-small" data-toggle="modal" href="#Register" ng-show="name=='BAKA'" ng-cloak>Register</button>
             <span ng-show="isadmin==true" ng-cloak> (Admin)</span>
-            <button class="btn btn-inverse btn-small" ng-hide="name=='BAKA'" ng-click="logout()" ng-cloak>Logout</button>
+            <button class="btn btn-primary btn-small" ng-hide="name=='BAKA'" ng-click="logout()" ng-cloak>Logout</button>
           </p>
         </div>
       </div>
@@ -153,131 +130,120 @@
           <span>Loading........</span>
         </div>
       </div>      
-      <div class="spark" ng-show="spark" ng-cloak ng-animate="{show: 'masterspark-show'}" style="top: {{beam_height}}px"></div>
       <div class="row-fluid" id="wrap">
         <!-- Navigation Sidebar (Access separate panes). -->
         <div class="span3">
-          <audio id="yoink">
-            <source src="./sfx/sounds/yoink-Public_D-362_hifi.mp3" type="audio/mpeg"></source>
-            <source src="./sfx/sounds/yoink-Public_D-362_hifi.wav" type="audio/wav"></source>
-          </audio>
-          <audio id="splode">
-            <source src="./sfx/sounds/Explosio-Diode111-8778_hifi.mp3" type="audio/mpeg"></source>
-            <source src="./sfx/sounds/Explosio-Diode111-8778_hifi.wav" type="audio/wav"></source>
-          </audio>
-          <audio id="charged">
-            <source src="./sfx/sounds/078.mp3" type="audio/mpeg"></source>
-            <source src="./sfx/sounds/078.wav" type="audio/wav"></source>
-          </audio>
-          <audio id="spark">
-            <source src="./sfx/sounds/spark.mp3" type="audio/mpeg"></source>
-            <source src="./sfx/sounds/spark.wav" type="audio/wav"></source>
-          </audio>
           <div class="well sidebar-nav sidebar-nav-fixed" id="sidenav">
             <ul class="nav nav-list">
               <li class="nav-header">
-                <button class="btn btn-inverse btn-small" title="Give Me Back My Sidebar!" onClick="untroll()" ng-cloak ng-show="reset">
-                  <span>Dammit, </span>Marisa...
-                </button>
-                <button class="btn btn-success btn-small" title="DO IT" ng-click="toggle()" ng-cloak ng-show="charge == 100">
-                  MASTER SPARK
-                </button>
                 <span>Navigation</span>
               </li>
-              <li class="nav-header" ng-cloak>
-                  <span class="label">Marisa Pwned: {{pwned}}</span>
-                  <br/>
-                  <div  class="progress progress-striped active" ng-class="progress">
-                    <div class="bar" style="width: {{charge}}%"></div>
-                  </div>
-                  {{bork}}
-              </li>
               <li class="active">
-                <a id="mp" href="#MainPage" data-toggle="tab" ng-click="do_troll('mp', $event)" ng-show="marisa['mp']">
+                <a id="mp" href="#MainPage" data-toggle="tab">
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Main Page</span>
                 </a>
               </li>
               <li>
-                <a id="cc" href="#CurrentChallenges" data-toggle="tab" ng-click="do_troll('cc', $event)"ng-show="marisa['cc']">
+                <a id="cc" href="#CurrentChallenges" data-toggle="tab">
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Current Challenges</span>
                 </a>
               </li>
               <li>
-                <a id="cr" href="#CurrentRanking" data-toggle="tab" ng-click="do_troll('cr', $event)"ng-show="marisa['cr']">
+                <a id="cr" href="#CurrentRanking" data-toggle="tab">
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Current Ranking</span>
                 </a>
               </li>
               <li>
-                <a id="mr" href="#MyProfile" ng-hide="(name=='BAKA' || marisa['mr']==false)" data-toggle="tab" ng-cloak ng-click="do_troll('mr', $event)">
+                <a id="mr" href="#MyProfile" ng-hide="name=='BAKA'" data-toggle="tab">
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>My Profile</span>
                 </a>
               </li>
-              <li class="nav-header">Missions</li>
+              <li class="nav-header">
+                <span>Missions</span>
+              </li>
               <li>
-              <li>
-                <a id="mim" href="#MissionMarisa" data-toggle="tab" ng-click="do_troll('mim', $event)"ng-show="marisa['mim']">
+                <a id="mic" href="#MissionCirno" data-toggle="tab">
                   <div class="ico" ng-class="marisa_status"></div> 
-                  <span>Marisa's Mission</span>
+                  <div class="ico-right" ng-class="cirno_status"></div> 
+                  <span>Cirno's Mission</span>
                 </a>
               </li>
               <li>
-                <a id="mic" href="#MissionCirno" data-toggle="tab" ng-click="do_troll('mic', $event)"ng-show="marisa['mic']">
+                <a id="mim" href="#MissionMarisa" data-toggle="tab">
                   <div class="ico" ng-class="marisa_status"></div> 
-                  <span>Cirno's Mission (Under Construction)</span>
+                  <div class="ico-right" ng-class="cirno_status"></div> 
+                  <span>Marisa's Mission (Extended!)</span>
                 </a>
               </li>
-              <li class="nav-header" ng-show="isadmin==true" ng-cloak>Admin Console</li>
+              <li class="nav-header" ng-show="isadmin==true" ng-cloak>
+                <span>Admin Console</span>
+              </li>
               <li>
-                <a id="mn" href="#ManageAnnouncements" ng-show="(isadmin==true && marisa['mn'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mn', $event)">
+                <a id="mn" href="#ManageAnnouncements" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Manage Announcements/News (Under Construction)</span>
                 </a>
               </li>
               <li>
-                <a id="mm" href="#ManageMissions" ng-show="(isadmin==true && marisa['mm'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mm', $event)">
+                <a id="mm" href="#ManageMissions" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Manage Missions (Under Construction)</span>
                 </a>
               </li>
               <li>
-                <a id="mu" href="#ManageUsers" ng-show="(isadmin==true && marisa['mu'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mu', $event)">
+                <a id="mu" href="#ManageUsers" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Manage Users</span>
                 </a>
               </li>
               <li>
-                <a id="mc" href="#ManageChallenges" ng-show="(isadmin==true && marisa['mc'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('mc', $event)">
+                <a id="mc" href="#ManageChallenges" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Manage Challenges</span>
                 </a>
               </li>
               <li>
-                <a id="ma" href="#ManageAchievements" ng-show="(isadmin==true && marisa['ma'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('ma', $event)">
+                <a id="ma" href="#ManageAchievements" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Manage Achievements</span>
                 </a>
               </li>
               <li>
-                <a id="ms" href="#ManageSongs" ng-show="(isadmin==true && marisa['ms'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('ms', $event)">
+                <a id="ms" href="#ManageSongs" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>Manage Songs</span>
                 </a>
               </li>
               <li>
-                <a id="vs" href="#ViewSubmissions" ng-show="(isadmin==true && marisa['vs'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('vs', $event)">
+                <a id="vs" href="#ViewSubmissions" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>View Submissions</span>
                 </a>
               </li>
               <li>
-                <a id="vl" href="#ViewLogs" ng-show="(isadmin==true && marisa['vl'] == true)" data-toggle="tab" ng-cloak ng-click="do_troll('vl', $event)">
+                <a id="vl" href="#ViewLogs" ng-show="isadmin==true" data-toggle="tab" ng-cloak>
                   <div class="ico" ng-class="marisa_status"></div> 
+                  <div class="ico-right" ng-class="cirno_status"></div> 
                   <span>View Logs</span>
                 </a>
+              </li>
+              <li class="nav-header">
+                <span></span>
               </li>
             </ul>
           </div><!--/.well -->
@@ -318,23 +284,74 @@
                           <div class="row-fluid">
                             <div class="span5">
                               <div class="well">
-                                <img id="food" src="./img/Game_On.jpg" alt="">
+                                <img id="food" src="./img/Saruno_no_Chinsuu_Kyoushitsu.jpg" alt="">
                               </div>
                             </div>
                             <div class="span7">
                               <div class="carousel-caption">
-                                <h1>Four People, One Table...</h1>
-                                <p class="lead">Let's Play <em>Mahjong</em>!</p>
+                                <a title="Everyone! Cirno's Math Class is starting!">
+                                <h1>みんな～～～！</h1>
+                                <p class="lead">さるののちんきょうしつはじまるよ～～～！</p>
+                                </a>
                                 <br/>
                                 <p>
-                                  <span style="font-style:italic">
-                                  </span>
+                                  Lessons are being held at the Misty Lake - free course materials will be provided during the first lesson.
+                                </p>
+                                <br/>
+                                <p>
+                                  Frog goddesses will be frozen on sight.
                                 </p>
                               </div>
                             </div>  
                           </div>
                         </div>
-                      </div>               
+                      </div>     
+                      <div class="item">
+                        <div class="container-fluid" ng-cloak>
+                          <div class="row-fluid">
+                            <div class="span5">
+                              <div class="well">
+                                <img id="food" src="./img/Dammit_Marisa_GTFO.jpg" alt="">
+                              </div>
+                            </div>
+                            <div class="span7">
+                              <div class="carousel-caption">
+                                <h1>Dammit, Marisa...</h1>
+                                <p class="lead">Just Go Home Already!</p>
+                                <br/>
+                                <p>
+                                    Unfortunately, the Ordinary Magician wasn't happy with her ill-gotten <span style="font-style:italic">mahjong</span> gains, and has decided to stick around for two more weeks.
+                                </p>
+                                <br/>
+                                <p>
+                                  Will the Strongest be able to drive her off?
+                                </p>
+                              </div>
+                            </div>  
+                          </div>
+                        </div>
+                      </div>              
+                      <!-- Scores will go here -->
+                      <div class="item">
+                        <div class="container-fluid">
+                          <div class="row-fluid">
+                            <div class="span5">
+                              <div class="well">
+                                <img src="./img/jubeat-saucer.jpg" alt="">
+                              </div>
+                            </div>
+                            <div class="span7">
+                              <div class="carousel-caption">
+                                <h1>Top Scorers</h1>
+                                <br/>
+                                <p class="lead" ng-repeat="user in users.entities | orderBy:'-u_points' | filter:userRanking | limitTo: 3" ng-cloak>
+                                   {{$index + 1}}: {{user.u_name}} ({{user.u_points}})
+                                </p>
+                              </div>
+                            </div>  
+                          </div>
+                        </div>
+                      </div>
                       <!--div ui-if="!!challenges.entities.length"-->
                       <div class="item" ng-repeat="chal in challenges.entities | filter:activeChallenge" ng-cloak>
                         <div class="container-fluid">
@@ -360,7 +377,7 @@
                                   <p id="c{{chal.id}}" class="lead">
                                     Expires: {{chal.c_date}}
                                   </p>
-                                  <button class="btn btn-inverse"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                                  <button class="btn btn-primary"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
                                 </div>
                                 <div ng-show="expireChallenge(chal)">
                                   Expired
@@ -376,29 +393,6 @@
                     <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
                   </div>
                 </div>
-                <div class="row-fluid marketing">
-                  <div class="span4">
-                    <h2>About 9Touhou</h2>
-                    <p>Coming soon........</p>
-                    <p><a class="btn btn-inverse btn-small" href="#">View more &raquo;</a></p>
-                  </div><!--/span-->
-                  <div class="span4">
-                    <h2>Top Scorers</h2>
-                    <ol>
-                      <li ng-repeat="user in users.entities | orderBy:'-u_points' | filter:userRanking | limitTo: 3" ng-cloak>
-                        {{user.u_name}} ({{user.u_points}})
-                      </li>
-                    </ol>
-                  </div><!--/span-->
-                  <div class="span4">
-                    <h2>Latest News</h2>
-                    <ul>
-                      <li>
-                        Coming soon........
-                      </li>
-                    </ul>
-                  </div><!--/span-->
-                </div><!--/row-->
             </div>
             
             <!-- Current Challenges Pane -->
@@ -444,7 +438,7 @@
                             {{chal.c_date}}
                           </td>
                           <td ng-hide="expireChallenge(chal)">
-                            <button class="btn btn-inverse btn-small"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
+                            <button class="btn btn-primary btn-small"  onclick="submission_upload({{chal.id}})"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button>
                           </td>
                           <td ng-show="expireChallenge(chal)" ng-cloak>
                             Expired
@@ -470,8 +464,8 @@
                 <div class="row-fluid">
                   <div class="span6">
                     <h3>Achievements Unlocked:</h3>
-                    <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button>
-                    <button class="btn btn-inverse btn-small"  onclick="achievement_upload()"  ng-hide="name=='BAKA'" ng-cloak>Submit Files For Achievements</button>
+                    <button class="btn btn-primary btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button>
+                    <button class="btn btn-primary btn-small"  onclick="achievement_upload()"  ng-hide="name=='BAKA'" ng-cloak>Submit Files For Achievements</button>
                     <table class="table table-striped">
                       <thead>
                         <th>
@@ -503,7 +497,7 @@
                   </div>
                   <div class="span6">
                     <h3>Notifications</h3>
-                    <button class="btn btn-inverse btn-small" ng-click="listnotifications()" ng-cloak>Refresh</button> 
+                    <button class="btn btn-primary btn-small" ng-click="listnotifications()" ng-cloak>Refresh</button> 
                     <table class="table table-striped">
                       <thead>
                         <th>
@@ -554,6 +548,288 @@
                   </tbody>
                 </table>
               </div>	 	        	
+            </div>
+
+            <!-- Missions Pane (Cirno) -->
+            <div class="tab-pane" id="MissionCirno">
+              <div>
+                <figure class="fluidratio">
+                  <div class="mission">
+                    <div class="mission-row">
+                      <h1><span><a href="#top"></a>Cirno's Mission: <a href="http://youtu.be/5wFDWP5JwSM" target="_blank">The PERFECT Math Class!</a></span></h1>
+                      <p>Cirno, the Strongest and Smartest<a href="#ref1"><sup>1</sup></a>, has grown tired of having others belittle her knowledge and skill<a href="#ref2"><sup>2</sup></a>. As such, she has decided to set up a classroom by the Misty Lake, where she can impart her "vast" wisdom to her students.<a href="#ref3"><sup>3</sup></a></p>
+                      <p>Attend well, and you will be educated!<a href="#ref4"><sup>4</sup></a></p>
+                    </div>
+                    
+                    <div class="mission-row">
+                      <div class="row-fluid">
+                        <div class="span6">
+                          <h3><span>Instructions</span></h3>
+                        </div>
+                        <div class="span6">
+                          <button class="btn btn-primary btn-small" ng-click="toggleNine()" style="float:right" title="Hard to read? Click Me!">Toggle "⑨"</button>
+                        </div>
+                      </div>
+                      <p>For this mission, you have been "enrolled" in <a href="http://youtu.be/5wFDWP5JwSM" target="_blank">Cirno's Perfect Math Class</a>, a month-long intensive course in - you guessed it - mathematics!</p>
+                      
+                      <p>To clear this course<a href="#ref5"><sup>5</sup></a>, participants will have to complete a series of modules prepared by Cirno-sensei. The number of modules completed will determine your "grades" as follows:</p>
+                      
+                      <div id="mission-table">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>
+                                No. of Modules Cleared
+                              </th>
+                              <th>
+                                "Grade"<a href="#ref6"><sup>6</sup></a>
+                              </th>
+                              <th>
+                                Mission Equivalent
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>
+                                1
+                              </td>
+                              <td>
+                                Satisfactory
+                              </td>
+                              <td>
+                                Easy
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                4
+                              </td>
+                              <td>
+                                Merit
+                              </td>
+                              <td>
+                                Normal
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                7
+                              </td>
+                              <td>
+                                <em>Cum Laude</em>
+                              </td>
+                              <td>
+                                Hard
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{nine_ball}}
+                              </td>
+                              <td>
+                                Valedictorian
+                              </td>
+                              <td>
+                                Lunatic
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <p>
+                        Of course, Cirno-sensei allows for "double-counting"<a href="#ref7"><sup>7</sup></a> of modules - if you manage to attain a certain "grade", you automatically gain ALL accolades and rewards for lower "grades". For example, clearing 7 modules means that you would be considered to have cleared this mission on Easy, Normal AND Hard difficulty.
+                      </p>
+                      <p>
+                        Lastly, Cirno-sensei will like to remind all candidates that she strongly disapproves of "academic dishonesty"<a href="#ref8"><sup>8</sup></a>. Anybody caught cheating will be awarded an automatic "Fail" grade for the course and subject to further disciplinary measures<a href="#ref9ball"><sup>{{nine_ball}}</sup></a>.
+                      </p>
+                      <p><span style="color:red">This course will end on Monday, 30th September 2013 at 2300 hrs (UTC +0800).</span> Better start mugging now!</p>
+                      <a href="#top"><sup>Back to Top</sup></a>
+                    </div>
+                    
+                    <div class="mission-row">
+                      <div class="row-fluid">
+                        <div class="span6">
+                          <h3><span>Modules</span></h3>
+                        </div>
+                        <div class="span6">
+                          <button class="btn btn-primary btn-small" ng-click="toggleNine()" style="float:right" title="Hard to read? Click Me!">Toggle "⑨"</button>
+                        </div>
+                      </div>
+                      <p>
+                        All available modules require the submission of a valid screenshot, to prove to Cirno-sensei that you have completed said modules to her satisfaction.
+                      </p>
+                      <p>
+                        All modules share the following two requirements (unless otherwise stated):
+                      </p>
+                      <div id="mission-table">
+                        <p>
+                           - Screenshot must be of a Level {{nine_ball}} song  played on a jubeat Saucer machine (no Copious machines allowed, sorry!).
+                        </p>
+                        <p>
+                           - Candidates must achieve a passing grade on the song attempted (i.e. you must "Clear" the song) for their submission to be deemed valid.
+                        </p>
+                      </div>
+                      <p>
+                        Here are the list of currently available modules - more modules will be added over time:
+                      </p>
+                      <div id="mission-table">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>
+                                Module Name
+                              </th>
+                              <th>
+                                Requirements
+                              </th>
+                              <th ng-hide="name=='BAKA'" ng-cloak>
+                                Action
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>
+                                {{modules[0].code}}{{nine_ball}} - {{modules[0].title}}
+                              </td>
+                              <td>
+                                Last digit of score of submitted song is {{nine_ball}}.
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[0].fullcode}} - {{modules[0].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{modules[1].code}}{{nine_ball}} - {{modules[1].title}}
+                              </td>
+                              <td>
+                                Score of submitted song is divisible by {{nine_ball}}.
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[1].fullcode}} - {{modules[1].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>                                
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{modules[2].code}}{{nine_ball}} - {{modules[2].title}}
+                              </td>
+                              <td>
+                                 Combo meter of submitted song is a multiple of {{nine_ball}} (combo meter must be at least 3 digits).
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[2].fullcode}} - {{modules[2].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>                                
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{modules[3].code}}{{nine_ball}} - {{modules[3].title}}
+                              </td>
+                              <td>
+                                Score of submitted song does NOT contain any {{nine_ball}}s.
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[3].fullcode}} - {{modules[3].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>                                
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{modules[4].code}}{{nine_ball}} - {{modules[4].title}}
+                              </td>
+                              <td>
+                                Last (ones) digit of combo meter of selected song is {{nine_ball}} (combo meter must be at least 2 digits).
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[4].fullcode}} - {{modules[4].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>                                
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{modules[5].code}}{{nine_ball}} - {{modules[5].title}}
+                              </td>
+                              <td>
+                                 Middle (tens) digit of combo meter of selected song is {{nine_ball}} (combo meter must be at least 3 digits).
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[5].fullcode}} - {{modules[5].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>                                
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{modules[6].code}}{{nine_ball}} - {{modules[6].title}}
+                              </td>
+                              <td>
+                                Song chart of selected song must contain EXACTLY {{nine_ball}} yellow bars.
+                              </td>
+                              <td ng-hide="name=='BAKA'" ng-cloak>
+                                <button class="btn btn-primary btn-small"  onclick="mission_upload('{{modules[6].fullcode}} - {{modules[6].title}}')"  ng-hide="name=='BAKA'" ng-cloak>
+                                  Submit Files
+                                </button>                                
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <a href="#top"><sup>Back to Top</sup></a>
+                    </div>
+                    
+
+                    <div class="mission-row">
+                      <div class="row-fluid">
+                        <div class="span6">
+                          <p>References (ALWAYS cite your work!):</p>
+                        </div>
+                        <div class="span6">
+                          <button class="btn btn-primary btn-small" ng-click="toggleNine()" style="float:right" title="Hard to read? Click Me!">Toggle "⑨"</button>
+                        </div>
+                      </div>
+                      <p>
+                        <a name="ref1"></a> <sup>1</sup><sub>: Amongst the fairies.</sub>
+                      </p>
+                      <p>
+                        <a name="ref2"></a> <sup>2</sup><sub>: Such as it is.</sub>
+                      </p>
+                      <p>
+                        <a name="ref3"></a> <sup>3</sup><sub>: Mostly frogs. Freezing is a common punishment for late submissions.</sub>
+                      </p>
+                      <p>
+                        <a name="ref4"></a> <sup>4</sup><sub>: In the way of the Baka.</sub>
+                      </p>
+                      <p>
+                        <a name="ref5"></a> <sup>5</sup><sub>: Absenteeism is not tolerated, and will be punished by ICICLE FALL.</sub>
+                      </p>
+                      <p>
+                        <a name="ref6"></a> <sup>6</sup><sub>: The Baka isn't actually sure what these words mean, but she thinks they sound cool.</sub>
+                      </p>
+                      <p>
+                        <a name="ref7"></a> <sup>7</sup><sub>: Same for this phrase.</sub>
+                      </p>
+                      <p>
+                        <a name="ref8"></a> <sup>8</sup><sub>: Ditto.</sub>
+                      </p>
+                      <p>
+                        <a name="ref9ball"></a> <sup>{{nine_ball}}</sup><sub>: This means a penalty to your contest score of <a href="http://youtu.be/uc1kFLJxvW0" target="_blank">OVER {{nine_ball}}000!</a> And you will be turned into a popsicle.</sub>
+                      </p>
+                      <a href="#top"><sup>Back to Top</sup></a>
+                    </div>
+                    <br/>
+                    <br/>
+                  </div>
+                </figure>
+              </div>
             </div>
             
             <!-- Missions Pane (Marisa) -->
@@ -688,7 +964,7 @@
                               <img src="./img/mahjong-tiles/MJs5.png" alt="">
                             </div>
                           </p>
-                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[0].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          <p><button class="btn btn-primary btn-small"  onclick="mission_upload('{{mission[0].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
@@ -715,7 +991,7 @@
                               <img src="./img/mahjong-tiles/MJf4.png" alt="">
                             </div>
                           </p>
-                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[1].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          <p><button class="btn btn-primary btn-small"  onclick="mission_upload('{{mission[1].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
@@ -743,7 +1019,7 @@
                               <img src="./img/mahjong-tiles/MJd3.png" alt="">
                             </div>
                           </p>
-                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[2].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          <p><button class="btn btn-primary btn-small"  onclick="mission_upload('{{mission[2].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
@@ -771,40 +1047,11 @@
                               <img src="./img/mahjong-tiles/MJt1.png" alt="">
                             </div>
                           </p>
-                          <p><button class="btn btn-inverse btn-small"  onclick="mission_upload('{{mission[3].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
+                          <p><button class="btn btn-primary btn-small"  onclick="mission_upload('{{mission[3].title}}')"  ng-hide="name=='BAKA'" ng-cloak>Submit Files</button></p>
                         </div>
                       </div>
                     </div>
                     
-                    <br/>
-                    <br/>
-                  </div>
-                </figure>
-              </div>
-            </div>
-
-            <!-- Missions Pane (Cirno) -->
-            <div class="tab-pane" id="MissionCirno">
-              <div>
-                <figure class="fluidratio">
-                  <div class="mission">
-                    <div class="mission-row">
-                      <h1><span>Cirno's Mission: <a href="http://youtu.be/5wFDWP5JwSM" target="_blank">The PERFECT Math Class!</a></span></h1>
-                      <p>Under Construction</p>
-                    </div>
-                    
-                    <div class="mission-row">
-                      <h3><span>Instructions</span></h3>
-                      <p>Under Construction</p>
-                      <p><span style="color:red">This mission will end on to Monday, 30th September 2013 at 2300 hrs (UTC +0800).</span></p>
-                    </div>
-                    
-                    <div class="mission-row">
-                      <div class="row-fluid">
-                      </div>
-                    </div>
-                    
-
                     <br/>
                     <br/>
                   </div>
@@ -824,51 +1071,76 @@
             <!-- Manage Missions Pane-->
             <div class="tab-pane" id="ManageMissions" ui-if="isadmin">
               <div class="well">
-                <h1>Current Mission (Marisa)</h1>
+                <h1>September's Mission (Cirno)</h1>
                 <br/>
                 <div class="row-fluid">
                   <div class="span6">
-                    <h3>{{mission[0].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[0]" ng-cloak>Score "{{mission[0].title}}"</button>
+                    <h3>{{newmission[0].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=newmission[0]" ng-cloak>Score "{{newmission[0].title}}"</button>
                   </div>
                   <div class="span6">
-                    <h3>{{mission[1].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[1]" ng-cloak>Score "{{mission[1].title}}"</button>
+                    <h3>{{newmission[1].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=newmission[1]" ng-cloak>Score "{{newmission[1].title}}"</button>
                   </div>
                 </div>
                 <div class="row-fluid">
                   <div class="span6">
-                    <h3>{{mission[2].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[2]" ng-cloak>Score "{{mission[2].title}}"</button>
+                    <h3>{{newmission[2].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=newmission[2]" ng-cloak>Score "{{newmission[2].title}}"</button>
                   </div>
                   <div class="span6">
-                    <h3>{{mission[3].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[3]" ng-cloak>Score "{{mission[3].title}}"</button>
+                    <h3>{{newmission[3].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=newmission[3]" ng-cloak>Score "{{newmission[3].title}}"</button>
                   </div>
                 </div>
               </div>
               <br/>
               <div class="well">
-                <h1>Past Mission (Mystia)</h1>
+                <h1>August's Mission (Marisa)</h1>
+                <br/>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <h3>{{mission[0].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[0]" ng-cloak>Score "{{mission[0].title}}"</button>
+                  </div>
+                  <div class="span6">
+                    <h3>{{mission[1].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[1]" ng-cloak>Score "{{mission[1].title}}"</button>
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <h3>{{mission[2].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[2]" ng-cloak>Score "{{mission[2].title}}"</button>
+                  </div>
+                  <div class="span6">
+                    <h3>{{mission[3].title}}</h3>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=mission[3]" ng-cloak>Score "{{mission[3].title}}"</button>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div class="well">
+                <h1>July's Mission (Mystia)</h1>
                 <br/>
                 <div class="row-fluid">
                   <div class="span6">
                     <h3>{{previous[0].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[0]" ng-cloak>Score "{{previous[0].title}}"</button>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[0]" ng-cloak>Score "{{previous[0].title}}"</button>
                   </div>
                   <div class="span6">
                     <h3>{{previous[1].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[1]" ng-cloak>Score "{{previous[1].title}}"</button>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[1]" ng-cloak>Score "{{previous[1].title}}"</button>
                   </div>
                 </div>
                 <div class="row-fluid">
                   <div class="span6">
                     <h3>{{previous[2].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[2]" ng-cloak>Score "{{previous[2].title}}"</button>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[2]" ng-cloak>Score "{{previous[2].title}}"</button>
                   </div>
                   <div class="span6">
                     <h3>{{previous[3].title}}</h3>
-                    <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[3]" ng-cloak>Score "{{previous[3].title}}"</button>
+                    <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreMission" ng-click="selected_mission=previous[3]" ng-cloak>Score "{{previous[3].title}}"</button>
                   </div>
                 </div>
               </div>
@@ -901,7 +1173,7 @@
             <!-- Manage Users Pane-->
             <div class="tab-pane" id="ManageUsers" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-inverse btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
+                <button class="btn btn-primary btn-small" ng-click="listusers()" ng-cloak>Refresh</button> 
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -941,10 +1213,10 @@
             <!-- Manage Challenge Pane -->
             <div class="tab-pane" id="ManageChallenges" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateChallenge" ng-cloak>Add New Challenge</button>
-                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ScoreChallenge"  ng-cloak>Score Challenge</button>                 
-                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#ThemeRewards"  ng-cloak>Theme Rewards</button>                 
-                <button class="btn btn-inverse btn-small" ng-click="listchallenge()" ng-cloak>Refresh</button>                 
+                <button class="btn btn-primary btn-small" data-toggle="modal" href="#CreateChallenge" ng-cloak>Add New Challenge</button>
+                <button class="btn btn-primary btn-small" data-toggle="modal" href="#ScoreChallenge"  ng-cloak>Score Challenge</button>                 
+                <button class="btn btn-primary btn-small" data-toggle="modal" href="#ThemeRewards"  ng-cloak>Theme Rewards</button>                 
+                <button class="btn btn-primary btn-small" ng-click="listchallenge()" ng-cloak>Refresh</button>                 
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -1001,7 +1273,7 @@
                       </td>
                       <td>
                         <form ng-submit="deletechallenge({{chal.id}})">
-                          <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                          <input class="btn btn-primary btn-small" type="submit" name="Delete" value="Delete">
                         </form>
                       </td>
                     </tr>
@@ -1042,7 +1314,7 @@
                           <option value="ADV">ADV (Advanced)</option>
                           <option value="EXT">EXT (Extreme)</option>
                         </select>
-                        <button class="btn btn-inverse btn-small" ng-click="addsongtochallenge()">Add</button> 
+                        <button class="btn btn-primary btn-small" ng-click="addsongtochallenge()">Add</button> 
                       </div>
                       <label class="control-label" for="ChalExpires">Expires</label>
                       <div class="controls">
@@ -1087,7 +1359,7 @@
                           <option value="3rd">3rd Place (2 pts)</option>
                           <option value="Participation">Participation (1 pts)</option>
                         </select>
-                        <button class="btn btn-inverse btn-small" ng-click="addrankingtoscoring()">Add</button>
+                        <button class="btn btn-primary btn-small" ng-click="addrankingtoscoring()">Add</button>
                       </div>
                       <div class="controls">
                         <input type="submit" ng-click="submitscoring()" value="Submit" data-dismiss="modal"/>
@@ -1127,7 +1399,7 @@
                           <option value="2nd">2nd Place (2 pts)</option>
                           <option value="3rd">3rd Place (1 pts)</option>
                         </select>
-                        <button class="btn btn-inverse btn-small" ng-click="addrewardtotheme()">Add</button>
+                        <button class="btn btn-primary btn-small" ng-click="addrewardtotheme()">Add</button>
                       </div>
                       <div class="controls">
                         <input type="submit" ng-click="submitreward()" value="Submit" data-dismiss="modal"/>
@@ -1144,11 +1416,11 @@
             </div>
 
             <!-- Manage Achievements Pane-->
-            <div class="tab-pane" id="ManageAchievements" ui-if="isadmin">
+            <div class="tab-pane" id="ManageAchievements" >
               <div class="container-fluid">
-                <button class="btn btn-inverse btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
-                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>
-                <button class="btn btn-inverse btn-small" data-toggle="modal" href="#AwardAchievement" ng-cloak>Award Achievement</button>                  
+                <button class="btn btn-primary btn-small" ng-click="listachievementsusers()" ng-cloak>Refresh</button> 
+                <button class="btn btn-primary btn-small" data-toggle="modal" href="#CreateAchievement" ng-cloak>Add New Achievement</button>
+                <button class="btn btn-primary btn-small" data-toggle="modal" href="#AwardAchievement" ng-cloak>Award Achievement</button>                  
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -1179,7 +1451,7 @@
                       </td>
                       <td>
                           <form ng-submit="deleteachievement({{achievement.id}})">
-                            <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                            <input class="btn btn-primary btn-small" type="submit" name="Delete" value="Delete">
                           </form>
                       </td>
                     </tr>
@@ -1252,8 +1524,8 @@
             <div class="tab-pane" id="ManageSongs" ui-if="isadmin">
               <div class="container-fluid">
                 <div class="row-fluid">
-                  <button class="btn btn-inverse btn-small" onclick="song_upload()" ng-cloak>Add New Song</button> 
-                  <button class="btn btn-inverse btn-small" ng-click="listsongs()" ng-cloak>Refresh</button>
+                  <button class="btn btn-primary btn-small" onclick="song_upload()" ng-cloak>Add New Song</button> 
+                  <button class="btn btn-primary btn-small" ng-click="listsongs()" ng-cloak>Refresh</button>
                   <span class="label" ui-if="(song_pagination.s_offset + song_pagination.s_limit <= songs.count)" ng-cloak>
                     (Song(s) {{song_pagination.s_offset + 1}} to {{song_pagination.s_offset + song_pagination.s_limit}} of {{songs.count}})
                   </span>
@@ -1265,10 +1537,10 @@
                   <div class="pagination">
                     <ul>
                       <li ng-repeat="page in song_pagination.s_pages" ng-cloak>
-                        <a href="#" class="btn btn-inverse btn-small" ng-click="song_paginate(page.offset)" ui-if="!song_paginate_disable(page.offset)">
+                        <a href="#" class="btn btn-primary btn-small" ng-click="song_paginate(page.offset)" ui-if="!song_paginate_disable(page.offset)">
                           {{page.no}}
                         </a>
-                        <a href="#" class="btn btn-inverse btn-small" disabled ui-if="song_paginate_disable(page.offset)">
+                        <a href="#" class="btn btn-primary btn-small" disabled ui-if="song_paginate_disable(page.offset)">
                           {{page.no}}
                         </a>
                       </li>
@@ -1322,7 +1594,7 @@
                         </td>
                         <td>
                             <form ng-submit="deletesong({{song.id}})">
-                              <input class="btn btn-inverse btn-small" type="submit" name="Delete" value="Delete">
+                              <input class="btn btn-primary btn-small" type="submit" name="Delete" value="Delete">
                             </form>
                         </td>
                       </tr>
@@ -1333,10 +1605,10 @@
                   <div class="pagination">
                     <ul>
                       <li ng-repeat="page in song_pagination.s_pages" ng-cloak>
-                        <a href="#" class="btn btn-inverse btn-small" ng-click="song_paginate(page.offset)" ui-if="!song_paginate_disable(page.offset)">
+                        <a href="#" class="btn btn-primary btn-small" ng-click="song_paginate(page.offset)" ui-if="!song_paginate_disable(page.offset)">
                           {{page.no}}
                         </a>
-                        <a href="#" class="btn btn-inverse btn-small" disabled ui-if="song_paginate_disable(page.offset)">
+                        <a href="#" class="btn btn-primary btn-small" disabled ui-if="song_paginate_disable(page.offset)">
                           {{page.no}}
                         </a>
                       </li>
@@ -1349,8 +1621,8 @@
             <!-- View Submissions Pane -->
             <div class="tab-pane" id="ViewSubmissions" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-inverse btn-small" ng-click="listsubmissions()" ng-cloak>Refresh</button>
-                <button class="btn btn-inverse btn-small" ng-click="changeFilter()">Turn {{button}} Half-Time Filter</button>
+                <button class="btn btn-primary btn-small" ng-click="listsubmissions()" ng-cloak>Refresh</button>
+                <button class="btn btn-primary btn-small" ng-click="changeFilter()">Turn {{button}} Half-Time Filter</button>
                 <table class="table table-striped">
                   <thead>
                     <th>
@@ -1397,7 +1669,7 @@
                       </td>
                       <td>
                           <form ng-submit="deletesubmission({{file.id}})">
-                            <input type="submit" class="btn btn-inverse btn-small" name="Delete" value="Delete">
+                            <input type="submit" class="btn btn-primary btn-small" name="Delete" value="Delete">
                           </form>
                       </td>
                     </tr>
@@ -1410,7 +1682,7 @@
             <!-- View Logs Pane -->
             <div class="tab-pane" id="ViewLogs" ui-if="isadmin">
               <div class="container-fluid">
-                <button class="btn btn-inverse btn-small" ng-click="listlogs()" ng-cloak>Refresh</button> 
+                <button class="btn btn-primary btn-small" ng-click="listlogs()" ng-cloak>Refresh</button> 
                 <table class="table table-striped">
                   <thead>
                     <th>

@@ -1,5 +1,5 @@
 application: 9touhou
-version: 12ball
+version: 15ball
 runtime: python27
 api_version: 1
 threadsafe: false

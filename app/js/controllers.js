@@ -73,11 +73,20 @@ function FirstController($scope,$resource) {
                               'progress-warning',
                               'progress-success',
                               'progress-info']
+                              
+  $scope.nine_ball = "⑨";
+  
+  
+  $scope.toggleNine = function() {
+    
+    $scope.nine_ball = $scope.nine_ball == "⑨" ? "9" : "⑨";
+  }  
   
   $scope.reset = false;
   $scope.pwned = 0;
   $scope.charge = 0;
   $scope.marisa_status = $scope.possible_status[0];
+  $scope.cirno_status = "cirno-normal";
   $scope.progress = $scope.possible_progress[0];
   $scope.beam_height = 0;
   
@@ -351,6 +360,18 @@ function FirstController($scope,$resource) {
   
   /* Missions (Admins) */
   
+  $scope.modules = [{"code":"CPMC10", "fullcode":"CPMC109", "title": "Introductory Arithmetics"},
+                    {"code":"CPMC20", "fullcode":"CPMC209", "title": "Long Division"},
+                    {"code":"CPMC30", "fullcode":"CPMC309", "title": "Introduction to Calculus"},
+                    {"code":"CPMC40", "fullcode":"CPMC409", "title": "Imaginary Numbers"},
+                    {"code":"CPMC50", "fullcode":"CPMC509", "title": "Basic Differentiation"},
+                    {"code":"CPMC60", "fullcode":"CPMC609", "title": "Basic Integration"},
+                    {"code":"CPMC70", "fullcode":"CPMC709", "title": "Introduction to Statistics"}]
+                    
+  $scope.newmission = [{"difficulty": "Easy", "title": "Satisfactory", "points": 4},
+                    {"difficulty": "Norrmal", "title": "Merit", "points": 7},
+                    {"difficulty": "Hard", "title": "Cum Laude", "points": 10},
+                    {"difficulty": "Lunatic", "title": "Valedictorian", "points": 12}];
   $scope.mission = [{"difficulty": "Easy", "title": "Hand Easy", "points": 4},
                     {"difficulty": "Norrmal", "title": "Hand Normal", "points": 7},
                     {"difficulty": "Hard", "title": "Hand Hard", "points": 10},

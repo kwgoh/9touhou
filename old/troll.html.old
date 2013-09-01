@@ -1,0 +1,57 @@
+
+      function troll(id) {
+        var chance = Math.random();
+        if (chance <= 0.25) {
+          scope = angular.element(document.getElementById(id)).scope();
+          scope.$apply(function(){
+            scope.do_troll(id);
+          })
+        }
+      }
+      
+      function untroll() {
+        scope = angular.element(document.getElementById('main')).scope();
+        scope.$apply(function(){
+          scope.reset_troll();
+        })
+      }
+            
+      function spark() {
+        scope = angular.element(document.getElementById('main')).scope();
+        scope.$apply(function(){
+          scope.toggle();
+        })
+      }
+                <button class="btn btn-inverse btn-small" title="Give Me Back My Sidebar!" onClick="untroll()" ng-cloak ng-show="reset">
+                  <span>Dammit, </span>Marisa...
+                </button>
+                <button class="btn btn-success btn-small" title="DO IT" ng-click="toggle()" ng-cloak ng-show="charge == 100">
+                  MASTER SPARK
+                </button>
+                
+              <li class="nav-header" ng-cloak>
+                  <span class="label">Marisa Pwned: {{pwned}}</span>
+                  <br/>
+                  <div  class="progress progress-striped active" ng-class="progress">
+                    <div class="bar" style="width: {{charge}}%"></div>
+                  </div>
+                  {{bork}}
+              </li>
+      <div class="spark" ng-show="spark" ng-cloak ng-animate="{show: 'masterspark-show'}" style="top: {{beam_height}}px"></div>
+                
+          <audio id="yoink">
+            <source src="./sfx/sounds/yoink-Public_D-362_hifi.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/yoink-Public_D-362_hifi.wav" type="audio/wav"></source>
+          </audio>
+          <audio id="splode">
+            <source src="./sfx/sounds/Explosio-Diode111-8778_hifi.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/Explosio-Diode111-8778_hifi.wav" type="audio/wav"></source>
+          </audio>
+          <audio id="charged">
+            <source src="./sfx/sounds/078.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/078.wav" type="audio/wav"></source>
+          </audio>
+          <audio id="spark">
+            <source src="./sfx/sounds/spark.mp3" type="audio/mpeg"></source>
+            <source src="./sfx/sounds/spark.wav" type="audio/wav"></source>
+          </audio>
